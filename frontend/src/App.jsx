@@ -1,28 +1,39 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router-dom';
+import Home from './pages/Home';
+import HowItWorks from './pages/HowItWorks';
 import FindBillboards from './pages/FindBillboards';
 
 export default function App() {
     return (
         <BrowserRouter>
-            <nav className="navbar">
-                <Link to="/" className="logo">BillboardBD</Link>
-                <Link to="/billboards">Find Billboards</Link>
-            </nav>
-
+            <Navbar />
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/billboards" element={<FindBillboards />} />
+                <Route path="/how-it-works" element={<HowItWorks />} />
             </Routes>
         </BrowserRouter>
     );
 }
 
-function Home() {
+function Navbar() {
     return (
-        <div className="page">
-            <h1>BillboardBD</h1>
-            <p>Book premium billboard advertising spaces across Dhaka.</p>
-            <Link to="/billboards" className="cta">Browse Billboards →</Link>
-        </div>
+        <nav className="navbar">
+            <Link to="/" className="logo">
+                <span className="logo-mark">📍</span>
+                Billboard<span className="logo-accent">BD</span>
+            </Link>
+
+            <div className="nav-links">
+                <NavLink to="/" end>Home</NavLink>
+                <NavLink to="/billboards">Find Billboards</NavLink>
+                <NavLink to="/how-it-works">How it works</NavLink>
+            </div>
+
+            <div className="nav-actions">
+                <button className="btn-ghost" onClick={(e) => e.preventDefault()}>Log in</button>
+                <button className="btn-primary" onClick={(e) => e.preventDefault()}>Sign up</button>
+            </div>
+        </nav>
     );
 }
