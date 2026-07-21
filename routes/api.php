@@ -8,4 +8,5 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::get('/billboards/nearby', [BillboardController::class, 'nearby']);
 Route::get('/billboards', [BillboardController::class, 'index']);

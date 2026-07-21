@@ -326,3 +326,51 @@ html, body {
     display: block;
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
 }
+/* User "you are here" marker */
+.user-marker {
+    background: transparent;
+    border: none;
+}
+
+.user-dot {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 12px;
+    height: 12px;
+    background: #0071e3;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.4);
+    z-index: 2;
+}
+
+.user-pulse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    background: rgba(0, 113, 227, 0.35);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
+
+.geo-warning {
+    background: #fff8e1;
+    color: #7a5a00;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.distance {
+    color: #6e6e73;
+    font-weight: 500;
+}
