@@ -316,23 +316,13 @@ html, body {
     width: 100% !important;
 }
 
-/* Custom leaflet div-icon markers */
+/* Custom Leaflet div-icon markers — colored sign with ad-copy lines on a pole */
 .billboard-marker {
     background: transparent;
     border: none;
 }
 
-.marker-pin {
-    width: 28px;
-    height: 18px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    border: 2px solid white;
-}
-
-.marker-stem {
-    width: 2px;
-    height: 22px;
-    background: #424245;
-    margin: 0 auto;
+.billboard-marker svg {
+    display: block;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
 }

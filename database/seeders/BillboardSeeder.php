@@ -1284,6 +1284,19 @@ class BillboardSeeder extends Seeder
                 'rating' => 4.3,
                 'status' => 'available',
             ],
+                        [
+                'title' => 'Kamarpara Billboard',
+                'address' => 'Kamarpara, Dhaka',
+                'latitude' => 23.8916,
+                'longitude' => 90.3882,
+                'size' => '15ft x 25ft',
+                'type' => 'Static',
+                'pricing_mode' => 'monthly',
+                'daily_rate' => 0,
+                'monthly_rate' => 130000,
+                'rating' => 4.3,
+                'status' => 'available',
+            ],
         ];
 
         foreach ($billboards as $billboard) {

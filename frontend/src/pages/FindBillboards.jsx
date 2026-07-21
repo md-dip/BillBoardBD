@@ -42,15 +42,25 @@ const TYPE_COLORS = {
     rooftop: '#ef4444',
 };
 
-// Build a colored div-icon so each marker matches its type color.
+// Build a colored div-icon so each marker matches its type color —
+// rendered as an inline SVG so the ad-copy lines stay crisp at any zoom.
 function makeIcon(type) {
     const color = TYPE_COLORS[type] || '#0071e3';
+    const svg = `
+        <svg width="34" height="44" viewBox="0 0 34 44" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="32" height="22" rx="4" fill="${color}" stroke="#ffffff" stroke-width="2"/>
+            <line x1="6" y1="9" x2="28" y2="9" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+            <line x1="6" y1="14" x2="28" y2="14" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+            <line x1="6" y1="19" x2="20" y2="19" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+            <rect x="15.5" y="23" width="3" height="15" fill="#1d1d1f"/>
+            <polygon points="12,38 22,38 18,44 16,44" fill="#1d1d1f"/>
+        </svg>`;
     return L.divIcon({
         className: 'billboard-marker',
-        html: `<div class="marker-pin" style="background:${color}"></div><div class="marker-stem"></div>`,
-        iconSize: [28, 40],
-        iconAnchor: [14, 40],
-        popupAnchor: [0, -36],
+        html: svg,
+        iconSize: [34, 44],
+        iconAnchor: [17, 44],
+        popupAnchor: [0, -40],
     });
 }
 
