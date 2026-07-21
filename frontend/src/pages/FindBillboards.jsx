@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import api from '../api/axios';
 
@@ -14,7 +14,19 @@ L.Icon.Default.mergeOptions({
 });
 
 const DHAKA_CENTER = [23.8103, 90.4125];
-
+function InvalidateOnMount() {
+    const map = useMap();
+    useEffect(() => {
+        const t = setTimeout(() => map.invalidateSize(), 300);
+        const onResize = () => map.invalidateSize();
+        window.addEventListener('resize', onResize);
+        return () => {
+            clearTimeout(t);
+            window.removeEventListener('resize', onResize);
+        };
+    }, [map]);
+    return null;
+}
 // Color palette per billboard type — used for both map markers and card accents.
 const TYPE_COLORS = {
     unipole: '#8b5cf6',
@@ -124,6 +136,7 @@ export default function FindBillboards() {
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
+                    <InvalidateOnMount />
                     {billboards.map((b) => (
                         <Marker
                             key={b.id}
