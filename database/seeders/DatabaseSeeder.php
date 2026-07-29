@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
         BillboardSeeder::class,
+        UserSeeder::class,
+        BillboardSeeder::class,
         ]);
     }
 }
