@@ -30,7 +30,6 @@ function InvalidateOnMount() {
     return null;
 }
 
-// Recenter the map when the user location is known.
 function FlyToUser({ userPos }) {
     const map = useMap();
     useEffect(() => {
@@ -68,7 +67,6 @@ function makeIcon(type) {
     });
 }
 
-// Special "you are here" marker
 const userIcon = L.divIcon({
     className: 'user-marker',
     html: `<div class="user-dot"></div><div class="user-pulse"></div>`,
@@ -76,8 +74,6 @@ const userIcon = L.divIcon({
     iconAnchor: [12, 12],
 });
 
-// Pull just the numbers out of a size string ("20ft x 10ft", "20*10", "20×10", "20")
-// so matching doesn't care what separator or units were used.
 function normalizeSize(s) {
     const nums = String(s).match(/\d+(\.\d+)?/g);
     return nums ? nums.join('x') : String(s).toLowerCase().replace(/\s+/g, '');
@@ -100,15 +96,15 @@ export default function FindBillboards() {
     const [billboards, setBillboards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [radius, setRadius] = useState(null);     // null = "All boards"
+    const [radius, setRadius] = useState(null);
     const [userPos, setUserPos] = useState(null);
     const [geoError, setGeoError] = useState(null);
     const [typeFilter, setTypeFilter] = useState('');
     const [sizeFilter, setSizeFilter] = useState('');
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
+    const [selectedId, setSelectedId] = useState(null);
 
-    // On mount, ask for user location once
     useEffect(() => {
         if (!navigator.geolocation) {
             setGeoError('Geolocation not supported by your browser');
@@ -121,12 +117,10 @@ export default function FindBillboards() {
         );
     }, []);
 
-    // Fetch boards whenever radius or user position changes
     useEffect(() => {
         setLoading(true);
         setError(null);
 
-        // If no radius chosen OR no user location, fetch all boards
         if (radius === null || !userPos) {
             api.get('/billboards')
                 .then((res) => {
@@ -140,7 +134,6 @@ export default function FindBillboards() {
             return;
         }
 
-        // Otherwise, fetch nearby
         api.get('/billboards/nearby', {
             params: { lat: userPos[0], lng: userPos[1], radius },
         })
@@ -170,6 +163,14 @@ export default function FindBillboards() {
         if (maxPrice !== '' && price > Number(maxPrice)) return false;
         return true;
     });
+
+    // Put the selected billboard at the top of the sidebar list
+    const displayedBillboards = selectedId
+        ? [
+            ...filteredBillboards.filter((b) => b.id === selectedId),
+            ...filteredBillboards.filter((b) => b.id !== selectedId),
+        ]
+        : filteredBillboards;
 
     return (
         <div className="find-page">
@@ -243,8 +244,12 @@ export default function FindBillboards() {
                     {!loading && !error && filteredBillboards.length === 0 && (
                         <p className="status">No billboards match your filters.</p>
                     )}
-                    {filteredBillboards.map((b) => (
-                        <Link key={b.id} to={`/billboards/${b.id}`} className="board-card-link">
+                    {displayedBillboards.map((b) => (
+                        <Link
+                            key={b.id}
+                            to={`/billboards/${b.id}`}
+                            className={`board-card-link ${selectedId === b.id ? 'selected' : ''}`}
+                        >
                             <div className="board-card">
                                 <div className="board-photo">No photo</div>
                                 <div className="board-info">
@@ -300,6 +305,9 @@ export default function FindBillboards() {
                             key={b.id}
                             position={[parseFloat(b.latitude), parseFloat(b.longitude)]}
                             icon={makeIcon(b.type)}
+                            eventHandlers={{
+                                click: () => setSelectedId(b.id),
+                            }}
                         >
                             <Popup>
                                 <strong>{b.title}</strong><br />

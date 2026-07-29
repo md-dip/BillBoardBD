@@ -777,3 +777,8 @@ html, body {
 .popup-link:hover {
     text-decoration: underline;
 }
+/* Highlight the selected board in the sidebar when its marker is clicked */
+.board-card-link.selected .board-card {
+    border: 2px solid #0071e3;
+    box-shadow: 0 6px 20px rgba(0, 113, 227, 0.2);
+}
