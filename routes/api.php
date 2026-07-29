@@ -12,6 +12,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // Public billboard routes — anyone can browse
 Route::get('/billboards/nearby', [BillboardController::class, 'nearby']);
 Route::get('/billboards', [BillboardController::class, 'index']);
+Route::get('/billboards/{billboard}', [BillboardController::class, 'show']);
 
 // Protected routes — require valid Sanctum token
 Route::middleware('auth:sanctum')->group(function () {

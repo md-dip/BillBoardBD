@@ -54,4 +54,12 @@ class BillboardController extends Controller
             'data' => $billboards,
         ]);
     }
+
+    public function show(Billboard $billboard)
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $billboard,
+        ]);
+    }
 }

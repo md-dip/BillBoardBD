@@ -5,6 +5,7 @@ import FindBillboards from './pages/FindBillboards';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { useAuth } from './context/AuthContext';
+import BillboardDetail from './pages/BillboardDetail';
 
 export default function App() {
     return (
@@ -16,6 +17,7 @@ export default function App() {
                 <Route path="/how-it-works" element={<HowItWorks />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/billboards/:id" element={<BillboardDetail />} />
             </Routes>
         </BrowserRouter>
     );

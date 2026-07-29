@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
+import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import api from '../api/axios';
 
@@ -243,27 +244,29 @@ export default function FindBillboards() {
                         <p className="status">No billboards match your filters.</p>
                     )}
                     {filteredBillboards.map((b) => (
-                        <div key={b.id} className="board-card">
-                            <div className="board-photo">No photo</div>
-                            <div className="board-info">
-                                <div className="board-title-row">
-                                    <h2>{b.title}</h2>
-                                    <span className={`status-badge ${b.status}`}>{b.status}</span>
-                                </div>
-                                <p className="address">📍 {b.address}</p>
-                                <div className="board-bottom">
-                                    <span className="type-tag" style={{color: TYPE_COLORS[b.type] || '#0071e3'}}>
-                                        {b.type.toUpperCase()}
-                                    </span>
-                                    <span className="price">
-                                        {formatPrice(b)}
-                                        {b.distance_km !== undefined && (
-                                            <span className="distance"> · {Number(b.distance_km).toFixed(1)} km</span>
-                                        )}
-                                    </span>
+                        <Link key={b.id} to={`/billboards/${b.id}`} className="board-card-link">
+                            <div className="board-card">
+                                <div className="board-photo">No photo</div>
+                                <div className="board-info">
+                                    <div className="board-title-row">
+                                        <h2>{b.title}</h2>
+                                        <span className={`status-badge ${b.status}`}>{b.status}</span>
+                                    </div>
+                                    <p className="address">📍 {b.address}</p>
+                                    <div className="board-bottom">
+                                        <span className="type-tag" style={{color: TYPE_COLORS[b.type] || '#0071e3'}}>
+                                            {b.type.toUpperCase()}
+                                        </span>
+                                        <span className="price">
+                                            {formatPrice(b)}
+                                            {b.distance_km !== undefined && (
+                                                <span className="distance"> · {Number(b.distance_km).toFixed(1)} km</span>
+                                            )}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </aside>
@@ -310,6 +313,8 @@ export default function FindBillboards() {
                                 {b.distance_km !== undefined && (
                                     <><br /><em>{Number(b.distance_km).toFixed(2)} km away</em></>
                                 )}
+                                <br />
+                                <Link to={`/billboards/${b.id}`} className="popup-link">View details →</Link>
                             </Popup>
                         </Marker>
                     ))}
