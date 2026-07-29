@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router-dom';
 import Home from './pages/Home';
 import HowItWorks from './pages/HowItWorks';
 import FindBillboards from './pages/FindBillboards';
+import Login from './pages/Login';
 
 export default function App() {
     return (
@@ -11,6 +12,7 @@ export default function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/billboards" element={<FindBillboards />} />
                 <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="/login" element={<Login />} />
             </Routes>
         </BrowserRouter>
     );
@@ -31,7 +33,7 @@ function Navbar() {
             </div>
 
             <div className="nav-actions">
-                <button className="btn-ghost" onClick={(e) => e.preventDefault()}>Log in</button>
+                <Link to="/login" className="btn-ghost">Log in</Link>
                 <button className="btn-primary" onClick={(e) => e.preventDefault()}>Sign up</button>
             </div>
         </nav>
