@@ -3,6 +3,8 @@ import Home from './pages/Home';
 import HowItWorks from './pages/HowItWorks';
 import FindBillboards from './pages/FindBillboards';
 import Login from './pages/Login';
+import Register from './pages/Register';
+import { useAuth } from './context/AuthContext';
 
 export default function App() {
     return (
@@ -13,12 +15,19 @@ export default function App() {
                 <Route path="/billboards" element={<FindBillboards />} />
                 <Route path="/how-it-works" element={<HowItWorks />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
             </Routes>
         </BrowserRouter>
     );
 }
 
 function Navbar() {
+    const { user, logout } = useAuth();
+
+    async function handleLogout() {
+        await logout();
+    }
+
     return (
         <nav className="navbar">
             <Link to="/" className="logo">
@@ -33,8 +42,17 @@ function Navbar() {
             </div>
 
             <div className="nav-actions">
-                <Link to="/login" className="btn-ghost">Log in</Link>
-                <button className="btn-primary" onClick={(e) => e.preventDefault()}>Sign up</button>
+                {user ? (
+                    <>
+                        <span className="nav-user">Hi, {user.name.split(' ')[0]}</span>
+                        <button className="btn-ghost" onClick={handleLogout}>Log out</button>
+                    </>
+                ) : (
+                    <>
+                        <Link to="/login" className="btn-ghost">Log in</Link>
+                        <Link to="/register" className="btn-primary">Sign up</Link>
+                    </>
+                )}
             </div>
         </nav>
     );
