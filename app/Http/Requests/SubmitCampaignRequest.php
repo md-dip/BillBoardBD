@@ -7,23 +7,21 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SubmitCampaignRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'brand_name' => ['required', 'string', 'max:255'],
+            'ad_category' => ['required', 'string', 'max:100'],
+            'campaign_description' => ['required', 'string', 'max:2000'],
+            'creative' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ];
     }
 }
