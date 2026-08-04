@@ -2,9 +2,56 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
+#[Fillable([
+    'billboard_id', 'user_id', 'start_date', 'end_date', 'total_amount',
+    'advance_amount', 'status', 'rejection_reason', 'brand_name', 'ad_category',
+    'campaign_description', 'creative_path', 'expires_at',
+])]
 class Booking extends Model
 {
-    //
+    // Adds a computed "creative_url" field to the JSON automatically.
+    protected $appends = ['creative_url'];
+
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'date',
+            'end_date' => 'date',
+            'total_amount' => 'decimal:2',
+            'advance_amount' => 'decimal:2',
+            'expires_at' => 'datetime',
+        ];
+    }
+
+    // Turns the stored file path into a full public URL the browser can load.
+    protected function creativeUrl(): Attribute
+    {
+        return Attribute::get(
+            fn () => $this->creative_path
+                ? Storage::disk('public')->url($this->creative_path)
+                : null
+        );
+    }
+
+    public function billboard(): BelongsTo
+    {
+        return $this->belongsTo(Billboard::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
 }
