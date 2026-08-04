@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import api from '../api/axios';
+import BookingWizard from '../components/BookingWizard';
 
 export default function BillboardDetail() {
     const { id } = useParams();
     const [billboard, setBillboard] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+
+    // Booking rules from the DB, so the wizard shows the real advance % / hold time.
+    const [settings, setSettings] = useState({ advance_percentage: 30, hold_minutes: 15 });
 
     useEffect(() => {
         setLoading(true);
@@ -19,14 +21,15 @@ export default function BillboardDetail() {
             .finally(() => setLoading(false));
     }, [id]);
 
+    useEffect(() => {
+        api.get('/settings/public')
+            .then((res) => setSettings(res.data.data))
+            .catch(() => { /* keep the safe defaults if this fails */ });
+    }, []);
+
     if (loading) return <div className="detail-loading">Loading...</div>;
     if (error) return <div className="detail-loading">{error}</div>;
     if (!billboard) return null;
-
-    // Format price based on pricing mode
-    const price = billboard.pricing_mode === 'daily'
-        ? `৳${Number(billboard.daily_rate).toLocaleString()} / day`
-        : `৳${Number(billboard.monthly_rate).toLocaleString()} / month`;
 
     // Render stars for the rating (e.g., 4.6 → ★★★★☆)
     const roundedRating = Math.round(Number(billboard.rating) || 0);
@@ -75,38 +78,12 @@ export default function BillboardDetail() {
                 </p>
             </div>
 
-            <aside className="booking-card">
-                <div className="booking-price">{price}</div>
-
-                <div className="booking-dates">
-                    <div>
-                        <label className="auth-label">Start date</label>
-                        <input
-                            type="date"
-                            className="auth-input"
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label className="auth-label">End date</label>
-                        <input
-                            type="date"
-                            className="auth-input"
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                        />
-                    </div>
-                </div>
-
-                <button
-                    className="booking-request-btn"
-                    onClick={() => alert('Booking flow coming next — for now this is just the detail page.')}
-                >
-                    Request booking
-                </button>
-
-                <p className="booking-note">📅 Pay 30% to confirm, balance before installation</p>
+            <aside>
+                <BookingWizard
+                    billboard={billboard}
+                    advancePercentage={settings.advance_percentage}
+                    holdMinutes={settings.hold_minutes}
+                />
             </aside>
         </div>
     );
