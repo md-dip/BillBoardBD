@@ -28,7 +28,8 @@ const icons = {
     ),
     sparkles: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8" />
+            <path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5A2 2 0 0 0 15.5 9.94l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z" />
+            <path d="M20 3v4M22 5h-4M4 17v2M5 18H3" />
         </svg>
     ),
     search: (
@@ -40,11 +41,11 @@ const icons = {
 };
 
 const features = [
-    { icon: icons.map, title: 'Interactive map search', desc: 'Locate billboards by neighborhood, radius, and type, the same way you search for a restaurant.' },
+    { icon: icons.map, title: 'Interactive map search', desc: 'Locate billboards by neighborhood, radius, and type — the same way you search for a restaurant.' },
     { icon: icons.zap, title: 'Instant availability', desc: 'Live conflict-checked calendars mean you never double-book a billboard for the same dates.' },
-    { icon: icons.shield, title: 'Permit-verified', desc: 'Every listing tracks its permit expiry, so your campaign stays legal.' },
+    { icon: icons.shield, title: 'Permit-verified', desc: 'Every listing tracks its City Corporation / RAJUK permit expiry, so your campaign stays legal.' },
     { icon: icons.trending, title: 'Owner analytics', desc: 'Billboard owners see occupancy rate and monthly revenue in a single dashboard.' },
-    { icon: icons.sparkles, title: 'Transparent pricing', desc: 'Daily and monthly rates shown upfront. Advance to confirm, balance before installation.' },
+    { icon: icons.sparkles, title: 'Transparent pricing', desc: 'Daily and monthly rates shown upfront. 30% advance to confirm, balance before installation.' },
     { icon: icons.search, title: 'Booking workflow', desc: 'Requests move from pending → approved → invoiced, with notifications at every step.' },
 ];
 
@@ -59,24 +60,26 @@ export default function Home() {
                         Find the perfect billboard in <span className="hero-title-soft">seconds</span>, not weeks.
                     </h1>
                     <p className="hero-subtitle">
-                        Browse outdoor advertising spaces on an interactive map. Compare prices, check availability, book online.
+                        Browse thousands of outdoor advertising spaces on an interactive map. Compare prices, check availability, book online.
                     </p>
                     <div className="hero-actions">
-                        <Link to="/billboards" className="hero-btn-primary">Search billboards</Link>
+                        <Link to="/billboards" className="hero-btn-primary">
+                            <span className="hero-btn-icon">{icons.search}</span> Search billboards
+                        </Link>
                         <Link to="/register" className="hero-btn-outline">List your billboard</Link>
                     </div>
                     <div className="hero-stats">
                         <div className="hero-stat">
-                            <div className="hero-stat-n">Dhaka</div>
-                            <div className="hero-stat-l">and beyond</div>
+                            <div className="hero-stat-n">500+</div>
+                            <div className="hero-stat-l">billboards</div>
                         </div>
                         <div className="hero-stat">
-                            <div className="hero-stat-n">30%</div>
-                            <div className="hero-stat-l">advance to book</div>
+                            <div className="hero-stat-n">12</div>
+                            <div className="hero-stat-l">cities</div>
                         </div>
                         <div className="hero-stat">
-                            <div className="hero-stat-n">24/7</div>
-                            <div className="hero-stat-l">online booking</div>
+                            <div className="hero-stat-n">99%</div>
+                            <div className="hero-stat-l">uptime</div>
                         </div>
                     </div>
                 </div>
