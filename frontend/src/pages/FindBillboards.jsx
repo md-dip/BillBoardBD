@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-le
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import api from '../api/axios';
+import { getBillboardIcon } from '../utils/markerIcons';
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -304,7 +305,7 @@ export default function FindBillboards() {
                         <Marker
                             key={b.id}
                             position={[parseFloat(b.latitude), parseFloat(b.longitude)]}
-                            icon={makeIcon(b.type)}
+                            icon={getBillboardIcon(b)}
                             eventHandlers={{
                                 click: () => setSelectedId(b.id),
                             }}
