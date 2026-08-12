@@ -1,7 +1,33 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import api from '../api/axios';
 import BookingWizard from '../components/BookingWizard';
+
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+// Same default-marker fix your map page uses, so the pin shows even if the
+// user opens this detail page directly (without visiting the map first).
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+});
+
+// A map placed in a below-the-fold container often renders grey because
+// Leaflet measured the container before it had its final size. Calling
+// invalidateSize() after mount forces it to re-measure and paint correctly.
+function InvalidateOnMount() {
+    const map = useMap();
+    useEffect(() => {
+        const t = setTimeout(() => map.invalidateSize(), 0);
+        return () => clearTimeout(t);
+    }, [map]);
+    return null;
+}
 
 export default function BillboardDetail() {
     const { id } = useParams();
@@ -31,9 +57,13 @@ export default function BillboardDetail() {
     if (error) return <div className="detail-loading">{error}</div>;
     if (!billboard) return null;
 
-    // Render stars for the rating (e.g., 4.6 → ★★★★☆)
     const roundedRating = Math.round(Number(billboard.rating) || 0);
     const stars = '★'.repeat(roundedRating) + '☆'.repeat(5 - roundedRating);
+
+    const lat = Number(billboard.latitude);
+    const lng = Number(billboard.longitude);
+    const hasCoords = !Number.isNaN(lat) && !Number.isNaN(lng);
+    const bookedRanges = billboard.booked_ranges || [];
 
     return (
         <div className="detail-wrap">
@@ -76,6 +106,35 @@ export default function BillboardDetail() {
                 <p className="detail-description">
                     {billboard.description || `Prime ${billboard.type} advertising space at ${billboard.address}.`}
                 </p>
+
+                <h2 className="detail-section-title">Availability</h2>
+                {bookedRanges.length > 0 ? (
+                    <ul className="detail-booked">
+                        {bookedRanges.map((r, i) => (
+                            <li key={i}>{r.start_date} to {r.end_date} <span className="detail-booked-tag">(booked)</span></li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="detail-description">No bookings yet — every date is open.</p>
+                )}
+
+                {hasCoords && (
+                    <>
+                        <h2 className="detail-section-title">Location</h2>
+                        <div className="detail-map">
+                            <MapContainer center={[lat, lng]} zoom={15} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
+                                <TileLayer
+                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                />
+                                <Marker position={[lat, lng]}>
+                                    <Popup>{billboard.title}</Popup>
+                                </Marker>
+                                <InvalidateOnMount />
+                            </MapContainer>
+                        </div>
+                    </>
+                )}
             </div>
 
             <aside>
