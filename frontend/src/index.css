@@ -1066,3 +1066,19 @@ textarea.auth-input { resize: vertical; font-family: inherit; }
 @media (max-width: 768px) {
     .footer-inner { grid-template-columns: 1fr 1fr; }
 }
+/* Detail — availability list + location map */
+.detail-booked { list-style: none; padding: 0; margin: 0; }
+.detail-booked li {
+    color: #475569;
+    font-size: 0.92rem;
+    padding: 6px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+.detail-booked-tag { color: #94a3b8; }
+.detail-map {
+    height: 320px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e5e5e5;
+    margin-top: 12px;
+}
