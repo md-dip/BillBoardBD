@@ -1082,3 +1082,7 @@ textarea.auth-input { resize: vertical; font-family: inherit; }
     border: 1px solid #e5e5e5;
     margin-top: 12px;
 }
+.billboard-marker-icon {
+    background: transparent;
+    border: none;
+}

@@ -4,17 +4,21 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import api from '../api/axios';
 import BookingWizard from '../components/BookingWizard';
+import { getBillboardIcon } from '../utils/markerIcons';
 
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-// Same default-marker fix your map page uses, so the pin shows even if the
-// user opens this detail page directly (without visiting the map first).
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIcon2x,
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow,
+// A marker drawn with HTML/SVG instead of Leaflet's default PNG. This avoids
+// the Vite image-path issue entirely and lets us colour it to match the brand.
+const billboardIcon = L.divIcon({
+    className: 'billboard-pin',
+    html: `
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="#0071e3" stroke="#ffffff" stroke-width="1.5">
+            <path d="M12 22s8-6 8-12a8 8 0 1 0-16 0c0 6 8 12 8 12z" />
+            <circle cx="12" cy="10" r="3" fill="#ffffff" stroke="none" />
+        </svg>
+    `,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -30],
 });
 
 // A map placed in a below-the-fold container often renders grey because
@@ -127,7 +131,7 @@ export default function BillboardDetail() {
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 />
-                                <Marker position={[lat, lng]}>
+                                <Marker position={[lat, lng]} icon={getBillboardIcon(billboard)}>
                                     <Popup>{billboard.title}</Popup>
                                 </Marker>
                                 <InvalidateOnMount />
