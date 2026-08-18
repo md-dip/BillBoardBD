@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, NavLink, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import HowItWorks from './pages/HowItWorks';
 import FindBillboards from './pages/FindBillboards';
@@ -6,11 +6,21 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import { useAuth } from './context/AuthContext';
 import BillboardDetail from './pages/BillboardDetail';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminDashboard from './pages/admin/Dashboard';
+import AdminBillboards from './pages/admin/BillboardsPage';
+import AdminBookings from './pages/admin/BookingsPage';
+import AdminPermits from './pages/admin/PermitsPage';
+import AdminReports from './pages/admin/ReportsPage';
+import AdminSettings from './pages/admin/SettingsPage';
 
-export default function App() {
+function AppRoutes() {
+    const { pathname } = useLocation();
+    const isAdmin = pathname.startsWith('/admin');
+
     return (
-        <BrowserRouter>
-            <Navbar />
+        <>
+            {!isAdmin && <Navbar />}
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/billboards" element={<FindBillboards />} />
@@ -18,8 +28,23 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/billboards/:id" element={<BillboardDetail />} />
+
+                <Route path="/admin" element={<ProtectedRoute requireRole="admin"><AdminDashboard /></ProtectedRoute>} />
+                <Route path="/admin/billboards" element={<ProtectedRoute requireRole="admin"><AdminBillboards /></ProtectedRoute>} />
+                <Route path="/admin/bookings" element={<ProtectedRoute requireRole="admin"><AdminBookings /></ProtectedRoute>} />
+                <Route path="/admin/permits" element={<ProtectedRoute requireRole="admin"><AdminPermits /></ProtectedRoute>} />
+                <Route path="/admin/reports" element={<ProtectedRoute requireRole="admin"><AdminReports /></ProtectedRoute>} />
+                <Route path="/admin/settings" element={<ProtectedRoute requireRole="admin"><AdminSettings /></ProtectedRoute>} />
             </Routes>
-            <Footer />
+            {!isAdmin && <Footer />}
+        </>
+    );
+}
+
+export default function App() {
+    return (
+        <BrowserRouter>
+            <AppRoutes />
         </BrowserRouter>
     );
 }
