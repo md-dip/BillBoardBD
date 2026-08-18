@@ -17,18 +17,24 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      api.get('/admin/billboards'),
-      api.get('/admin/bookings'),
-      api.get('/admin/reports/revenue'),
-    ])
-      .then(([bbRes, bkRes, revRes]) => {
-        setBillboards(bbRes.data.data.data);
-        setBookings(bkRes.data.data);
-        setRevenue(revRes.data.data);
-      })
-      .catch((err) => console.error('Dashboard load failed', err))
-      .finally(() => setLoading(false));
+    function fetchAll() {
+      Promise.all([
+        api.get('/admin/billboards'),
+        api.get('/admin/bookings'),
+        api.get('/admin/reports/revenue'),
+      ])
+        .then(([bbRes, bkRes, revRes]) => {
+          setBillboards(bbRes.data.data.data);
+          setBookings(bkRes.data.data);
+          setRevenue(revRes.data.data);
+        })
+        .catch((err) => console.error('Dashboard load failed', err))
+        .finally(() => setLoading(false));
+    }
+
+    fetchAll();
+    const interval = setInterval(fetchAll, 30000); // refresh every 30 seconds
+    return () => clearInterval(interval);
   }, []);
 
   const stats = useMemo(() => ({

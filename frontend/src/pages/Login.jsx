@@ -29,7 +29,7 @@ export default function Login() {
             const user = await login(email, password);
             // Redirect based on role
             if (user.role === 'admin') {
-                navigate('/');  // we don't have /admin yet — go home for now
+                navigate('/admin');
             } else {
                 navigate('/billboards');
             }
