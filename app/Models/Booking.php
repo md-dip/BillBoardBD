@@ -2,21 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable([
-    'billboard_id', 'user_id', 'start_date', 'end_date', 'total_amount',
-    'advance_amount', 'status', 'rejection_reason', 'brand_name', 'ad_category',
-    'campaign_description', 'creative_path', 'expires_at',
-])]
 class Booking extends Model
 {
-    // Adds a computed "creative_url" field to the JSON automatically.
+    use HasFactory;
+
+    protected $fillable = [
+        'billboard_id', 'user_id', 'start_date', 'end_date', 'total_amount',
+        'advance_amount', 'status', 'rejection_reason', 'brand_name', 'ad_category',
+        'campaign_description', 'creative_path', 'expires_at',
+    ];
+
     protected $appends = ['creative_url'];
 
     protected function casts(): array
@@ -30,14 +32,9 @@ class Booking extends Model
         ];
     }
 
-    // Turns the stored file path into a full public URL the browser can load.
     protected function creativeUrl(): Attribute
     {
-        return Attribute::get(
-            fn () => $this->creative_path
-                ? Storage::disk('public')->url($this->creative_path)
-                : null
-        );
+        return Attribute::get(fn () => $this->creative_path ? Storage::disk('public')->url($this->creative_path) : null);
     }
 
     public function billboard(): BelongsTo
