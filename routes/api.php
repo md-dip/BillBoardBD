@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Owner\BillboardController as OwnerBillboardController;
+use App\Http\Controllers\Owner\BookingController as OwnerBookingController;
 
 // Public auth routes — no token needed
 Route::post('/register', [AuthController::class, 'register']);
@@ -56,4 +58,15 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     // Reports (revenue + occupancy)
     Route::get('/reports/revenue', [AdminReportController::class, 'revenue']);
     Route::get('/reports/occupancy', [AdminReportController::class, 'occupancy']);
+});
+
+// Owner routes — require Sanctum token AND role=owner
+Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner')->group(function () {
+    // Billboard CRUD, scoped to the logged-in owner's own listings
+    Route::apiResource('billboards', OwnerBillboardController::class)->except(['show']);
+
+    // Booking requests for the owner's billboards + approval workflow
+    Route::get('/bookings', [OwnerBookingController::class, 'index']);
+    Route::patch('/bookings/{booking}/approve', [OwnerBookingController::class, 'approve']);
+    Route::patch('/bookings/{booking}/reject', [OwnerBookingController::class, 'reject']);
 });

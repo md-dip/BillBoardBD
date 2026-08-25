@@ -32,7 +32,7 @@ export default function Register() {
             const user = await register(form);
             // After registration, redirect based on role
             if (user.role === 'owner') {
-                navigate('/');  // owner dashboard not built yet — home for now
+                navigate('/owner');
             } else {
                 navigate('/billboards');
             }

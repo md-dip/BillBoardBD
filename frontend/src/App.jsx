@@ -13,14 +13,18 @@ import AdminBookings from './pages/admin/BookingsPage';
 import AdminPermits from './pages/admin/PermitsPage';
 import AdminReports from './pages/admin/ReportsPage';
 import AdminSettings from './pages/admin/SettingsPage';
+import OwnerDashboard from './pages/owner/Dashboard';
+import OwnerBillboards from './pages/owner/BillboardsPage';
+import OwnerBookings from './pages/owner/BookingsPage';
 
 function AppRoutes() {
     const { pathname } = useLocation();
     const isAdmin = pathname.startsWith('/admin');
+    const isOwner = pathname.startsWith('/owner');
 
     return (
         <>
-            {!isAdmin && <Navbar />}
+            {!isAdmin && !isOwner && <Navbar />}
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/billboards" element={<FindBillboards />} />
@@ -35,8 +39,12 @@ function AppRoutes() {
                 <Route path="/admin/permits" element={<ProtectedRoute requireRole="admin"><AdminPermits /></ProtectedRoute>} />
                 <Route path="/admin/reports" element={<ProtectedRoute requireRole="admin"><AdminReports /></ProtectedRoute>} />
                 <Route path="/admin/settings" element={<ProtectedRoute requireRole="admin"><AdminSettings /></ProtectedRoute>} />
+
+                <Route path="/owner" element={<ProtectedRoute requireRole="owner"><OwnerDashboard /></ProtectedRoute>} />
+                <Route path="/owner/billboards" element={<ProtectedRoute requireRole="owner"><OwnerBillboards /></ProtectedRoute>} />
+                <Route path="/owner/bookings" element={<ProtectedRoute requireRole="owner"><OwnerBookings /></ProtectedRoute>} />
             </Routes>
-            {!isAdmin && <Footer />}
+            {!isAdmin && !isOwner && <Footer />}
         </>
     );
 }
@@ -77,6 +85,8 @@ function Navbar() {
             <div className="nav-actions">
                 {user ? (
                     <>
+                        {user.role === 'admin' && <Link to="/admin" className="btn-ghost">Admin</Link>}
+                        {user.role === 'owner' && <Link to="/owner" className="btn-ghost">Owner Dashboard</Link>}
                         <span className="nav-user">Hi, {user.name.split(' ')[0]}</span>
                         <button className="btn-ghost" onClick={handleLogout}>Log out</button>
                     </>
