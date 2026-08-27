@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Link, NavLink, useLocation } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 import Home from './pages/Home';
 import HowItWorks from './pages/HowItWorks';
 import FindBillboards from './pages/FindBillboards';
@@ -16,6 +17,7 @@ import AdminSettings from './pages/admin/SettingsPage';
 import OwnerDashboard from './pages/owner/Dashboard';
 import OwnerBillboards from './pages/owner/BillboardsPage';
 import OwnerBookings from './pages/owner/BookingsPage';
+import Dashboard from './pages/Dashboard';
 
 function AppRoutes() {
     const { pathname } = useLocation();
@@ -32,6 +34,7 @@ function AppRoutes() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/billboards/:id" element={<BillboardDetail />} />
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 
                 <Route path="/admin" element={<ProtectedRoute requireRole="admin"><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/admin/billboards" element={<ProtectedRoute requireRole="admin"><AdminBillboards /></ProtectedRoute>} />
@@ -87,8 +90,11 @@ function Navbar() {
                     <>
                         {user.role === 'admin' && <Link to="/admin" className="btn-ghost">Admin</Link>}
                         {user.role === 'owner' && <Link to="/owner" className="btn-ghost">Owner Dashboard</Link>}
-                        <span className="nav-user">Hi, {user.name.split(' ')[0]}</span>
-                        <button className="btn-ghost" onClick={handleLogout}>Log out</button>
+                        {user.role === 'client' && <Link to="/dashboard" className="btn-ghost">My bookings</Link>}
+                        <span className="nav-user">{user.name}</span>
+                        <button className="nav-icon-btn" onClick={handleLogout} aria-label="Log out" title="Log out">
+                            <LogOut size={16} />
+                        </button>
                     </>
                 ) : (
                     <>

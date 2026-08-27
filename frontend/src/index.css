@@ -560,6 +560,24 @@ html, body {
     color: #0f172a;
     margin-right: 4px;
 }
+
+.nav-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #6e6e73;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.nav-icon-btn:hover {
+    background: #f1f5f9;
+    color: #1d1d1f;
+}
 /* ============ BILLBOARD DETAIL ============ */
 .detail-wrap {
     max-width: 1100px;
@@ -1085,4 +1103,230 @@ textarea.auth-input { resize: vertical; font-family: inherit; }
 .billboard-marker-icon {
     background: transparent;
     border: none;
+}
+
+/* ===== My Bookings (client dashboard) ===== */
+.mybookings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+.mybookings-header h1 { margin-bottom: 0; }
+
+.mybookings-empty {
+    border: 1px dashed #d2d2d7;
+    border-radius: 14px;
+    padding: 40px;
+    text-align: center;
+    color: #6e6e73;
+}
+.mybookings-empty a { color: #0071e3; text-decoration: none; font-weight: 500; }
+
+.mybookings-list { display: flex; flex-direction: column; gap: 14px; }
+
+.mybookings-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.mybookings-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.mybookings-thumb {
+    width: 88px;
+    height: 64px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.mybookings-thumb-empty {
+    display: grid;
+    place-items: center;
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
+.mybookings-info { flex: 1; min-width: 180px; }
+.mybookings-title { font-weight: 600; color: #1d1d1f; }
+.mybookings-dates { font-size: 0.85rem; color: #6e6e73; margin-top: 2px; }
+
+.mybookings-amount-col { text-align: right; min-width: 140px; }
+.mybookings-amount { font-weight: 700; color: #1d1d1f; }
+.mybookings-payment-text { font-size: 0.8rem; color: #6e6e73; margin-top: 2px; }
+.mybookings-pay-link {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: 2px;
+    font-size: 0.8rem;
+    color: #0071e3;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.mybookings-badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+.mybookings-badge-pending_payment,
+.mybookings-badge-pending { background: #fef3c7; color: #b45309; }
+.mybookings-badge-approved { background: #dbeafe; color: #1d4ed8; }
+.mybookings-badge-rejected { background: #fee2e2; color: #b91c1c; }
+.mybookings-badge-completed { background: #dcfce7; color: #15803d; }
+.mybookings-badge-cancelled { background: #f1f5f9; color: #64748b; }
+
+.mybookings-actions { display: flex; gap: 8px; }
+.mybookings-actions .pay-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.82rem;
+    padding: 6px 12px;
+}
+
+.mybookings-pay-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+}
+.mybookings-pay-form .booking-request-btn { margin: 0; }
+
+.mybookings-detail {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+}
+.mybookings-creative {
+    width: 160px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #e5e5e5;
+    margin-bottom: 12px;
+}
+.mybookings-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    font-size: 0.88rem;
+}
+.mybookings-detail-label { font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 2px; }
+.mybookings-detail-span { grid-column: 1 / -1; }
+.mybookings-rejection {
+    margin-top: 12px;
+    background: #fef2f2;
+    color: #b91c1c;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 640px) {
+    .mybookings-row { flex-direction: column; align-items: flex-start; }
+    .mybookings-amount-col { text-align: left; }
+    .mybookings-actions { width: 100%; }
+}
+
+/* Invoice modal */
+.mb-invoice-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    z-index: 100;
+}
+.mb-invoice-modal {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+.mb-invoice-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.mb-invoice-header h3 { font-size: 1.05rem; }
+.mb-invoice-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6e6e73;
+    display: grid;
+    place-items: center;
+}
+.mb-invoice-body { padding: 20px; }
+.mb-invoice-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.88rem;
+    color: #475569;
+    padding: 4px 0;
+}
+.mb-invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 0.85rem;
+}
+.mb-invoice-table th {
+    text-align: left;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+.mb-invoice-table td { padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+.mb-invoice-table tfoot td { border-bottom: none; font-weight: 700; padding-top: 12px; }
+.mb-invoice-table .num { text-align: right; }
+.mb-invoice-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px 20px;
+    border-top: 1px solid #f1f5f9;
+}
+.mb-invoice-footer .booking-request-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+@media print {
+    body * { visibility: hidden; }
+    .mb-invoice-modal, .mb-invoice-modal * { visibility: visible; }
+    .mb-invoice-overlay {
+        position: absolute;
+        background: none;
+        inset: auto;
+        padding: 0;
+    }
+    .mb-invoice-modal { position: absolute; top: 0; left: 0; box-shadow: none; max-height: none; }
+    .mb-invoice-close, .mb-invoice-footer { display: none; }
 }
