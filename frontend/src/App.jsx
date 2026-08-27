@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import FindBillboards from './client/pages/FindBillboards';
 import BillboardDetail from './client/pages/BillboardDetail';
 import MyBookings from './client/pages/MyBookings';
+import ClientHowItWorks from './client/pages/HowItWorks';
 import ClientNavbar from './client/components/Navbar';
 import Footer from './client/components/Footer';
 import Home from './shared/pages/Home';
@@ -36,7 +37,7 @@ function AppRoutes() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/billboards" element={<FindBillboards />} />
-                <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="/how-it-works" element={user?.role === 'client' ? <ClientHowItWorks /> : <HowItWorks />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/billboards/:id" element={<BillboardDetail />} />
