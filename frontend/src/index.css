@@ -11,7 +11,10 @@ body {
     min-height: 100vh;
 }
 html, body {
-    overflow-x: hidden;
+    /* clip (not hidden) avoids the spec quirk where a non-'visible' overflow-x
+       silently forces overflow-y to 'auto', which turns body into its own
+       scroll container and breaks position:sticky for every descendant. */
+    overflow-x: clip;
     width: 100%;
 }
 /* ===== Navbar ===== */
