@@ -404,6 +404,7 @@
 .mt-6 { margin-top: 24px; }
 .mb-2 { margin-bottom: 8px; }
 .mb-4 { margin-bottom: 16px; }
+.mb-6 { margin-bottom: 24px; }
 
 .empty-state {
   display: grid;

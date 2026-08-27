@@ -137,7 +137,7 @@ class BookingController extends Controller
         $bookings = $request->user()
             ->bookings()
             ->where('status', '!=', 'held')
-            ->with(['billboard', 'payments'])
+            ->with(['billboard', 'payments', 'proofOfPostings'])
             ->latest()
             ->get();
 

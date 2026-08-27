@@ -316,6 +316,10 @@ html, body {
     height: 100%;
     width: 100%;
     position: relative;
+    /* z-index (not just position) makes this its own stacking context, so
+       Leaflet's internal panes/controls (it uses z-index up to ~1000
+       internally) can never outrank page UI like the navbar's dropdowns. */
+    z-index: 0;
     overflow: hidden;
 }
 
@@ -1186,11 +1190,24 @@ textarea.auth-input { resize: vertical; font-family: inherit; }
     white-space: nowrap;
 }
 .mybookings-badge-pending_payment,
-.mybookings-badge-pending { background: #fef3c7; color: #b45309; }
-.mybookings-badge-approved { background: #dbeafe; color: #1d4ed8; }
+.mybookings-badge-pending_admin_review,
+.mybookings-badge-pending_owner_approval,
+.mybookings-badge-pending_proof_review { background: #fef3c7; color: #b45309; }
+.mybookings-badge-confirmed { background: #dbeafe; color: #1d4ed8; }
 .mybookings-badge-rejected { background: #fee2e2; color: #b91c1c; }
-.mybookings-badge-completed { background: #dcfce7; color: #15803d; }
+.mybookings-badge-paid_in_full,
+.mybookings-badge-active { background: #dcfce7; color: #15803d; }
 .mybookings-badge-cancelled { background: #f1f5f9; color: #64748b; }
+
+.mybookings-proof { margin-top: 12px; }
+.mybookings-proof-gallery { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.mybookings-proof-photo {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+}
 
 .mybookings-actions { display: flex; gap: 8px; }
 .mybookings-actions .pay-btn-outline {
@@ -1334,3 +1351,95 @@ textarea.auth-input { resize: vertical; font-family: inherit; }
     .mb-invoice-modal { position: absolute; top: 0; left: 0; box-shadow: none; max-height: none; }
     .mb-invoice-close, .mb-invoice-footer { display: none; }
 }
+
+/* ===== Notification bell (shared: public navbar + admin/owner shells) ===== */
+.notif-bell-wrap { position: relative; }
+
+.notif-bell-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #6e6e73;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.notif-bell-btn:hover { background: #f1f5f9; color: #1d1d1f; }
+
+.notif-bell-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    border-radius: 999px;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+}
+
+.notif-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 340px;
+    max-height: 420px;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 200;
+}
+
+.notif-dropdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    font-weight: 600;
+    font-size: 14px;
+    color: #1d1d1f;
+}
+
+.notif-mark-all {
+    background: none;
+    border: none;
+    color: #0071e3;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+}
+
+.notif-list { overflow-y: auto; }
+
+.notif-empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.notif-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f8fafc;
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-item.unread { background: #eff6ff; }
+
+.notif-item-title { font-size: 13px; font-weight: 600; color: #1d1d1f; }
+.notif-item-body { font-size: 12.5px; color: #64748b; margin-top: 2px; line-height: 1.4; }
+.notif-item-time { font-size: 11px; color: #94a3b8; margin-top: 4px; }

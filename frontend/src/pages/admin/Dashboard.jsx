@@ -40,7 +40,7 @@ export default function AdminDashboard() {
   const stats = useMemo(() => ({
     revenue: revenue?.totals?.gross ?? 0,
     commission: revenue?.totals?.commission ?? 0,
-    pending: bookings.filter((b) => b.status === 'pending').length,
+    pending: bookings.filter((b) => b.status === 'pending_admin_review').length,
     expiring: billboards.filter((b) => b.permit_expiry_date && daysUntil(b.permit_expiry_date) < 90).length,
   }), [bookings, billboards, revenue]);
 
@@ -119,10 +119,13 @@ export default function AdminDashboard() {
               <CalendarCheck size={16} color="#2563eb" />
               <h2 className="section-title" style={{ margin: 0 }}>Booking pipeline</h2>
             </div>
-            <div className="mini-stat-grid">
-              <MiniStat label="Pending" value={bookings.filter((b) => b.status === 'pending').length} />
-              <MiniStat label="Approved" value={bookings.filter((b) => b.status === 'approved').length} />
-              <MiniStat label="Completed" value={bookings.filter((b) => b.status === 'completed').length} />
+            <div className="mini-stat-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+              <MiniStat label="Pending review" value={bookings.filter((b) => b.status === 'pending_admin_review').length} />
+              <MiniStat label="Awaiting owner" value={bookings.filter((b) => b.status === 'pending_owner_approval').length} />
+              <MiniStat label="Confirmed" value={bookings.filter((b) => b.status === 'confirmed').length} />
+              <MiniStat label="Paid in full" value={bookings.filter((b) => b.status === 'paid_in_full').length} />
+              <MiniStat label="Proof review" value={bookings.filter((b) => b.status === 'pending_proof_review').length} />
+              <MiniStat label="Active" value={bookings.filter((b) => b.status === 'active').length} />
               <MiniStat label="Rejected" value={bookings.filter((b) => b.status === 'rejected').length} />
             </div>
           </div>

@@ -13,6 +13,7 @@ class UpdateSettingsRequest extends FormRequest
         return [
             'commission_rate' => ['required', 'numeric', 'between:0,100'],
             'advance_percentage' => ['required', 'numeric', 'between:0,100'],
+            'final_payment_days' => ['required', 'integer', 'between:1,60'],
         ];
     }
 }

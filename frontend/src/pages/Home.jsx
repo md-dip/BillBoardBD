@@ -46,7 +46,7 @@ const features = [
     { icon: icons.shield, title: 'Permit-verified', desc: 'Every listing tracks its City Corporation / RAJUK permit expiry, so your campaign stays legal.' },
     { icon: icons.trending, title: 'Owner analytics', desc: 'Billboard owners see occupancy rate and monthly revenue in a single dashboard.' },
     { icon: icons.sparkles, title: 'Transparent pricing', desc: 'Daily and monthly rates shown upfront. 30% advance to confirm, balance before installation.' },
-    { icon: icons.search, title: 'Booking workflow', desc: 'Requests move from pending → approved → invoiced, with notifications at every step.' },
+    { icon: icons.search, title: 'Booking workflow', desc: 'Requests move through admin review, owner acceptance, final payment and installation proof, with notifications at every step.' },
 ];
 
 export default function Home() {

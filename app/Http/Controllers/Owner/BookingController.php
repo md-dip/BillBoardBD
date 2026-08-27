@@ -5,19 +5,19 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RejectBookingRequest;
 use App\Models\Booking;
-use App\Services\BookingApprovalService;
+use App\Services\OwnerAcceptanceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    public function __construct(private readonly BookingApprovalService $approvals) {}
+    public function __construct(private readonly OwnerAcceptanceService $acceptance) {}
 
     public function index(Request $request): JsonResponse
     {
         $query = Booking::query()
-            ->whereNotIn('status', ['held', 'pending_payment'])
-            ->with(['billboard', 'user', 'payments'])
+            ->whereNotIn('status', ['held', 'pending_payment', 'pending_admin_review'])
+            ->with(['billboard', 'user', 'payments', 'proofOfPostings'])
             ->whereHas('billboard', fn ($q) => $q->where('owner_id', $request->user()->id));
 
         if ($status = $request->query('status')) {
@@ -41,7 +41,7 @@ class BookingController extends Controller
             ], 403);
         }
 
-        $result = $this->approvals->approve($booking);
+        $result = $this->acceptance->accept($booking);
 
         return response()->json([
             'success' => $result['ok'],
@@ -60,7 +60,7 @@ class BookingController extends Controller
             ], 403);
         }
 
-        $result = $this->approvals->reject($booking, $request->validated('rejection_reason'));
+        $result = $this->acceptance->reject($booking, $request->validated('rejection_reason'));
 
         return response()->json([
             'success' => $result['ok'],

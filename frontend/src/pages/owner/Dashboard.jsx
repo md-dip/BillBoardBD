@@ -28,16 +28,16 @@ export default function OwnerDashboard() {
     );
   }
 
-  const pending = bookings.filter((b) => b.status === 'pending');
-  const approved = bookings.filter((b) => b.status === 'approved');
+  const pending = bookings.filter((b) => b.status === 'pending_owner_approval');
+  const inProgress = bookings.filter((b) => ['confirmed', 'paid_in_full', 'pending_proof_review', 'active'].includes(b.status));
   const revenue = bookings
-    .filter((b) => b.status === 'approved' || b.status === 'completed')
+    .filter((b) => ['confirmed', 'paid_in_full', 'pending_proof_review', 'active'].includes(b.status))
     .reduce((s, b) => s + Number(b.total_amount), 0);
 
   const kpis = [
     { label: 'My billboards', value: billboards.length, icon: Megaphone },
     { label: 'Pending requests', value: pending.length, icon: Clock, accent: 'warning' },
-    { label: 'Active bookings', value: approved.length, icon: CalendarCheck, accent: 'success' },
+    { label: 'Confirmed bookings', value: inProgress.length, icon: CalendarCheck, accent: 'success' },
     { label: 'Revenue (BDT)', value: formatBDT(revenue), icon: DollarSign },
   ];
 

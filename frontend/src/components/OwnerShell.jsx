@@ -5,14 +5,17 @@ import {
   LayoutDashboard,
   LogOut,
   Megaphone,
+  Wallet,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
 import '../pages/admin/admin.css';
 
 const NAV_ITEMS = [
   { to: '/owner', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { to: '/owner/billboards', label: 'My Billboards', icon: Megaphone },
   { to: '/owner/bookings', label: 'Booking Requests', icon: CalendarCheck },
+  { to: '/owner/payouts', label: 'Payouts', icon: Wallet },
 ];
 
 export default function OwnerShell({ children, title }) {
@@ -59,6 +62,9 @@ export default function OwnerShell({ children, title }) {
       <div className="admin-main">
         <header className="admin-header">
           <h1 className="admin-title">{title ?? 'Dashboard'}</h1>
+          <div style={{ marginLeft: 'auto' }}>
+            <NotificationBell />
+          </div>
         </header>
         <main className="admin-content">{children}</main>
       </div>

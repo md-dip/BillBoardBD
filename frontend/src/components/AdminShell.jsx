@@ -8,8 +8,10 @@ import {
   Megaphone,
   Settings,
   ShieldAlert,
+  Wallet,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
 import '../pages/admin/admin.css';
 
 const NAV_ITEMS = [
@@ -17,6 +19,7 @@ const NAV_ITEMS = [
   { to: '/admin/billboards', label: 'Billboards', icon: Megaphone },
   { to: '/admin/bookings', label: 'Bookings', icon: CalendarCheck },
   { to: '/admin/permits', label: 'Permits', icon: ShieldAlert },
+  { to: '/admin/payouts', label: 'Payouts', icon: Wallet },
   { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
   { to: '/admin/settings', label: 'Settings', icon: Settings },
 ];
@@ -65,6 +68,9 @@ export default function AdminShell({ children, title }) {
       <div className="admin-main">
         <header className="admin-header">
           <h1 className="admin-title">{title ?? 'Admin'}</h1>
+          <div style={{ marginLeft: 'auto' }}>
+            <NotificationBell />
+          </div>
         </header>
         <main className="admin-content">{children}</main>
       </div>

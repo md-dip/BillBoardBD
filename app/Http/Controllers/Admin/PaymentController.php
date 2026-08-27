@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\User;
+use App\Notifications\BookingStatusNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -12,11 +14,11 @@ class PaymentController extends Controller
 {
     public function recordBalance(Request $request, Booking $booking): JsonResponse
     {
-        if ($booking->status !== 'approved') {
+        if ($booking->status !== 'confirmed') {
             return response()->json([
                 'success' => false,
                 'data' => null,
-                'message' => 'Only approved bookings can record a balance payment.',
+                'message' => 'Only confirmed bookings can record a balance payment.',
             ], 422);
         }
 
@@ -35,7 +37,7 @@ class PaymentController extends Controller
 
         $balanceAmount = round((float) $booking->total_amount - (float) $booking->advance_amount, 2);
 
-        // Update the existing pending 'balance' row created at approval, else create one
+        // Update the existing pending 'balance' row created at owner acceptance, else create one
         $payment = $booking->payments()->where('payment_type', 'balance')->first();
 
         if ($payment) {
@@ -59,7 +61,19 @@ class PaymentController extends Controller
             ]);
         }
 
-        $booking->update(['status' => 'completed']);
+        $booking->update(['status' => 'paid_in_full']);
+        $booking = $booking->fresh(['billboard.owner']);
+
+        if ($owner = $booking->billboard?->owner) {
+            $owner->notify(new BookingStatusNotification(
+                $booking,
+                'Final payment received',
+                "The final payment for \"{$booking->billboard?->title}\" has been paid in full. Please install by the start date.",
+            ));
+        }
+        foreach (User::query()->where('role', 'admin')->get() as $admin) {
+            $admin->notify(new BookingStatusNotification($booking, 'Payment recorded', "Final payment recorded for \"{$booking->billboard?->title}\"."));
+        }
 
         return response()->json([
             'success' => true,

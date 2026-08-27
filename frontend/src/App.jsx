@@ -17,7 +17,10 @@ import AdminSettings from './pages/admin/SettingsPage';
 import OwnerDashboard from './pages/owner/Dashboard';
 import OwnerBillboards from './pages/owner/BillboardsPage';
 import OwnerBookings from './pages/owner/BookingsPage';
+import AdminPayouts from './pages/admin/PayoutsPage';
+import OwnerPayouts from './pages/owner/PayoutsPage';
 import Dashboard from './pages/Dashboard';
+import NotificationBell from './components/NotificationBell';
 
 function AppRoutes() {
     const { pathname } = useLocation();
@@ -42,10 +45,12 @@ function AppRoutes() {
                 <Route path="/admin/permits" element={<ProtectedRoute requireRole="admin"><AdminPermits /></ProtectedRoute>} />
                 <Route path="/admin/reports" element={<ProtectedRoute requireRole="admin"><AdminReports /></ProtectedRoute>} />
                 <Route path="/admin/settings" element={<ProtectedRoute requireRole="admin"><AdminSettings /></ProtectedRoute>} />
+                <Route path="/admin/payouts" element={<ProtectedRoute requireRole="admin"><AdminPayouts /></ProtectedRoute>} />
 
                 <Route path="/owner" element={<ProtectedRoute requireRole="owner"><OwnerDashboard /></ProtectedRoute>} />
                 <Route path="/owner/billboards" element={<ProtectedRoute requireRole="owner"><OwnerBillboards /></ProtectedRoute>} />
                 <Route path="/owner/bookings" element={<ProtectedRoute requireRole="owner"><OwnerBookings /></ProtectedRoute>} />
+                <Route path="/owner/payouts" element={<ProtectedRoute requireRole="owner"><OwnerPayouts /></ProtectedRoute>} />
             </Routes>
             {!isAdmin && !isOwner && <Footer />}
         </>
@@ -92,6 +97,7 @@ function Navbar() {
                         {user.role === 'owner' && <Link to="/owner" className="btn-ghost">Owner Dashboard</Link>}
                         {user.role === 'client' && <Link to="/dashboard" className="btn-ghost">My bookings</Link>}
                         <span className="nav-user">{user.name.split(' ').slice(0, 2).join(' ')}</span>
+                        <NotificationBell />
                         <button className="nav-icon-btn" onClick={handleLogout} aria-label="Log out" title="Log out">
                             <LogOut size={16} />
                         </button>

@@ -5,15 +5,20 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BillboardController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\Admin\BillboardController as AdminBillboardController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
+use App\Http\Controllers\Admin\ProofOfPostingController as AdminProofOfPostingController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Owner\BillboardController as OwnerBillboardController;
 use App\Http\Controllers\Owner\BookingController as OwnerBookingController;
+use App\Http\Controllers\Owner\PayoutController as OwnerPayoutController;
+use App\Http\Controllers\Owner\ProofOfPostingController as OwnerProofOfPostingController;
 
 // Public auth routes — no token needed
 Route::post('/register', [AuthController::class, 'register']);
@@ -36,6 +41,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Mock payment gateway
     Route::post('/payments/{payment}/pay', [PaymentController::class, 'pay']);                   // step 3
+
+    // Notifications (shared by all 3 actors)
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead']);
 });
 
 // Admin routes — require Sanctum token AND role=admin
@@ -51,13 +60,21 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::patch('/bookings/{booking}/reject', [AdminBookingController::class, 'reject']);
     Route::post('/bookings/{booking}/balance-payment', [AdminPaymentController::class, 'recordBalance']);
 
-    // Platform settings (commission %, advance %)
+    // Stage 5: proof-of-posting verification
+    Route::patch('/bookings/{booking}/proof/verify', [AdminProofOfPostingController::class, 'verify']);
+    Route::patch('/bookings/{booking}/proof/reject', [AdminProofOfPostingController::class, 'reject']);
+
+    // Platform settings (commission %, advance %, final payment window)
     Route::get('/settings', [AdminSettingController::class, 'index']);
     Route::put('/settings', [AdminSettingController::class, 'update']);
 
     // Reports (revenue + occupancy)
     Route::get('/reports/revenue', [AdminReportController::class, 'revenue']);
     Route::get('/reports/occupancy', [AdminReportController::class, 'occupancy']);
+
+    // Owner payouts
+    Route::get('/payouts', [AdminPayoutController::class, 'index']);
+    Route::post('/payouts/{owner}', [AdminPayoutController::class, 'store']);
 });
 
 // Owner routes — require Sanctum token AND role=owner
@@ -69,4 +86,10 @@ Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner')->group(functi
     Route::get('/bookings', [OwnerBookingController::class, 'index']);
     Route::patch('/bookings/{booking}/approve', [OwnerBookingController::class, 'approve']);
     Route::patch('/bookings/{booking}/reject', [OwnerBookingController::class, 'reject']);
+
+    // Stage 5: upload proof of posting
+    Route::post('/bookings/{booking}/proof', [OwnerProofOfPostingController::class, 'store']);
+
+    // Payouts (read-only for the owner)
+    Route::get('/payouts', [OwnerPayoutController::class, 'index']);
 });

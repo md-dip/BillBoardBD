@@ -17,7 +17,7 @@ class BookingController extends Controller
     {
         $query = Booking::query()
             ->whereNotIn('status', ['held', 'pending_payment'])
-            ->with(['billboard', 'user', 'payments']);
+            ->with(['billboard', 'user', 'payments', 'proofOfPostings']);
 
         if ($status = $request->query('status')) {
             $query->where('status', $status);

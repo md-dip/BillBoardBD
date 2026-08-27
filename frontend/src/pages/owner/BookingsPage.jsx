@@ -1,19 +1,30 @@
 import { Fragment, useEffect, useState } from 'react';
-import { Check, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, Upload, X } from 'lucide-react';
 import api from '../../api/axios';
 import OwnerShell from '../../components/OwnerShell';
 import { formatBDT } from '../../utils/formatPrice';
 
-const STATUSES = ['pending', 'approved', 'rejected', 'completed', 'cancelled'];
+const STATUSES = ['pending_owner_approval', 'confirmed', 'paid_in_full', 'pending_proof_review', 'active', 'rejected'];
+
+const STATUS_LABEL = {
+  pending_owner_approval: 'new requests',
+  confirmed: 'confirmed',
+  paid_in_full: 'ready to install',
+  pending_proof_review: 'awaiting admin',
+  active: 'live',
+  rejected: 'rejected',
+};
 
 export default function OwnerBookingsPage() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('pending');
+  const [activeTab, setActiveTab] = useState('pending_owner_approval');
   const [rejectingId, setRejectingId] = useState(null);
   const [reason, setReason] = useState('');
   const [error, setError] = useState('');
   const [expandedId, setExpandedId] = useState(null);
+  const [uploadingId, setUploadingId] = useState(null);
+  const [photos, setPhotos] = useState(null);
 
   function load() {
     setLoading(true);
@@ -30,7 +41,7 @@ export default function OwnerBookingsPage() {
       await api.patch(`/owner/bookings/${id}/approve`);
       load();
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not approve this booking.');
+      setError(err.response?.data?.message || 'Could not accept this booking.');
     }
   }
 
@@ -42,7 +53,25 @@ export default function OwnerBookingsPage() {
       setReason('');
       load();
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not reject this booking.');
+      setError(err.response?.data?.message || 'Could not decline this booking.');
+    }
+  }
+
+  async function submitProof(id) {
+    setError('');
+    if (!photos || photos.length === 0) {
+      setError('Choose at least one photo.');
+      return;
+    }
+    try {
+      const form = new FormData();
+      Array.from(photos).forEach((file) => form.append('photos[]', file));
+      await api.post(`/owner/bookings/${id}/proof`, form);
+      setUploadingId(null);
+      setPhotos(null);
+      load();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not upload proof of posting.');
     }
   }
 
@@ -65,14 +94,19 @@ export default function OwnerBookingsPage() {
                 className={`tab-trigger ${activeTab === s ? 'active' : ''}`}
                 onClick={() => setActiveTab(s)}
               >
-                {s} ({groups[s].length})
+                {STATUS_LABEL[s]} ({groups[s].length})
               </button>
             ))}
           </div>
 
-          {activeTab === 'pending' && (
+          {activeTab === 'pending_owner_approval' && (
             <p className="muted mb-2" style={{ fontSize: 13 }}>
-              Advance payment is confirmed before a request reaches this list. Review within 24 hours.
+              Admin has already reviewed these. Accept to confirm the booking and start the final-payment countdown.
+            </p>
+          )}
+          {activeTab === 'paid_in_full' && (
+            <p className="muted mb-2" style={{ fontSize: 13 }}>
+              Final payment received. Upload a photo once the billboard is installed to send it for admin verification.
             </p>
           )}
 
@@ -86,12 +120,13 @@ export default function OwnerBookingsPage() {
                   <th>Dates</th>
                   <th>Total</th>
                   <th>Payment</th>
-                  <th className="text-right">{activeTab === 'pending' ? 'Actions' : ''}</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((bk) => {
                   const advancePayment = bk.payments?.find((p) => p.payment_type === 'advance');
+                  const balancePayment = bk.payments?.find((p) => p.payment_type === 'balance');
                   const expanded = expandedId === bk.id;
                   return (
                     <Fragment key={bk.id}>
@@ -113,12 +148,14 @@ export default function OwnerBookingsPage() {
                         <td style={{ fontSize: 13 }}>{bk.start_date?.slice(0, 10)} → {bk.end_date?.slice(0, 10)}</td>
                         <td style={{ fontWeight: 600 }}>{formatBDT(bk.total_amount)}</td>
                         <td>
-                          {advancePayment ? (
+                          {balancePayment ? (
+                            <span className="badge badge-neutral">balance {balancePayment.status}</span>
+                          ) : advancePayment ? (
                             <span className="badge badge-neutral">advance {advancePayment.status}</span>
                           ) : 'N/A'}
                         </td>
                         <td className="text-right">
-                          {activeTab === 'pending' ? (
+                          {activeTab === 'pending_owner_approval' ? (
                             rejectingId === bk.id ? (
                               <div className="flex flex-gap-2 justify-end items-center">
                                 <input
@@ -134,15 +171,33 @@ export default function OwnerBookingsPage() {
                             ) : (
                               <div className="flex flex-gap-2 justify-end">
                                 <button className="btn btn-primary btn-sm" onClick={() => handleApprove(bk.id)}>
-                                  <Check size={14} /> Approve
+                                  <Check size={14} /> Accept
                                 </button>
                                 <button
                                   className="btn btn-outline btn-sm"
                                   onClick={() => { setRejectingId(bk.id); setReason(''); }}
                                 >
-                                  <X size={14} /> Reject
+                                  <X size={14} /> Decline
                                 </button>
                               </div>
+                            )
+                          ) : activeTab === 'paid_in_full' ? (
+                            uploadingId === bk.id ? (
+                              <div className="flex flex-gap-2 justify-end items-center">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  multiple
+                                  style={{ fontSize: 12, maxWidth: 180 }}
+                                  onChange={(e) => setPhotos(e.target.files)}
+                                />
+                                <button className="btn btn-primary btn-sm" onClick={() => submitProof(bk.id)}>Submit</button>
+                                <button className="btn btn-outline btn-sm" onClick={() => { setUploadingId(null); setPhotos(null); }}>Cancel</button>
+                              </div>
+                            ) : (
+                              <button className="btn btn-primary btn-sm" onClick={() => setUploadingId(bk.id)}>
+                                <Upload size={14} /> Upload proof
+                              </button>
                             )
                           ) : activeTab === 'rejected' ? (
                             <span className="row-sub">{bk.rejection_reason || 'N/A'}</span>
@@ -162,6 +217,15 @@ export default function OwnerBookingsPage() {
                                   style={{ width: 128, height: 96, borderRadius: 6, border: '1px solid #e2e8f0', objectFit: 'cover' }}
                                 />
                               )}
+                              {bk.proof_of_postings?.map((p) => (
+                                <img
+                                  key={p.id}
+                                  src={p.photo_url}
+                                  alt="Proof of posting"
+                                  title={`Proof: ${p.status}`}
+                                  style={{ width: 128, height: 96, borderRadius: 6, border: '1px solid #e2e8f0', objectFit: 'cover' }}
+                                />
+                              ))}
                               <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, fontSize: 13 }}>
                                 <div>
                                   <div className="mini-stat-label">Brand</div>
@@ -175,6 +239,12 @@ export default function OwnerBookingsPage() {
                                   <div className="mini-stat-label">Campaign description</div>
                                   <div>{bk.campaign_description || 'N/A'}</div>
                                 </div>
+                                {bk.final_payment_due_at && (
+                                  <div>
+                                    <div className="mini-stat-label">Final payment due</div>
+                                    <div>{bk.final_payment_due_at.slice(0, 10)}</div>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </td>
@@ -186,7 +256,7 @@ export default function OwnerBookingsPage() {
                 {rows.length === 0 && (
                   <tr>
                     <td colSpan={7} style={{ padding: 32, textAlign: 'center', color: '#64748b' }}>
-                      No {activeTab} bookings.
+                      No bookings in this stage.
                     </td>
                   </tr>
                 )}

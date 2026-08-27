@@ -4,7 +4,7 @@ import AdminShell from '../../components/AdminShell';
 import './admin.css';
 
 export default function SettingsPage() {
-  const [form, setForm] = useState({ commission_rate: '', advance_percentage: '' });
+  const [form, setForm] = useState({ commission_rate: '', advance_percentage: '', final_payment_days: '' });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
 
@@ -59,6 +59,22 @@ export default function SettingsPage() {
                   value={form.advance_percentage}
                   onChange={(e) => setForm({ ...form, advance_percentage: e.target.value })}
                 />
+              </div>
+              <div className="form-row">
+                <label className="form-label" htmlFor="final-payment-days">Final payment window (days)</label>
+                <input
+                  id="final-payment-days"
+                  className="form-input"
+                  type="number"
+                  min="1"
+                  max="60"
+                  step="1"
+                  value={form.final_payment_days}
+                  onChange={(e) => setForm({ ...form, final_payment_days: e.target.value })}
+                />
+                <p className="muted" style={{ fontSize: 12, marginTop: 4 }}>
+                  How many days a client has to pay the remaining 70% after the owner accepts a booking.
+                </p>
               </div>
               {message && (
                 <p className={message.type === 'success' ? 'success-text' : 'error-text'}>

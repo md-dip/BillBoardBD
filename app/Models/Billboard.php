@@ -42,7 +42,8 @@ class Billboard extends Model
     public function activeBookings(): HasMany
     {
         return $this->bookings()->whereIn('status', [
-            'held', 'pending_payment', 'pending', 'approved', 'completed',
+            'held', 'pending_payment', 'pending_admin_review', 'pending_owner_approval',
+            'confirmed', 'paid_in_full', 'pending_proof_review', 'active',
         ]);
     }
 }

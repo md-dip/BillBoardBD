@@ -72,7 +72,7 @@ export default function ReportsPage() {
             <h2 className="section-title">Occupancy this month</h2>
             <div style={{ height: 288 }}>
               {occupancyThisMonth.length === 0 ? (
-                <div className="empty-state">No approved bookings this month.</div>
+                <div className="empty-state">No confirmed bookings this month.</div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={occupancyThisMonth} layout="vertical" margin={{ left: 20 }}>

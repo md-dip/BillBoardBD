@@ -44,7 +44,7 @@ class ReportController extends Controller
 
     public function occupancy(): JsonResponse
     {
-        $bookings = Booking::query()->where('status', 'approved')->get();
+        $bookings = Booking::query()->whereIn('status', ['confirmed', 'paid_in_full', 'pending_proof_review', 'active'])->get();
 
         $bookedDays = [];
 

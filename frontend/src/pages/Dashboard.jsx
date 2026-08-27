@@ -8,10 +8,13 @@ const METHODS = ['bkash', 'nagad', 'bank', 'cash'];
 
 const STATUS_LABEL = {
     pending_payment: 'Payment due',
-    pending: 'Pending',
-    approved: 'Approved',
+    pending_admin_review: 'Under review',
+    pending_owner_approval: 'Awaiting owner',
+    confirmed: 'Confirmed',
+    paid_in_full: 'Paid in full',
+    pending_proof_review: 'Verifying installation',
+    active: 'Live',
     rejected: 'Rejected',
-    completed: 'Completed',
     cancelled: 'Cancelled',
 };
 
@@ -110,7 +113,11 @@ export default function Dashboard() {
                                                 setTxnRef('');
                                             }}
                                         >
-                                            {paymentText} &middot; Pay now
+                                            {paymentText}
+                                            {b.status === 'confirmed' && b.final_payment_due_at
+                                                ? ` by ${b.final_payment_due_at.slice(0, 10)}`
+                                                : ''}
+                                            {' '}&middot; Pay now
                                         </button>
                                     ) : (
                                         <div className="mybookings-payment-text">{paymentText}</div>
@@ -186,6 +193,18 @@ export default function Dashboard() {
                                     </div>
                                     {b.status === 'rejected' && b.rejection_reason && (
                                         <div className="mybookings-rejection">Rejected: {b.rejection_reason}</div>
+                                    )}
+                                    {b.proof_of_postings?.some((p) => p.status === 'verified') && (
+                                        <div className="mybookings-proof">
+                                            <span className="mybookings-detail-label">Installation proof</span>
+                                            <div className="mybookings-proof-gallery">
+                                                {b.proof_of_postings
+                                                    .filter((p) => p.status === 'verified')
+                                                    .map((p) => (
+                                                        <img key={p.id} src={p.photo_url} alt="Proof of posting" className="mybookings-proof-photo" />
+                                                    ))}
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
                             )}

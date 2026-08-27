@@ -16,7 +16,7 @@ class Booking extends Model
     protected $fillable = [
         'billboard_id', 'user_id', 'start_date', 'end_date', 'total_amount',
         'advance_amount', 'status', 'rejection_reason', 'brand_name', 'ad_category',
-        'campaign_description', 'creative_path', 'expires_at',
+        'campaign_description', 'creative_path', 'expires_at', 'final_payment_due_at',
     ];
 
     protected $appends = ['creative_url'];
@@ -29,6 +29,7 @@ class Booking extends Model
             'total_amount' => 'decimal:2',
             'advance_amount' => 'decimal:2',
             'expires_at' => 'datetime',
+            'final_payment_due_at' => 'datetime',
         ];
     }
 
@@ -50,5 +51,10 @@ class Booking extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function proofOfPostings(): HasMany
+    {
+        return $this->hasMany(ProofOfPosting::class);
     }
 }

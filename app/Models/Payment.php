@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'booking_id', 'amount', 'payment_type', 'method', 'transaction_ref',
-    'status', 'commission_amount', 'owner_payable', 'paid_at',
+    'status', 'commission_amount', 'owner_payable', 'paid_at', 'refunded_at', 'payout_id',
 ])]
 class Payment extends Model
 {
@@ -19,11 +19,17 @@ class Payment extends Model
             'commission_amount' => 'decimal:2',
             'owner_payable' => 'decimal:2',
             'paid_at' => 'datetime',
+            'refunded_at' => 'datetime',
         ];
     }
 
     public function booking(): BelongsTo
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    public function payout(): BelongsTo
+    {
+        return $this->belongsTo(Payout::class);
     }
 }
