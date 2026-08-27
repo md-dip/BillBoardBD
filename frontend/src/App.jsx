@@ -91,7 +91,7 @@ function Navbar() {
                         {user.role === 'admin' && <Link to="/admin" className="btn-ghost">Admin</Link>}
                         {user.role === 'owner' && <Link to="/owner" className="btn-ghost">Owner Dashboard</Link>}
                         {user.role === 'client' && <Link to="/dashboard" className="btn-ghost">My bookings</Link>}
-                        <span className="nav-user">{user.name}</span>
+                        <span className="nav-user">{user.name.split(' ').slice(0, 2).join(' ')}</span>
                         <button className="nav-icon-btn" onClick={handleLogout} aria-label="Log out" title="Log out">
                             <LogOut size={16} />
                         </button>
