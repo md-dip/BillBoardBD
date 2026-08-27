@@ -1,10 +1,20 @@
 /* ============================================================
    BookingWizard — the sticky booking sidebar (dates -> campaign ->
    review & pay) shown on BillboardDetail. Everything this component's
-   own markup needs lives here; .booking-request-btn / .booking-error /
-   .pay-method-select / .pay-ref-input / .pay-btn-outline are ALSO
-   duplicated in client/pages/MyBookings.css (its "pay now" inline form
-   reuses the same classes) — keep both copies in sync if they change.
+   own markup needs lives here, across all 3 steps.
+
+   Every button gets its own class named after what it actually says
+   (.hold-these-dates-btn, .continue-to-review-btn, .cancel-btn, etc.)
+   instead of one generic class shared across differently-labeled
+   buttons — so the class name always tells you which button it's for.
+
+   - .confirm-btn / .cancel-btn / .booking-error / .pay-method-select /
+     .pay-ref-input are ALSO duplicated in client/pages/MyBookings.css
+     (its "pay now" inline form has its own Confirm/Cancel buttons)
+   - .auth-label / .auth-input are ALSO duplicated from
+     shared/styles/index.css (Login/Register's form fields use the
+     canonical copy there)
+   Keep every duplicate copy in sync if the original ever changes.
    ============================================================ */
 
 /* Sticky card the whole wizard lives in, pinned to the right of the page */
@@ -48,7 +58,7 @@
     margin: 4px 0 16px;
 }
 .booking-step { color: #94a3b8; }
-.booking-step.active { color: #0071e3; font-weight: 600; }
+.booking-step.active { color: #127ce7; font-weight: 600; }
 
 /* Countdown pill ("hold expires in mm:ss") shown during steps 2 & 3 */
 .booking-timer {
@@ -66,6 +76,35 @@
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-bottom: 16px;
+}
+
+/* Field label used on every step (Start/End date, Brand name, Ad category,
+   Campaign description, Ad creative) — duplicated from shared/styles/index.css,
+   which still owns the canonical copy for Login/Register's own form fields.
+   Keep both copies in sync if this ever changes. */
+.auth-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+/* Text/date/file input + textarea look used on every step (also duplicated) */
+.auth-input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f8fafc;
+    box-sizing: border-box;
+    outline: none;
+    transition: border 0.15s, background 0.15s;
+}
+.auth-input:focus {
+    border-color: #0071e3;
+    background: #ffffff;
 }
 
 /* Step 2/3: the locked-in date range shown as plain text */
@@ -106,9 +145,15 @@
     margin: 10px 0;
 }
 
-/* Solid blue "Hold these dates" / "Continue" / "Confirm" button (also
-   duplicated in MyBookings.css for its own inline pay form) */
-.booking-request-btn {
+/* Every solid "primary action" button in the wizard — one class per
+   button, named after what that button actually says, so the CSS class
+   always tells you which button it belongs to. .confirm-btn is also
+   duplicated in MyBookings.css for its own inline pay form. */
+.hold-these-dates-btn,
+.continue-to-review-btn,
+.pay-advance-btn,
+.confirm-btn,
+.go-to-my-bookings-btn {
     width: 100%;
     padding: 12px;
     font-size: 15px;
@@ -120,10 +165,17 @@
     cursor: pointer;
     transition: background 0.15s;
 }
-.booking-request-btn:hover {
+.hold-these-dates-btn:hover,
+.continue-to-review-btn:hover,
+.pay-advance-btn:hover,
+.confirm-btn:hover,
+.go-to-my-bookings-btn:hover {
     background: #005bb5;
 }
-.booking-request-btn:disabled {
+.hold-these-dates-btn:disabled,
+.continue-to-review-btn:disabled,
+.pay-advance-btn:disabled,
+.confirm-btn:disabled {
     background: #94a3b8;
     cursor: not-allowed;
 }
@@ -162,9 +214,9 @@
 }
 .pay-ref-input { flex: 1; min-width: 120px; }
 /* Shrink the "Confirm" button to fit inline next to the inputs above */
-.pay-form .booking-request-btn { width: auto; padding: 8px 16px; margin: 0; }
+.pay-form .confirm-btn { width: auto; padding: 8px 16px; margin: 0; }
 /* Outlined "Cancel" button next to it (also duplicated in MyBookings.css) */
-.pay-btn-outline {
+.cancel-btn {
     background: transparent;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
@@ -186,9 +238,8 @@
 }
 .booking-success h3 { margin: 0 0 8px; color: #0f172a; }
 .booking-success p { color: #64748b; font-size: 0.9rem; margin: 0 0 16px; }
-.booking-success .booking-request-btn { display: inline-block; text-decoration: none; text-align: center; }
+.booking-success .go-to-my-bookings-btn { display: inline-block; text-decoration: none; text-align: center; }
 
-/* Step 2's campaign-description field uses the shared .auth-input look
-   (still defined in shared/styles/index.css, used by Login/Register too)
-   but needs this one textarea-specific tweak */
+/* Step 2's campaign-description field is a <textarea>, not an <input> —
+   needs this one extra tweak on top of the .auth-input rule above */
 textarea.auth-input { resize: vertical; font-family: inherit; }

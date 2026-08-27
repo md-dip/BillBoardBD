@@ -17,8 +17,8 @@
     margin-bottom: 24px;
 }
 
-/* Solid blue button — used here for "Book another" */
-.btn-primary {
+/* Solid blue "Book another" button */
+.book-another-btn {
     padding: 8px 16px;
     border-radius: 8px;
     border: none;
@@ -95,7 +95,8 @@
 .mybookings-amount-col { text-align: right; min-width: 140px; }
 .mybookings-amount { font-weight: 700; color: #1d1d1f; }
 .mybookings-payment-text { font-size: 0.8rem; color: #6e6e73; margin-top: 2px; }
-/* "Advance unpaid · Pay now" style clickable payment link */
+
+/* "Balance Due· Pay now" style clickable payment link */
 .mybookings-pay-link {
     background: none;
     border: none;
@@ -140,7 +141,8 @@
 
 /* "View" / "Invoice" buttons on the right of the card */
 .mybookings-actions { display: flex; gap: 8px; }
-.mybookings-actions .pay-btn-outline {
+.mybookings-actions .view-btn,
+.mybookings-actions .invoice-btn {
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -158,7 +160,7 @@
     padding-top: 14px;
     border-top: 1px solid #f1f5f9;
 }
-.mybookings-pay-form .booking-request-btn { margin: 0; }
+.mybookings-pay-form .confirm-btn { margin: 0; }
 
 /* Expanded "View" panel: brand/category/campaign details + rejection reason */
 .mybookings-detail {
@@ -207,8 +209,10 @@
     margin-top: 10px;
 }
 
-/* Solid blue "Confirm ৳X" / "Hold these dates" style button */
-.booking-request-btn {
+/* Solid blue buttons — one class per button, named after what each one
+   says, so the class always tells you which button it belongs to */
+.confirm-btn,
+.print-btn {
     width: 100%;
     padding: 12px;
     font-size: 15px;
@@ -220,10 +224,12 @@
     cursor: pointer;
     transition: background 0.15s;
 }
-.booking-request-btn:hover {
+.confirm-btn:hover,
+.print-btn:hover {
     background: #005bb5;
 }
-.booking-request-btn:disabled {
+.confirm-btn:disabled,
+.print-btn:disabled {
     background: #94a3b8;
     cursor: not-allowed;
 }
@@ -238,8 +244,11 @@
 }
 .pay-ref-input { flex: 1; min-width: 120px; }
 
-/* Outlined secondary button (Cancel / View / Invoice / Close) */
-.pay-btn-outline {
+/* Outlined secondary buttons: Cancel / View / Invoice / Close */
+.cancel-btn,
+.view-btn,
+.invoice-btn,
+.close-btn {
     background: transparent;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
@@ -316,7 +325,7 @@
     padding: 16px 20px;
     border-top: 1px solid #f1f5f9;
 }
-.mb-invoice-footer .booking-request-btn {
+.mb-invoice-footer .print-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;

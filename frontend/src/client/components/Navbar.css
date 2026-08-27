@@ -71,9 +71,10 @@
     gap: 8px;
 }
 
-/* "My bookings" ghost button — shape/spacing shared with other ghost
-   buttons app-wide, color kept local so this file is self-contained */
-.nav-actions .btn-ghost {
+/* "My bookings" button — its own class named after the button itself
+   (not the generic .btn-ghost name), styled to look like the app-wide
+   ghost-button shape */
+.nav-actions .my-bookings-btn {
     padding: 8px 16px;
     border-radius: 8px;
     border: none;

@@ -34,7 +34,7 @@ export default function Navbar() {
             </div>
 
             <div className="nav-actions">
-                <Link to="/dashboard" className="btn-ghost">My bookings</Link>
+                <Link to="/dashboard" className="my-bookings-btn">My bookings</Link>
                 <span className="nav-user">{user?.name.split(' ').slice(0, 2).join(' ')}</span>
                 <NotificationBell />
                 <button className="nav-icon-btn" onClick={handleLogout} aria-label="Log out" title="Log out">

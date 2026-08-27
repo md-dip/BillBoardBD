@@ -142,7 +142,7 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
                         <div className="booking-summary-row booking-summary-total"><span>Total</span><span>{formatBDT(previewTotal)}</span></div>
                     </div>
 
-                    <button className="booking-request-btn" onClick={handleHold} disabled={loading}>
+                    <button className="hold-these-dates-btn" onClick={handleHold} disabled={loading}>
                         {loading ? 'Holding...' : 'Hold these dates'}
                     </button>
                     <p className="booking-note">🔒 Dates are locked to you for {holdMinutes} minutes while you finish your request.</p>
@@ -166,7 +166,7 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
                     <input className="auth-input" type="file" accept="image/*" onChange={(e) => setCreative(e.target.files[0] || null)} />
                     {creative && <img className="booking-preview" src={URL.createObjectURL(creative)} alt="preview" />}
 
-                    <button className="booking-request-btn" onClick={handleCampaign} disabled={loading}>
+                    <button className="continue-to-review-btn" onClick={handleCampaign} disabled={loading}>
                         {loading ? 'Saving...' : 'Continue to review'}
                     </button>
                 </>
@@ -184,7 +184,7 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
                     </div>
 
                     {!payOpen ? (
-                        <button className="booking-request-btn" onClick={() => setPayOpen(true)} disabled={loading}>
+                        <button className="pay-advance-btn" onClick={() => setPayOpen(true)} disabled={loading}>
                             Pay advance (mock)
                         </button>
                     ) : (
@@ -193,10 +193,10 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
                                 {METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
                             </select>
                             <input className="pay-ref-input" placeholder="Transaction ref" value={txnRef} onChange={(e) => setTxnRef(e.target.value)} />
-                            <button className="booking-request-btn" onClick={handlePay} disabled={loading || !txnRef}>
+                            <button className="confirm-btn" onClick={handlePay} disabled={loading || !txnRef}>
                                 {loading ? 'Paying...' : 'Confirm'}
                             </button>
-                            <button className="pay-btn-outline" onClick={() => setPayOpen(false)}>Cancel</button>
+                            <button className="cancel-btn" onClick={() => setPayOpen(false)}>Cancel</button>
                         </div>
                     )}
                     <p className="booking-note">🔒 Pay {advancePercentage}% now to submit for admin review, balance before installation.</p>
@@ -209,7 +209,7 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
                     <div className="booking-success-check">✓</div>
                     <h3>Booking request submitted</h3>
                     <p>Your advance payment is confirmed. We'll notify you once admin reviews your request (usually within 24 hours).</p>
-                    <a className="booking-request-btn" href="/dashboard">Go to My Bookings</a>
+                    <a className="go-to-my-bookings-btn" href="/dashboard">Go to My Bookings</a>
                 </div>
             )}
 

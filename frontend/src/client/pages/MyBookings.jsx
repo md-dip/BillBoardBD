@@ -67,7 +67,7 @@ export default function Dashboard() {
         <div className="page mybookings-page">
             <div className="mybookings-header">
                 <h1>My bookings</h1>
-                <Link to="/billboards" className="btn-primary">Book another</Link>
+                <Link to="/billboards" className="book-another-btn">Book another</Link>
             </div>
 
             {loading && <p className="subtitle">Loading your bookings...</p>}
@@ -132,12 +132,12 @@ export default function Dashboard() {
                                 <div className="mybookings-actions">
                                     <button
                                         type="button"
-                                        className="pay-btn-outline"
+                                        className="view-btn"
                                         onClick={() => setExpandedId(expanded ? null : b.id)}
                                     >
                                         {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />} View
                                     </button>
-                                    <button type="button" className="pay-btn-outline" onClick={() => setInvoiceBooking(b)}>
+                                    <button type="button" className="invoice-btn" onClick={() => setInvoiceBooking(b)}>
                                         Invoice
                                     </button>
                                 </div>
@@ -156,13 +156,13 @@ export default function Dashboard() {
                                     />
                                     <button
                                         type="button"
-                                        className="booking-request-btn"
+                                        className="confirm-btn"
                                         style={{ width: 'auto' }}
                                         onClick={() => handlePay(payable.id)}
                                     >
                                         Confirm {formatBDT(payable.amount)}
                                     </button>
-                                    <button type="button" className="pay-btn-outline" onClick={() => setPayingId(null)}>
+                                    <button type="button" className="cancel-btn" onClick={() => setPayingId(null)}>
                                         Cancel
                                     </button>
                                     {payError && <p className="booking-error">{payError}</p>}
@@ -277,8 +277,8 @@ function InvoiceModal({ booking, onClose }) {
                 </div>
 
                 <div className="mb-invoice-footer">
-                    <button type="button" className="pay-btn-outline" onClick={onClose}>Close</button>
-                    <button type="button" className="booking-request-btn" onClick={() => window.print()}>
+                    <button type="button" className="close-btn" onClick={onClose}>Close</button>
+                    <button type="button" className="print-btn" onClick={() => window.print()}>
                         <Printer size={14} /> Print
                     </button>
                 </div>
