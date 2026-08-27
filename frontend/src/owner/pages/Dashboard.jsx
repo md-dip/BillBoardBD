@@ -62,62 +62,64 @@ export default function OwnerDashboard() {
       </div>
 
       <div className="dashboard-two-col-grid">
+        {/*Recent booking requests*/}
         <div className="dashboard-recent-bookings-card">
           <div className="dashboard-recent-bookings-card-body">
-            <div className="dashboard-section-header">
-              <h2 className="dashboard-section-title">Recent booking requests</h2>
-              <button type="button" className="dashboard-btn dashboard-btn-outline dashboard-btn-sm" onClick={() => navigate('/owner/bookings')}>
+            <div className="dashboard-recent-bookings-header">
+              <h2 className="dashboard-recent-bookings-title">Recent booking requests</h2>
+              <button type="button" className="dashboard-view-all-btn" onClick={() => navigate('/owner/bookings')}>
                 View all
               </button>
             </div>
-            <div className="dashboard-row-list">
+            <div className="dashboard-recent-bookings-list">
               {bookings.slice(0, 5).map((bk) => (
                 <div
                   key={bk.id}
-                  className="dashboard-row-item"
+                  className="dashboard-recent-bookings-item"
                 >
                   <div>
-                    <div className="dashboard-row-title">{bk.user?.name}</div>
-                    <div className="dashboard-row-sub">
+                    <div className="dashboard-recent-bookings-item-title">{bk.user?.name}</div>
+                    <div className="dashboard-recent-bookings-item-sub">
                       {bk.billboard?.title} &middot; {bk.start_date?.slice(0, 10)} &rarr; {bk.end_date?.slice(0, 10)}
                     </div>
                   </div>
-                  <span className="dashboard-badge dashboard-badge-neutral">{bk.status}</span>
+                  <span className="dashboard-recent-bookings-badge">{bk.status}</span>
                 </div>
               ))}
-              {bookings.length === 0 && <p className="dashboard-muted">No booking requests yet.</p>}
+              {bookings.length === 0 && <p className="dashboard-recent-bookings-empty">No booking requests yet.</p>}
             </div>
           </div>
         </div>
 
+        {/* My billboards */}
         <div className="dashboard-my-billboards-card">
           <div className="dashboard-my-billboards-card-body">
-            <div className="dashboard-section-header">
-              <h2 className="dashboard-section-title">My billboards</h2>
-              <button type="button" className="dashboard-btn dashboard-btn-outline dashboard-btn-sm" onClick={() => navigate('/owner/billboards')}>
+            <div className="dashboard-my-billboards-header">
+              <h2 className="dashboard-my-billboards-title">My billboards</h2>
+              <button type="button" className="dashboard-manage-btn" onClick={() => navigate('/owner/billboards')}>
                 Manage
               </button>
             </div>
-            <div className="dashboard-row-list">
+            <div className="dashboard-my-billboards-list">
               {billboards.slice(0, 5).map((b) => (
                 <div
                   key={b.id}
-                  className="dashboard-row-item"
+                  className="dashboard-my-billboards-item"
                 >
                   <div>
-                    <div className="dashboard-row-title">{b.title}</div>
-                    <div className="dashboard-row-sub">{b.address}</div>
+                    <div className="dashboard-my-billboards-item-title">{b.title}</div>
+                    <div className="dashboard-my-billboards-item-sub">{b.address}</div>
                   </div>
-                  <div className="dashboard-row-price">
-                    <div className="dashboard-row-price-amount">
+                  <div className="dashboard-my-billboards-price">
+                    <div className="dashboard-my-billboards-price-amount">
                       {b.pricing_mode === 'monthly' ? `${formatBDT(b.monthly_rate)}/mo` : `${formatBDT(b.daily_rate)}/day`}
                     </div>
-                    <span className="dashboard-badge dashboard-badge-neutral">{b.status}</span>
+                    <span className="dashboard-my-billboards-badge">{b.status}</span>
                   </div>
                 </div>
               ))}
               {billboards.length === 0 && (
-                <p className="dashboard-muted">
+                <p className="dashboard-my-billboards-empty">
                   You haven&apos;t listed any billboards yet.{' '}
                   <button
                     type="button"
