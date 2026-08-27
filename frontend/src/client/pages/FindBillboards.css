@@ -1,0 +1,303 @@
+/* ============================================================
+   FindBillboards page — the map + sidebar billboard search.
+   Everything this page's own markup needs lives here.
+
+   .billboard-marker-icon is duplicated here AND in BillboardDetail.css —
+   both pages render pins via the shared getBillboardIcon() helper
+   (shared/utils/markerIcons.js), so both need this tiny rule. Keep the
+   two copies in sync if it ever changes.
+   ============================================================ */
+
+/* Two-column layout: sidebar list on the left, map filling the rest */
+.find-page {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    height: calc(100vh - 64px);
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Sidebar column: scrolls independently of the map */
+.sidebar {
+    background: #ffffff;
+    border-right: 1px solid #e5e5e5;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sidebar's title + filters block, stuck to the top while the list scrolls */
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fafafa;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.sidebar h1 {
+    font-size: 22px;
+    margin-bottom: 2px;
+}
+
+.sidebar .subtitle {
+    font-size: 13px;
+    margin-bottom: 14px;
+}
+
+/* 5km / 10km / 20km radius toggle row */
+.radius-pills {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.pill {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid #d2d2d7;
+    background: #ffffff;
+    font-size: 13px;
+    cursor: pointer;
+    color: #1d1d1f;
+}
+
+.pill.active {
+    background: #0071e3;
+    border-color: #000305;
+    color: #ffffff;
+}
+
+/* Type / size / price filter inputs, two per row */
+.filter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.filter-select, .filter-input {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #d2d2d7;
+    background: #ffffff;
+    font-size: 13px;
+    font-family: inherit;
+}
+
+/* ---- Board cards in the sidebar list ---- */
+
+.list {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* One billboard's card: thumbnail + info side by side */
+.board-card {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 12px;
+    padding: 10px;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+}
+
+.board-photo {
+    background: #f0f0f2;
+    border-radius: 8px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a1a1a6;
+    font-size: 12px;
+}
+
+.board-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+}
+
+.board-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.board-title-row h2 {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.address {
+    color: #6e6e73;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 4px 0;
+}
+
+.board-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.type-tag {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 11px;
+}
+
+.price {
+    font-weight: 600;
+    color: #1d1d1f;
+}
+
+/* Available/booked pill on each card */
+.status-badge {
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.status-badge.available {
+    background: #d4f4dd;
+    color: #1a7f37;
+}
+
+.status-badge.booked {
+    background: #ffe0e0;
+    color: #d70015;
+}
+
+/* Whole card wrapped in a Link — kills default link styling, and lifts
+   the card on hover; .selected highlights the card whose marker was
+   clicked on the map */
+.board-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+.board-card-link .board-card {
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.board-card-link:hover .board-card {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+.board-card-link.selected .board-card {
+    border: 2px solid #0071e3;
+    box-shadow: 0 6px 20px rgba(0, 113, 227, 0.2);
+}
+
+/* ---- Map ---- */
+
+.map-wrapper {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    /* z-index (not just position) makes this its own stacking context, so
+       Leaflet's internal panes/controls (it uses z-index up to ~1000
+       internally) can never outrank page UI elsewhere. */
+    z-index: 0;
+    overflow: hidden;
+}
+
+.map-wrapper .leaflet-container {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+/* Strips Leaflet's default marker box so our custom pin svg (from
+   shared/utils/markerIcons.js) renders cleanly */
+.billboard-marker-icon {
+    background: transparent;
+    border: none;
+}
+
+/* "You are here" pin: blue dot + expanding ring pulse animation */
+.user-marker {
+    background: transparent;
+    border: none;
+}
+.user-dot {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 12px;
+    height: 12px;
+    background: #0071e3;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.4);
+    z-index: 2;
+}
+.user-pulse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    background: rgba(0, 113, 227, 0.35);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Banner shown when geolocation isn't available/granted */
+.geo-warning {
+    background: #fff8e1;
+    color: #7a5a00;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+/* "within X km" distance text next to a card */
+.distance {
+    color: #6e6e73;
+    font-weight: 500;
+}
+
+/* "View details →" link inside a map marker's popup */
+.popup-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: #0071e3;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 13px;
+}
+.popup-link:hover {
+    text-decoration: underline;
+}
+
+/* Loading/error state text (also used by a couple of other simple pages —
+   kept minimal here since this page's own use is just "Loading...") */
+.status {
+    padding: 32px;
+    text-align: center;
+}
+.status.error {
+    color: #d70015;
+}

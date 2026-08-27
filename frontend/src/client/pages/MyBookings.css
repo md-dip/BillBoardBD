@@ -1,0 +1,338 @@
+/* ============================================================
+   MyBookings page — the client's booking list + the invoice modal.
+   ============================================================ */
+
+/* Generic page heading wrapper shared with a couple of other simple pages */
+.page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 32px;
+}
+.page h1 {
+    font-size: 36px;
+    margin-bottom: 8px;
+}
+.subtitle {
+    color: #6e6e73;
+    margin-bottom: 24px;
+}
+
+/* Solid blue button — used here for "Book another" */
+.btn-primary {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    background: #0071e3;
+    color: #ffffff;
+}
+
+/* "My bookings" title row + "Book another" button */
+.mybookings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+.mybookings-header h1 { margin-bottom: 0; }
+
+/* "You haven't booked anything yet" empty state */
+.mybookings-empty {
+    border: 1px dashed #d2d2d7;
+    border-radius: 14px;
+    padding: 40px;
+    text-align: center;
+    color: #6e6e73;
+}
+.mybookings-empty a { color: #0071e3; text-decoration: none; font-weight: 500; }
+
+/* Vertical stack of booking cards */
+.mybookings-list { display: flex; flex-direction: column; gap: 14px; }
+
+/* One booking card */
+.mybookings-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+/* Card's top row: thumbnail, info, amount, badge, actions side by side */
+.mybookings-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* Billboard thumbnail (or its empty-state placeholder box) */
+.mybookings-thumb {
+    width: 88px;
+    height: 64px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.mybookings-thumb-empty {
+    display: grid;
+    place-items: center;
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
+/* Billboard title + date range */
+.mybookings-info { flex: 1; min-width: 180px; }
+.mybookings-title { font-weight: 600; color: #1d1d1f; }
+.mybookings-dates { font-size: 0.85rem; color: #6e6e73; margin-top: 2px; }
+
+/* Amount column + the payment status line under it */
+.mybookings-amount-col { text-align: right; min-width: 140px; }
+.mybookings-amount { font-weight: 700; color: #1d1d1f; }
+.mybookings-payment-text { font-size: 0.8rem; color: #6e6e73; margin-top: 2px; }
+/* "Advance unpaid · Pay now" style clickable payment link */
+.mybookings-pay-link {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: 2px;
+    font-size: 0.8rem;
+    color: #0071e3;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Status pill (Under Review / Confirmed / Paid In Full / Live / Rejected...) */
+.mybookings-badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+.mybookings-badge-pending_payment,
+.mybookings-badge-pending_admin_review,
+.mybookings-badge-pending_owner_approval,
+.mybookings-badge-pending_proof_review { background: #fef3c7; color: #b45309; }
+.mybookings-badge-confirmed { background: #dbeafe; color: #1d4ed8; }
+.mybookings-badge-rejected { background: #fee2e2; color: #b91c1c; }
+.mybookings-badge-paid_in_full,
+.mybookings-badge-active { background: #dcfce7; color: #15803d; }
+.mybookings-badge-cancelled { background: #f1f5f9; color: #64748b; }
+
+/* Verified installation-proof photo gallery in the expanded panel */
+.mybookings-proof { margin-top: 12px; }
+.mybookings-proof-gallery { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.mybookings-proof-photo {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+}
+
+/* "View" / "Invoice" buttons on the right of the card */
+.mybookings-actions { display: flex; gap: 8px; }
+.mybookings-actions .pay-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.82rem;
+    padding: 6px 12px;
+}
+
+/* Inline "pay now" form that opens below a card */
+.mybookings-pay-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+}
+.mybookings-pay-form .booking-request-btn { margin: 0; }
+
+/* Expanded "View" panel: brand/category/campaign details + rejection reason */
+.mybookings-detail {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+}
+.mybookings-creative {
+    width: 160px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #e5e5e5;
+    margin-bottom: 12px;
+}
+.mybookings-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    font-size: 0.88rem;
+}
+.mybookings-detail-label { font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 2px; }
+.mybookings-detail-span { grid-column: 1 / -1; }
+.mybookings-rejection {
+    margin-top: 12px;
+    background: #fef2f2;
+    color: #b91c1c;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+}
+
+/* Stack the card's row into one column on narrow screens */
+@media (max-width: 640px) {
+    .mybookings-row { flex-direction: column; align-items: flex-start; }
+    .mybookings-amount-col { text-align: left; }
+    .mybookings-actions { width: 100%; }
+}
+
+/* ---- Reused pay-form controls (also defined for BookingWizard) ---- */
+
+/* Red error text under a failed pay attempt */
+.booking-error {
+    color: #dc2626;
+    font-size: 0.88rem;
+    margin-top: 10px;
+}
+
+/* Solid blue "Confirm ৳X" / "Hold these dates" style button */
+.booking-request-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    background: #0071e3;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.booking-request-btn:hover {
+    background: #005bb5;
+}
+.booking-request-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* Payment method dropdown + transaction reference input */
+.pay-method-select,
+.pay-ref-input {
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+.pay-ref-input { flex: 1; min-width: 120px; }
+
+/* Outlined secondary button (Cancel / View / Invoice / Close) */
+.pay-btn-outline {
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+    color: #475569;
+}
+
+/* ---- Invoice modal ---- */
+
+.mb-invoice-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    z-index: 100;
+}
+.mb-invoice-modal {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+.mb-invoice-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.mb-invoice-header h3 { font-size: 1.05rem; }
+.mb-invoice-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6e6e73;
+    display: grid;
+    place-items: center;
+}
+.mb-invoice-body { padding: 20px; }
+.mb-invoice-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.88rem;
+    color: #475569;
+    padding: 4px 0;
+}
+.mb-invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 0.85rem;
+}
+.mb-invoice-table th {
+    text-align: left;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+.mb-invoice-table td { padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+.mb-invoice-table tfoot td { border-bottom: none; font-weight: 700; padding-top: 12px; }
+.mb-invoice-table .num { text-align: right; }
+.mb-invoice-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px 20px;
+    border-top: 1px solid #f1f5f9;
+}
+.mb-invoice-footer .booking-request-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+/* Print stylesheet: hide everything except the invoice modal itself */
+@media print {
+    body * { visibility: hidden; }
+    .mb-invoice-modal, .mb-invoice-modal * { visibility: visible; }
+    .mb-invoice-overlay {
+        position: absolute;
+        background: none;
+        inset: auto;
+        padding: 0;
+    }
+    .mb-invoice-modal { position: absolute; top: 0; left: 0; box-shadow: none; max-height: none; }
+    .mb-invoice-close, .mb-invoice-footer { display: none; }
+}

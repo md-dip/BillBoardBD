@@ -232,24 +232,29 @@
 
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.btn-primary { background: #2563eb; color: #ffffff; }
-.btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+/* Scoped as .btn.btn-* (not bare .btn-*) so these never collide with the
+   client actor's own same-named classes (shared/styles/index.css /
+   client/components/Navbar.jsx) once both stylesheets end up in the same
+   bundle. Every admin/owner usage already pairs .btn with a modifier
+   (className="btn btn-primary" etc.), so this changes no existing markup. */
+.btn.btn-primary { background: #2563eb; color: #ffffff; }
+.btn.btn-primary:hover:not(:disabled) { background: #1d4ed8; }
 
-.btn-outline {
+.btn.btn-outline {
   background: #ffffff;
   color: #0f172a;
   border: 1px solid #cbd5e1;
 }
-.btn-outline:hover:not(:disabled) { background: #f1f5f9; }
+.btn.btn-outline:hover:not(:disabled) { background: #f1f5f9; }
 
-.btn-destructive { background: #dc2626; color: #ffffff; }
-.btn-destructive:hover:not(:disabled) { background: #b91c1c; }
+.btn.btn-destructive { background: #dc2626; color: #ffffff; }
+.btn.btn-destructive:hover:not(:disabled) { background: #b91c1c; }
 
-.btn-ghost {
+.btn.btn-ghost {
   background: transparent;
   color: #64748b;
 }
-.btn-ghost:hover:not(:disabled) { background: #f1f5f9; }
+.btn.btn-ghost:hover:not(:disabled) { background: #f1f5f9; }
 
 .btn-sm { padding: 6px 10px; font-size: 13px; }
 .btn-icon { padding: 6px; }

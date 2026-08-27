@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../shared/api/axios';
 import { daysBetweenInclusive, todayIso } from '../../shared/utils/dateRange';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import './BookingWizard.css';
 
 const METHODS = ['bkash', 'nagad', 'bank', 'cash'];
 

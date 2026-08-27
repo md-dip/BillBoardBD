@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import api from '../../shared/api/axios';
 import { getBillboardIcon } from '../../shared/utils/markerIcons';
+import './FindBillboards.css';
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';

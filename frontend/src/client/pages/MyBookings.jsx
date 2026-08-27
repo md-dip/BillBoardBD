@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Image as ImageIcon, Printer, X } from 'lucide-react';
 import api from '../../shared/api/axios';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import './MyBookings.css';
 
 const METHODS = ['bkash', 'nagad', 'bank', 'cash'];
 
