@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Wallet } from 'lucide-react';
 import api from '../../shared/api/axios';
-import OwnerShell from '../../components/OwnerShell';
+import OwnerShell from '../components/OwnerShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import './Payouts.css';
 
-export default function OwnerPayoutsPage() {
+export default function OwnerPayouts() {
   const [outstanding, setOutstanding] = useState(0);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,28 +22,28 @@ export default function OwnerPayoutsPage() {
   if (loading) {
     return (
       <OwnerShell title="Payouts">
-        <p className="muted">Loading...</p>
+        <p className="payouts-muted">Loading...</p>
       </OwnerShell>
     );
   }
 
   return (
     <OwnerShell title="Payouts">
-      <div className="kpi-grid">
-        <div className="kpi-card">
-          <div className="kpi-header">
-            <span className="kpi-label">Outstanding balance</span>
-            <span className="kpi-icon success"><Wallet size={16} /></span>
+      <div className="payouts-kpi-grid">
+        <div className="payouts-kpi-card">
+          <div className="payouts-kpi-header">
+            <span className="payouts-kpi-label">Outstanding balance</span>
+            <span className="payouts-kpi-icon success"><Wallet size={16} /></span>
           </div>
-          <div className="kpi-value">{formatBDT(outstanding)}</div>
+          <div className="payouts-kpi-value">{formatBDT(outstanding)}</div>
         </div>
       </div>
 
-      <p className="muted mb-4">Payouts are typically settled by admin on the 10th of each month.</p>
+      <p className="payouts-muted payouts-mb-4">Payouts are typically settled by admin on the 10th of each month.</p>
 
-      <h3 className="section-title">Payout history</h3>
-      <div className="card">
-        <table className="admin-table">
+      <h3 className="payouts-section-title">Payout history</h3>
+      <div className="payouts-card">
+        <table className="payouts-table">
           <thead>
             <tr>
               <th>Amount</th>
@@ -54,15 +55,15 @@ export default function OwnerPayoutsPage() {
           <tbody>
             {history.map((p) => (
               <tr key={p.id}>
-                <td style={{ fontWeight: 600 }}>{formatBDT(p.amount)}</td>
-                <td style={{ textTransform: 'capitalize' }}>{p.method || 'N/A'}</td>
+                <td className="payouts-amount-cell">{formatBDT(p.amount)}</td>
+                <td className="payouts-method-cell">{p.method || 'N/A'}</td>
                 <td>{p.reference || 'N/A'}</td>
                 <td>{p.paid_at ? p.paid_at.slice(0, 10) : 'N/A'}</td>
               </tr>
             ))}
             {history.length === 0 && (
               <tr>
-                <td colSpan={4} style={{ padding: 32, textAlign: 'center', color: '#64748b' }}>
+                <td colSpan={4} className="payouts-table-empty">
                   You haven&apos;t received any payouts yet.
                 </td>
               </tr>

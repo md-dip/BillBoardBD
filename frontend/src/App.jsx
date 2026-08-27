@@ -5,6 +5,7 @@ import MyBookings from './client/pages/MyBookings';
 import ClientHowItWorks from './client/pages/HowItWorks';
 import ClientNavbar from './client/components/Navbar';
 import Footer from './client/components/Footer';
+import OwnerNavbar from './owner/components/Navbar';
 import Home from './shared/pages/Home';
 import HowItWorks from './shared/pages/HowItWorks';
 import Login from './shared/pages/Login';
@@ -19,10 +20,10 @@ import AdminPermits from './pages/admin/PermitsPage';
 import AdminReports from './pages/admin/ReportsPage';
 import AdminSettings from './pages/admin/SettingsPage';
 import AdminPayouts from './pages/admin/PayoutsPage';
-import OwnerDashboard from './pages/owner/Dashboard';
-import OwnerBillboards from './pages/owner/BillboardsPage';
-import OwnerBookings from './pages/owner/BookingsPage';
-import OwnerPayouts from './pages/owner/PayoutsPage';
+import OwnerDashboard from './owner/pages/Dashboard';
+import OwnerMyBillboards from './owner/pages/MyBillboards';
+import OwnerBookingRequests from './owner/pages/BookingRequests';
+import OwnerPayouts from './owner/pages/Payouts';
 
 function AppRoutes() {
     const { pathname } = useLocation();
@@ -31,9 +32,17 @@ function AppRoutes() {
     const isOwner = pathname.startsWith('/owner');
     const showClientChrome = !isAdmin && !isOwner;
 
+    // On a shared/public page, an owner gets their own navbar (a badge
+    // linking back to /owner) instead of the client-only one — a logged-in
+    // client still gets ClientNavbar, and admin falls back to it too for
+    // now (admin hasn't been split into its own actor navbar yet).
+    let navbar = <DefaultNavbar />;
+    if (showClientChrome && user?.role === 'owner') navbar = <OwnerNavbar />;
+    else if (showClientChrome && user) navbar = <ClientNavbar />;
+
     return (
         <>
-            {showClientChrome && (user ? <ClientNavbar /> : <DefaultNavbar />)}
+            {showClientChrome && navbar}
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/billboards" element={<FindBillboards />} />
@@ -52,8 +61,8 @@ function AppRoutes() {
                 <Route path="/admin/payouts" element={<ProtectedRoute requireRole="admin"><AdminPayouts /></ProtectedRoute>} />
 
                 <Route path="/owner" element={<ProtectedRoute requireRole="owner"><OwnerDashboard /></ProtectedRoute>} />
-                <Route path="/owner/billboards" element={<ProtectedRoute requireRole="owner"><OwnerBillboards /></ProtectedRoute>} />
-                <Route path="/owner/bookings" element={<ProtectedRoute requireRole="owner"><OwnerBookings /></ProtectedRoute>} />
+                <Route path="/owner/billboards" element={<ProtectedRoute requireRole="owner"><OwnerMyBillboards /></ProtectedRoute>} />
+                <Route path="/owner/bookings" element={<ProtectedRoute requireRole="owner"><OwnerBookingRequests /></ProtectedRoute>} />
                 <Route path="/owner/payouts" element={<ProtectedRoute requireRole="owner"><OwnerPayouts /></ProtectedRoute>} />
             </Routes>
             {showClientChrome && <Footer />}

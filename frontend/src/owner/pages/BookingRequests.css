@@ -1,0 +1,199 @@
+/* ============================================================
+   Owner Booking Requests page — fully independent: every class is
+   prefixed .bookings-* (or otherwise unique) and fully self-contained,
+   so nothing here can ever be silently overridden by (or override)
+   another owner page's identical-looking class — this app bundles all
+   CSS into one file with no per-page code-splitting, so two files
+   defining the exact same bare selector (e.g. .card, .btn) collide,
+   and whichever loads later wins. Prefixing every class per-page is
+   how that's avoided for good.
+   ============================================================ */
+
+/* Error line + loading state */
+.bookings-error-text { color: #dc2626; font-size: 14px; margin-bottom: 8px; }
+.bookings-muted { color: #64748b; font-size: 14px; }
+.bookings-mb-2 { margin-bottom: 8px; }
+
+/* "Admin has already reviewed these..." / "Final payment received..."
+   helper text shown above the table on certain tabs */
+.bookings-tab-hint-text { font-size: 13px; }
+
+/* Status tab row (new requests / confirmed / ready to install / ...) */
+.bookings-tabs-list {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+.bookings-tab-trigger {
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+    color: #64748b;
+    cursor: pointer;
+    text-transform: capitalize;
+    font-weight: 500;
+}
+.bookings-tab-trigger:hover { color: #0f172a; }
+.bookings-tab-trigger.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+}
+
+/* Table card */
+.bookings-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Bookings table */
+.bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.bookings-table thead th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+.bookings-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+}
+.bookings-table tbody tr:last-child td { border-bottom: none; }
+.bookings-table .text-right { text-align: right; }
+.bookings-table .row-title { font-weight: 500; color: #0f172a; }
+.bookings-table .row-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+/* Narrow fixed-width column that only ever holds the expand chevron */
+.bookings-expand-col { width: 40px; }
+/* Dates column (smaller text to fit the range) + bold Total column */
+.bookings-dates-cell { font-size: 13px; }
+.bookings-total-cell { font-weight: 600; }
+
+/* "No bookings in this stage" empty-table row (also duplicated in
+   MyBillboards.css and Payouts.css for their own empty-table states,
+   each under its own page-prefixed name) */
+.bookings-table-empty {
+    padding: 32px;
+    text-align: center;
+    color: #64748b;
+}
+
+/* Buttons: expand-row chevron (ghost/icon), Accept/Confirm/Submit
+   (primary), Decline/Cancel (outline) */
+.bookings-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    text-decoration: none;
+}
+.bookings-btn.bookings-btn-ghost {
+    background: transparent;
+    color: #64748b;
+}
+.bookings-btn.bookings-btn-ghost:hover:not(:disabled) { background: #f1f5f9; }
+.bookings-btn.bookings-btn-primary { background: #2563eb; color: #ffffff; }
+.bookings-btn.bookings-btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+.bookings-btn.bookings-btn-outline {
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+}
+.bookings-btn.bookings-btn-outline:hover:not(:disabled) { background: #f1f5f9; }
+.bookings-btn-sm { padding: 6px 10px; font-size: 13px; }
+.bookings-btn-icon { padding: 6px; }
+
+/* Status pill (advance/balance payment status) */
+.bookings-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+.bookings-badge-neutral { background: #f1f5f9; color: #475569; }
+
+/* Layout utilities for the action buttons */
+.bookings-flex { display: flex; }
+.bookings-flex-gap-2 { gap: 8px; }
+.bookings-justify-end { justify-content: flex-end; }
+.bookings-items-center { align-items: center; }
+
+/* Rejection-reason input (narrower than the default .bookings-form-input width) */
+.bookings-form-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #0f172a;
+    background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.bookings-form-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.bookings-reject-reason-input { width: 160px; padding: 6px 10px; font-size: 12px; }
+
+/* Proof-of-posting file picker */
+.bookings-proof-file-input { font-size: 12px; max-width: 180px; }
+
+/* ---- Expanded row (creative + proof photos + campaign details) ---- */
+
+/* Light gray background for the whole expanded row */
+.bookings-expanded-row-cell { background: #f8fafc; }
+
+/* Photos + detail grid laid out side by side, wrapping on narrow screens */
+.bookings-expanded-row-content {
+    display: flex;
+    gap: 12px;
+    padding: 8px 0;
+    flex-wrap: wrap;
+}
+
+/* Ad creative / proof-of-posting thumbnail */
+.bookings-expanded-row-photo {
+    width: 128px;
+    height: 96px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    object-fit: cover;
+}
+
+/* Brand / Category / Campaign description / Final payment due grid */
+.bookings-expanded-row-detail-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    font-size: 13px;
+}
+/* Campaign description spans the full width of the grid */
+.bookings-expanded-row-detail-span { grid-column: span 3; }
+
+/* "Brand" / "Category" / "Final payment due" labels in the expanded row */
+.bookings-mini-stat-label { font-size: 12px; color: #64748b; }

@@ -1,0 +1,176 @@
+/* Loading/empty state text */
+.dashboard-muted { color: #64748b; font-size: 14px; }
+
+/* KPI stat cards row (My billboards / Pending requests / Confirmed / Revenue) */
+.dashboard-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+/* Each of the 4 KPI cards gets its own dedicated class below (in
+   addition to the shared .dashboard-kpi-card base for the identical
+   layout/spacing) so any one card's own colors can be changed on its
+   own without touching the other 3 — the base class alone can't do
+   that, since every card would share whatever background it defines. */
+.dashboard-kpi-card {
+    border-radius: 10px;
+    padding: 20px;
+}
+.dashboard-kpi-card-my-billboards { background: #ffffff; border: 1px solid #e2e8f0; }
+.dashboard-kpi-card-pending-requests { background: #ffffff; border: 1px solid #e2e8f0; }
+.dashboard-kpi-card-confirmed-bookings { background: #ffffff; border: 1px solid #e2e8f0; }
+.dashboard-kpi-card-revenue { background: #ffffff; border: 1px solid #e2e8f0; }
+.dashboard-kpi-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.dashboard-kpi-label {
+    font-size: 14px;
+    color: #64748b;
+}
+.dashboard-kpi-icon {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #dbeafe;
+    color: #044ce7;
+}
+.dashboard-kpi-icon.warning {
+    background: #fef3c7;
+    color: #b45309;
+}
+.dashboard-kpi-icon.success {
+    background: #dcfce7;
+    color: #15803d;
+}
+.dashboard-kpi-value {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+/* Side-by-side "Recent booking requests" and "My billboards" cards */
+.dashboard-two-col-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* The two two-col-grid panels each get their own complete, independent
+   rule (not one shared .dashboard-card class) so either one's colors
+   can be changed without touching the other. */
+.dashboard-recent-bookings-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.dashboard-recent-bookings-card-body {
+    padding: 20px;
+}
+.dashboard-my-billboards-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.dashboard-my-billboards-card-body {
+    padding: 20px;
+}
+
+/* Card's heading row + "View all"/"Manage" button */
+.dashboard-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.dashboard-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+/* No bottom margin when the title sits inline in a .dashboard-section-header
+   row next to its button */
+.dashboard-section-header .dashboard-section-title {
+    margin: 0;
+}
+
+/* "View all" / "Manage" buttons */
+.dashboard-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    text-decoration: none;
+}
+.dashboard-btn.dashboard-btn-outline {
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+}
+.dashboard-btn.dashboard-btn-outline:hover:not(:disabled) { background: #f1f5f9; }
+.dashboard-btn-sm { padding: 6px 10px; font-size: 13px; }
+
+/* Vertical stack of booking/billboard rows inside each card */
+.dashboard-row-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* One row: title/subtitle on the left, status badge (and price, on the
+   billboards side) on the right */
+.dashboard-row-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+/* Each row's title + subtitle text */
+.dashboard-row-title { font-weight: 500; color: #0f172a; }
+.dashboard-row-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+/* Billboard row's price column (right-aligned, above the status badge) */
+.dashboard-row-price { text-align: right; }
+.dashboard-row-price-amount { font-size: 14px; font-weight: 600; }
+
+/* Status pill on each row */
+.dashboard-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+.dashboard-badge-neutral { background: #f1f5f9; color: #475569; }
+
+/* "Add your first" link-styled button in the empty-billboards message */
+.dashboard-add-first-btn {
+    background: none;
+    border: none;
+    color: #2563eb;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* Stack the two cards into one column on narrow screens */
+@media (max-width: 768px) {
+    .dashboard-two-col-grid { grid-template-columns: 1fr; }
+}

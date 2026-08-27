@@ -1,0 +1,102 @@
+/* ============================================================
+   Owner Payouts page — fully independent: every class is prefixed
+   .payouts-* and fully self-contained, so nothing here can ever be
+   silently overridden by (or override) another owner page's identical-
+   looking class — this app bundles all CSS into one file with no
+   per-page code-splitting, so two files defining the exact same bare
+   selector (e.g. .kpi-card, .card) collide, and whichever loads later
+   wins. Prefixing every class per-page is how that's avoided for good.
+   ============================================================ */
+
+/* Loading state + the "settled on the 10th" note */
+.payouts-muted { color: #64748b; font-size: 14px; }
+.payouts-mb-4 { margin-bottom: 16px; }
+
+/* "Outstanding balance" KPI card */
+.payouts-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.payouts-kpi-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px;
+}
+.payouts-kpi-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.payouts-kpi-label {
+    font-size: 14px;
+    color: #64748b;
+}
+.payouts-kpi-icon {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #dbeafe;
+    color: #2563eb;
+}
+.payouts-kpi-icon.success {
+    background: #dcfce7;
+    color: #15803d;
+}
+.payouts-kpi-value {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+/* "Payout history" heading */
+.payouts-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+/* Payout history table card */
+.payouts-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.payouts-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.payouts-table thead th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+.payouts-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+}
+.payouts-table tbody tr:last-child td { border-bottom: none; }
+
+/* Amount column (bold) + Method column (values come lowercase from the DB) */
+.payouts-amount-cell { font-weight: 600; }
+.payouts-method-cell { text-transform: capitalize; }
+
+/* "You haven't received any payouts yet" empty-table row (also
+   duplicated in MyBillboards.css and BookingRequests.css, each under
+   its own page-prefixed name) */
+.payouts-table-empty {
+    padding: 32px;
+    text-align: center;
+    color: #64748b;
+}
