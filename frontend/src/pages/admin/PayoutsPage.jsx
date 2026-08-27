@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import api from '../../api/axios';
+import api from '../../shared/api/axios';
 import AdminShell from '../../components/AdminShell';
-import { formatBDT } from '../../utils/formatPrice';
+import { formatBDT } from '../../shared/utils/formatPrice';
 
 const METHODS = ['bkash', 'nagad', 'bank', 'cash'];
 

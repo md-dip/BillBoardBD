@@ -18,6 +18,7 @@ class ReportController extends Controller
             ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
             ->join('billboards', 'billboards.id', '=', 'bookings.billboard_id')
             ->where('payments.payment_type', 'advance')
+            ->where('payments.status', 'paid')
             ->selectRaw(
                 "billboards.id as billboard_id, billboards.title as billboard_title, ".
                 "to_char(payments.created_at, 'YYYY-MM') as month, ".

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
-import api from '../../api/axios';
+import api from '../../shared/api/axios';
 import OwnerShell from '../../components/OwnerShell';
-import { formatBDT } from '../../utils/formatPrice';
+import { formatBDT } from '../../shared/utils/formatPrice';
 
 const TYPES = ['unipole', 'multipole', 'gantry', 'rooftop', 'freestanding', 'static', 'backlit', 'frontlit', 'led', 'neon', 'wall'];
 const STATUSES = ['available', 'booked', 'hidden'];

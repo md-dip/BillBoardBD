@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import api from '../api/axios';
+import api from '../../shared/api/axios';
 import BookingWizard from '../components/BookingWizard';
-import { getBillboardIcon } from '../utils/markerIcons';
+import { getBillboardIcon } from '../../shared/utils/markerIcons';
 
 // A marker drawn with HTML/SVG instead of Leaflet's default PNG. This avoids
 // the Vite image-path issue entirely and lets us colour it to match the brand.

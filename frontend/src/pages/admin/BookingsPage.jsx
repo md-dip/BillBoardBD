@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Check, ChevronDown, ChevronUp, X } from 'lucide-react';
-import api from '../../api/axios';
+import api from '../../shared/api/axios';
 import AdminShell from '../../components/AdminShell';
-import { formatBDT } from '../../utils/formatPrice';
+import { formatBDT } from '../../shared/utils/formatPrice';
 import './admin.css';
 
 const STATUSES = [

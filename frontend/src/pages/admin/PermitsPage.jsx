@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AlertTriangle, ShieldAlert, ShieldCheck } from 'lucide-react';
-import api from '../../api/axios';
+import api from '../../shared/api/axios';
 import AdminShell from '../../components/AdminShell';
 import './admin.css';
 

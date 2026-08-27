@@ -10,8 +10,8 @@ import {
   ShieldAlert,
   Wallet,
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import NotificationBell from './NotificationBell';
+import { useAuth } from '../shared/context/AuthContext';
+import NotificationBell from '../shared/components/NotificationBell';
 import '../pages/admin/admin.css';
 
 const NAV_ITEMS = [

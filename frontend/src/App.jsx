@@ -1,35 +1,38 @@
-import { BrowserRouter, Routes, Route, Link, NavLink, useLocation } from 'react-router-dom';
-import { LogOut } from 'lucide-react';
-import Home from './pages/Home';
-import HowItWorks from './pages/HowItWorks';
-import FindBillboards from './pages/FindBillboards';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import { useAuth } from './context/AuthContext';
-import BillboardDetail from './pages/BillboardDetail';
-import ProtectedRoute from './components/ProtectedRoute';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import FindBillboards from './client/pages/FindBillboards';
+import BillboardDetail from './client/pages/BillboardDetail';
+import MyBookings from './client/pages/MyBookings';
+import ClientNavbar from './client/components/Navbar';
+import Footer from './client/components/Footer';
+import Home from './shared/pages/Home';
+import HowItWorks from './shared/pages/HowItWorks';
+import Login from './shared/pages/Login';
+import Register from './shared/pages/Register';
+import ProtectedRoute from './shared/components/ProtectedRoute';
+import DefaultNavbar from './shared/components/Navbar';
+import { useAuth } from './shared/context/AuthContext';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminBillboards from './pages/admin/BillboardsPage';
 import AdminBookings from './pages/admin/BookingsPage';
 import AdminPermits from './pages/admin/PermitsPage';
 import AdminReports from './pages/admin/ReportsPage';
 import AdminSettings from './pages/admin/SettingsPage';
+import AdminPayouts from './pages/admin/PayoutsPage';
 import OwnerDashboard from './pages/owner/Dashboard';
 import OwnerBillboards from './pages/owner/BillboardsPage';
 import OwnerBookings from './pages/owner/BookingsPage';
-import AdminPayouts from './pages/admin/PayoutsPage';
 import OwnerPayouts from './pages/owner/PayoutsPage';
-import Dashboard from './pages/Dashboard';
-import NotificationBell from './components/NotificationBell';
 
 function AppRoutes() {
     const { pathname } = useLocation();
+    const { user } = useAuth();
     const isAdmin = pathname.startsWith('/admin');
     const isOwner = pathname.startsWith('/owner');
+    const showClientChrome = !isAdmin && !isOwner;
 
     return (
         <>
-            {!isAdmin && !isOwner && <Navbar />}
+            {showClientChrome && (user ? <ClientNavbar /> : <DefaultNavbar />)}
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/billboards" element={<FindBillboards />} />
@@ -37,7 +40,7 @@ function AppRoutes() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/billboards/:id" element={<BillboardDetail />} />
-                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
 
                 <Route path="/admin" element={<ProtectedRoute requireRole="admin"><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/admin/billboards" element={<ProtectedRoute requireRole="admin"><AdminBillboards /></ProtectedRoute>} />
@@ -52,7 +55,7 @@ function AppRoutes() {
                 <Route path="/owner/bookings" element={<ProtectedRoute requireRole="owner"><OwnerBookings /></ProtectedRoute>} />
                 <Route path="/owner/payouts" element={<ProtectedRoute requireRole="owner"><OwnerPayouts /></ProtectedRoute>} />
             </Routes>
-            {!isAdmin && !isOwner && <Footer />}
+            {showClientChrome && <Footer />}
         </>
     );
 }
@@ -62,86 +65,5 @@ export default function App() {
         <BrowserRouter>
             <AppRoutes />
         </BrowserRouter>
-    );
-}
-
-function Navbar() {
-    const { user, logout } = useAuth();
-
-    async function handleLogout() {
-        await logout();
-    }
-
-    return (
-        <nav className="navbar">
-            <Link to="/" className="logo">
-                <span className="logo-mark">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                        <circle cx="12" cy="10" r="3" />
-                    </svg>
-                </span>
-                <span className="logo-text">Billboard<span className="logo-accent">BD</span></span>
-            </Link>
-
-            <div className="nav-links">
-                <NavLink to="/" end>Home</NavLink>
-                <NavLink to="/billboards">Find Billboards</NavLink>
-                <NavLink to="/how-it-works">How it works</NavLink>
-            </div>
-
-            <div className="nav-actions">
-                {user ? (
-                    <>
-                        {user.role === 'admin' && <Link to="/admin" className="btn-ghost">Admin</Link>}
-                        {user.role === 'owner' && <Link to="/owner" className="btn-ghost">Owner Dashboard</Link>}
-                        {user.role === 'client' && <Link to="/dashboard" className="btn-ghost">My bookings</Link>}
-                        <span className="nav-user">{user.name.split(' ').slice(0, 2).join(' ')}</span>
-                        <NotificationBell />
-                        <button className="nav-icon-btn" onClick={handleLogout} aria-label="Log out" title="Log out">
-                            <LogOut size={16} />
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <Link to="/login" className="btn-ghost">Log in</Link>
-                        <Link to="/register" className="btn-primary">Sign up</Link>
-                    </>
-                )}
-            </div>
-        </nav>
-    );
-}
-
-function Footer() {
-    return (
-        <footer className="site-footer">
-            <div className="footer-inner">
-                <div className="footer-brand">
-                    <div className="footer-brand-name">Billboard<span className="logo-accent">BD</span></div>
-                    <p className="footer-tagline">Bangladesh&apos;s simplest way to hire outdoor billboards.</p>
-                </div>
-
-                <div className="footer-col">
-                    <h4>Platform</h4>
-                    <Link to="/billboards">Browse billboards</Link>
-                    <Link to="/how-it-works">How it works</Link>
-                </div>
-
-                <div className="footer-col">
-                    <h4>For owners</h4>
-                    <Link to="/register">List your billboard</Link>
-                    <Link to="/login">Owner login</Link>
-                </div>
-
-                <div className="footer-col">
-                    <h4>Contact</h4>
-                    <a href="mailto:hello@billboardbd.com">hello@billboardbd.com</a>
-                    <span>+880 1XXX-XXXXXX</span>
-                </div>
-            </div>
-
-            <div className="footer-bottom">© 2026 BillboardBD</div>
-        </footer>
     );
 }

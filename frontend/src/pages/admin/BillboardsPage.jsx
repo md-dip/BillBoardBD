@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
-import api from '../../api/axios';
+import api from '../../shared/api/axios';
 import AdminShell from '../../components/AdminShell';
-import { formatBDT } from '../../utils/formatPrice';
+import { formatBDT } from '../../shared/utils/formatPrice';
 import './admin.css';
 
 const TYPES = ['unipole', 'multipole', 'gantry', 'rooftop', 'freestanding', 'static', 'backlit', 'frontlit', 'led', 'neon', 'wall'];

@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Check, ChevronDown, ChevronUp, Upload, X } from 'lucide-react';
-import api from '../../api/axios';
+import api from '../../shared/api/axios';
 import OwnerShell from '../../components/OwnerShell';
-import { formatBDT } from '../../utils/formatPrice';
+import { formatBDT } from '../../shared/utils/formatPrice';
 
 const STATUSES = ['pending_owner_approval', 'confirmed', 'paid_in_full', 'pending_proof_review', 'active', 'rejected'];
 

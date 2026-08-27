@@ -17,70 +17,9 @@ html, body {
     overflow-x: clip;
     width: 100%;
 }
-/* ===== Navbar ===== */
-.navbar {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    height: 64px;
-    background: #ffffff;
-    border-bottom: 1px solid #e5e5e5;
-    padding: 12px max(32px, calc((100% - 1200px) / 2));
-}
-
-.navbar .logo {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none;
-    color: #1d1d1f;
-    font-weight: 700;
-    font-size: 18px;
-}
-
-.navbar .logo-mark {
-    background: #0071e3;
-    color: #ffffff;
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-.navbar .logo-mark svg { width: 18px; height: 18px; }
-.navbar .logo-text { display: inline-flex; }
-
-.navbar .logo-accent {
-    color: #0071e3;
-}
-
-.nav-links {
-    display: flex;
-    gap: 24px;
-    margin-left: 16px;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: #424245;
-    font-weight: 500;
-    padding: 6px 0;
-    border-bottom: 2px solid transparent;
-}
-
-.nav-links a.active {
-    color: #1d1d1f;
-    border-bottom-color: #0071e3;
-}
-
-.nav-actions {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
+/* Navbar styles moved to client/components/Navbar.css — it's a
+   client-exclusive component. .btn-ghost/.btn-primary stay here since
+   Home.jsx and MyBookings.jsx (not just the navbar) use them too. */
 .btn-ghost, .btn-primary {
     padding: 8px 16px;
     border-radius: 8px;
@@ -561,30 +500,6 @@ html, body {
 .role-option-desc {
     font-size: 12px;
     color: #64748b;
-}
-.nav-user {
-    font-size: 14px;
-    font-weight: 600;
-    color: #0f172a;
-    margin-right: 4px;
-}
-
-.nav-icon-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    border: none;
-    background: transparent;
-    color: #6e6e73;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-}
-.nav-icon-btn:hover {
-    background: #f1f5f9;
-    color: #1d1d1f;
 }
 /* ============ BILLBOARD DETAIL ============ */
 .detail-wrap {
@@ -1365,11 +1280,11 @@ textarea.auth-input { resize: vertical; font-family: inherit; }
     border-radius: 8px;
     border: none;
     background: transparent;
-    color: #6e6e73;
+    color: #2727cc;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
 }
-.notif-bell-btn:hover { background: #f1f5f9; color: #1d1d1f; }
+.notif-bell-btn:hover { background: #0a75e0; color: #1414b3; }
 
 .notif-bell-badge {
     position: absolute;

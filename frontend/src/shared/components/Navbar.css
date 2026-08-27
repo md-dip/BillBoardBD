@@ -1,0 +1,77 @@
+/* Default (logged-out) navbar. This duplicates the navbar shell rules also
+   found in client/components/Navbar.css — that's intentional: this file and
+   each actor's navbar are meant to be fully self-contained, not dependent on
+   each other, even though the logo/nav-links look identical. */
+
+/* Outer bar: white background, bottom border, full-width flex row */
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 64px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 12px max(32px, calc((100% - 1200px) / 2));
+}
+
+/* "BillboardBD" logo link: icon + text side by side */
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: #1d1d1f;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+/* Blue rounded square behind the logo's pin icon */
+.navbar .logo-mark {
+    background: #0071e3;
+    color: #ffffff;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Size of the pin icon svg inside the logo mark */
+.navbar .logo-mark svg { width: 18px; height: 18px; }
+/* Keeps "Billboard" + "BD" on one line, no wrapping */
+.navbar .logo-text { display: inline-flex; }
+
+/* Blue color for the "BD" half of the logo text */
+.navbar .logo-accent {
+    color: #0071e3;
+}
+
+/* Center nav group: Home / Find Billboards / How it works */
+.nav-links {
+    display: flex;
+    gap: 24px;
+    margin-left: 16px;
+}
+
+/* Default (inactive) look for each nav link */
+.nav-links a {
+    text-decoration: none;
+    color: #424245;
+    font-weight: 500;
+    padding: 6px 0;
+    border-bottom: 2px solid transparent;
+}
+
+/* Current-page nav link: dark text + blue underline */
+.nav-links a.active {
+    color: #1d1d1f;
+    border-bottom-color: #0071e3;
+}
+
+/* Right-hand action group: Log in / Sign up, pushed to the far right */
+.nav-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

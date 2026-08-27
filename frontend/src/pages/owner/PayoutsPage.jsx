@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Wallet } from 'lucide-react';
-import api from '../../api/axios';
+import api from '../../shared/api/axios';
 import OwnerShell from '../../components/OwnerShell';
-import { formatBDT } from '../../utils/formatPrice';
+import { formatBDT } from '../../shared/utils/formatPrice';
 
 export default function OwnerPayoutsPage() {
   const [outstanding, setOutstanding] = useState(0);

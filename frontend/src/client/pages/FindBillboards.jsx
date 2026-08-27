@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
-import api from '../api/axios';
-import { getBillboardIcon } from '../utils/markerIcons';
+import api from '../../shared/api/axios';
+import { getBillboardIcon } from '../../shared/utils/markerIcons';
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';

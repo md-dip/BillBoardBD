@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CalendarCheck, Clock, DollarSign, Megaphone } from 'lucide-react';
-import api from '../../api/axios';
+import api from '../../shared/api/axios';
 import OwnerShell from '../../components/OwnerShell';
-import { formatBDT } from '../../utils/formatPrice';
+import { formatBDT } from '../../shared/utils/formatPrice';
 
 export default function OwnerDashboard() {
   const navigate = useNavigate();

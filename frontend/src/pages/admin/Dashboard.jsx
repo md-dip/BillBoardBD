@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CalendarCheck, DollarSign, Megaphone, ShieldAlert, TrendingUp } from 'lucide-react';
-import api from '../../api/axios';
+import api from '../../shared/api/axios';
 import AdminShell from '../../components/AdminShell';
-import { formatBDT } from '../../utils/formatPrice';
+import { formatBDT } from '../../shared/utils/formatPrice';
 import './admin.css';
 
 function daysUntil(dateStr) {

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import api from '../../api/axios';
+import api from '../../shared/api/axios';
 import AdminShell from '../../components/AdminShell';
-import { formatBDT } from '../../utils/formatPrice';
+import { formatBDT } from '../../shared/utils/formatPrice';
 import './admin.css';
 
 const COLORS = ['#2563eb', '#93c5fd', '#15803d', '#b45309', '#dc2626', '#9333ea', '#0891b2', '#ea580c', '#65a30d', '#db2777', '#4f46e5'];

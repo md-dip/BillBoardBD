@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Image as ImageIcon, Printer, X } from 'lucide-react';
-import api from '../api/axios';
-import { formatBDT } from '../utils/formatPrice';
+import api from '../../shared/api/axios';
+import { formatBDT } from '../../shared/utils/formatPrice';
 
 const METHODS = ['bkash', 'nagad', 'bank', 'cash'];
 

@@ -21,9 +21,16 @@ class PayoutService
 
     private function settledPaymentsQuery(int $ownerId)
     {
+        // Only the 'advance' row is summed: its owner_payable already carries
+        // the net amount for the ENTIRE booking (total - commission, frozen
+        // at BookingController::submitCampaign time) — the same convention
+        // Admin\ReportController::revenue() relies on. The 'balance' row's
+        // owner_payable duplicates that same amount, so including it would
+        // double-count every settled booking.
         return Payment::query()
             ->whereNull('payout_id')
             ->where('status', 'paid')
+            ->where('payment_type', 'advance')
             ->whereHas(
                 'booking',
                 fn ($q) => $q->whereIn('status', self::SETTLED_STATUSES)
