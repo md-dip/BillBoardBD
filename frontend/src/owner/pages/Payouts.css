@@ -100,3 +100,157 @@
     text-align: center;
     color: #64748b;
 }
+
+/* ============================================================
+   "Payout details" form — the owner sets up where their payouts
+   should be sent.
+   ============================================================ */
+
+/* Form card wrapper (same look as the history table's .payouts-card,
+   just with its own padding for the form) */
+.payouts-card-body { padding: 20px; }
+
+/* Error feedback line above the form */
+.payouts-error-text { color: #dc2626; font-size: 14px; margin-bottom: 12px; }
+
+/* One labeled field on its own row (the method select) */
+.payouts-form-row { margin-bottom: 16px; }
+.payouts-form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+/* Two fields side by side (account name + number, or bank name + branch) */
+.payouts-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.payouts-form-input,
+.payouts-form-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #0f172a;
+    background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.payouts-form-input:focus,
+.payouts-form-select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* "Save payout details" button + the "Cancel" button next to it while editing */
+.payouts-form-actions { display: flex; gap: 8px; }
+
+.payouts-save-details-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: #2563eb;
+    color: #ffffff;
+    transition: background 0.15s, opacity 0.15s;
+}
+.payouts-save-details-btn:hover:not(:disabled) { background: #1d4ed8; }
+.payouts-save-details-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.payouts-cancel-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    transition: background 0.15s;
+}
+.payouts-cancel-edit-btn:hover:not(:disabled) { background: #f1f5f9; }
+.payouts-cancel-edit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ============================================================
+   Saved payout-details view (read-only, shown once something's on
+   file) — the "Saved" badge + "Edit" button row, and the label/value
+   grid underneath.
+   ============================================================ */
+
+.payouts-details-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+/* Small green pill confirming these details are already saved */
+.payouts-details-saved-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #dcfce7;
+    color: #15803d;
+}
+
+/* "Edit" button */
+.payouts-edit-details-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    transition: background 0.15s;
+}
+.payouts-edit-details-btn:hover { background: #f1f5f9; }
+
+/* Read-only label/value pairs (method, account name, account number, ...) */
+.payouts-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.payouts-details-label {
+    display: block;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 2px;
+}
+.payouts-details-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0f172a;
+}
+
+/* Stack the two-field rows on narrow screens */
+@media (max-width: 768px) {
+    .payouts-form-grid { grid-template-columns: 1fr; }
+    .payouts-details-grid { grid-template-columns: 1fr; }
+}

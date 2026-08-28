@@ -1,14 +1,3 @@
-/* ============================================================
-   Owner Booking Requests page — fully independent: every class is
-   prefixed .bookings-* (or otherwise unique) and fully self-contained,
-   so nothing here can ever be silently overridden by (or override)
-   another owner page's identical-looking class — this app bundles all
-   CSS into one file with no per-page code-splitting, so two files
-   defining the exact same bare selector (e.g. .card, .btn) collide,
-   and whichever loads later wins. Prefixing every class per-page is
-   how that's avoided for good.
-   ============================================================ */
-
 /* Error line + loading state */
 .bookings-error-text { color: #dc2626; font-size: 14px; margin-bottom: 8px; }
 .bookings-muted { color: #64748b; font-size: 14px; }
@@ -57,13 +46,14 @@
     border-collapse: collapse;
     font-size: 14px;
 }
+/* Universal Table head */
 .bookings-table thead th {
     text-align: left;
     padding: 12px 16px;
     font-size: 13px;
     font-weight: 500;
     color: #64748b;
-    background: #f8fafc;
+    background: #ffffff;
     border-bottom: 1px solid #e2e8f0;
 }
 .bookings-table tbody td {

@@ -1,14 +1,3 @@
-/* ============================================================
-   OwnerShell — the sidebar+header layout every owner page renders
-   inside. Every class here is prefixed .owner-* AND fully owns its own
-   declarations (including the Site/Logout buttons, which used to share
-   bare .btn/.btn-outline/.btn-sm/.btn-icon with every page — that meant
-   editing a page's button style could silently override THIS shell's
-   buttons too, since identical selectors collide when everything ends
-   up in one bundled CSS file with no code-splitting). Now nothing here
-   shares a class name with anything outside this file, ever.
-   ============================================================ */
-
 /* Sidebar + main content layout shell */
 .owner-shell {
   display: flex;

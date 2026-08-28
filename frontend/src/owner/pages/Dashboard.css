@@ -1,12 +1,3 @@
-/* ============================================================
-   Owner Dashboard — fully independent, box by box. Every class here
-   belongs to exactly one box (a single KPI card, "Recent booking
-   requests", or "My billboards") — nothing is shared between boxes,
-   so changing one box's colors, spacing, or any other style can never
-   affect another box. This is deliberately more duplication than a
-   typical stylesheet — that's the point: it guarantees independence.
-   ============================================================ */
-
 /* Page-level "Loading..." text shown before any box exists yet */
 .dashboard-muted { color: #64748b; font-size: 14px; }
 

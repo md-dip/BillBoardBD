@@ -90,6 +90,7 @@ Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner')->group(functi
     // Stage 5: upload proof of posting
     Route::post('/bookings/{booking}/proof', [OwnerProofOfPostingController::class, 'store']);
 
-    // Payouts (read-only for the owner)
+    // Payouts (read-only history/outstanding) + the owner's own payout details
     Route::get('/payouts', [OwnerPayoutController::class, 'index']);
+    Route::put('/payout-details', [OwnerPayoutController::class, 'updateDetails']);
 });

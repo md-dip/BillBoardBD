@@ -56,7 +56,7 @@ export default function OwnerMyBillboards() {
       <div className="billboards-section-header">
         <p className="billboards-muted">{billboards.length} billboard{billboards.length === 1 ? '' : 's'} listed</p>
         {!editing && (
-          <button type="button" className="billboards-btn billboards-btn-primary" onClick={() => setEditing({ ...BLANK_FORM })}>
+          <button type="button" className="billboards-list-new-billboard-btn" onClick={() => setEditing({ ...BLANK_FORM })}>
             <Plus size={16} /> List new billboard
           </button>
         )}
@@ -144,14 +144,14 @@ export default function OwnerMyBillboards() {
               </div>
 
               <div className="billboards-flex billboards-flex-gap-2">
-                <button type="submit" className="billboards-btn billboards-btn-primary">Save</button>
-                <button type="button" className="billboards-btn billboards-btn-outline" onClick={() => setEditing(null)}>Cancel</button>
+                <button type="submit" className="billboards-save-btn">Save</button>
+                <button type="button" className="billboards-cancel-btn" onClick={() => setEditing(null)}>Cancel</button>
               </div>
             </form>
           </div>
         </div>
       )}
-
+{/* Listed Board details table */}
       {loading ? (
         <p className="billboards-muted">Loading...</p>
       ) : (
@@ -180,8 +180,8 @@ export default function OwnerMyBillboards() {
                   <td>{b.permit_expiry_date ? b.permit_expiry_date.slice(0, 10) : 'N/A'}</td>
                   <td className="text-right">
                     <div className="billboards-flex billboards-flex-gap-2 billboards-justify-end">
-                      <button className="billboards-btn billboards-btn-outline billboards-btn-sm" onClick={() => setEditing({ ...b })}>Edit</button>
-                      <button className="billboards-btn billboards-btn-destructive billboards-btn-sm" onClick={() => handleDelete(b.id)}>Delete</button>
+                      <button className="billboards-edit-btn" onClick={() => setEditing({ ...b })}>Edit</button>
+                      <button className="billboards-delete-btn" onClick={() => handleDelete(b.id)}>Delete</button>
                     </div>
                   </td>
                 </tr>

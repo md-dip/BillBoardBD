@@ -6,6 +6,90 @@ import OwnerShell from '../components/OwnerShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
 import './Dashboard.css';
 
+
+const BOXES = ['my-billboards','recent-bookings'];
+
+// "Recent booking requests" box
+function RecentBookingsBox({ bookings, onViewAll }) {
+  return (
+    <div className="dashboard-recent-bookings-card">
+      <div className="dashboard-recent-bookings-card-body">
+        <div className="dashboard-recent-bookings-header">
+          <h2 className="dashboard-recent-bookings-title">Recent booking requests</h2>
+          <button type="button" className="dashboard-view-all-btn" onClick={onViewAll}>
+            View all
+          </button>
+        </div>
+        <div className="dashboard-recent-bookings-list">
+          {bookings.slice(0, 5).map((bk) => (
+            <div
+              key={bk.id}
+              className="dashboard-recent-bookings-item"
+            >
+              <div>
+                <div className="dashboard-recent-bookings-item-title">{bk.user?.name}</div>
+                <div className="dashboard-recent-bookings-item-sub">
+                  {bk.billboard?.title} &middot; {bk.start_date?.slice(0, 10)} &rarr; {bk.end_date?.slice(0, 10)}
+                </div>
+              </div>
+              <span className="dashboard-recent-bookings-badge">{bk.status}</span>
+            </div>
+          ))}
+          {bookings.length === 0 && <p className="dashboard-recent-bookings-empty">No booking requests yet.</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// "My billboards" box
+function MyBillboardsBox({ billboards, onManage }) {
+  return (
+    <div className="dashboard-my-billboards-card">
+      <div className="dashboard-my-billboards-card-body">
+        <div className="dashboard-my-billboards-header">
+          <h2 className="dashboard-my-billboards-title">My billboards</h2>
+          <button type="button" className="dashboard-manage-btn" onClick={onManage}>
+            Manage
+          </button>
+        </div>
+        <div className="dashboard-my-billboards-list">
+          {billboards.slice(0, 5).map((b) => (
+            <div
+              key={b.id}
+              className="dashboard-my-billboards-item"
+            >
+              <div>
+                <div className="dashboard-my-billboards-item-title">{b.title}</div>
+                <div className="dashboard-my-billboards-item-sub">{b.address}</div>
+              </div>
+              <div className="dashboard-my-billboards-price">
+                <div className="dashboard-my-billboards-price-amount">
+                  {b.pricing_mode === 'monthly' ? `${formatBDT(b.monthly_rate)}/mo` : `${formatBDT(b.daily_rate)}/day`}
+                </div>
+                <span className="dashboard-my-billboards-badge">{b.status}</span>
+              </div>
+            </div>
+          ))}
+          {billboards.length === 0 && (
+            <p className="dashboard-my-billboards-empty">
+              You haven&apos;t listed any billboards yet.{' '}
+              <button
+                type="button"
+                className="dashboard-add-first-btn"
+                onClick={onManage}
+              >
+                Add your first
+              </button>
+              .
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function OwnerDashboard() {
   const navigate = useNavigate();
   const [billboards, setBillboards] = useState([]);
@@ -62,78 +146,15 @@ export default function OwnerDashboard() {
       </div>
 
       <div className="dashboard-two-col-grid">
-        {/*Recent booking requests*/}
-        <div className="dashboard-recent-bookings-card">
-          <div className="dashboard-recent-bookings-card-body">
-            <div className="dashboard-recent-bookings-header">
-              <h2 className="dashboard-recent-bookings-title">Recent booking requests</h2>
-              <button type="button" className="dashboard-view-all-btn" onClick={() => navigate('/owner/bookings')}>
-                View all
-              </button>
-            </div>
-            <div className="dashboard-recent-bookings-list">
-              {bookings.slice(0, 5).map((bk) => (
-                <div
-                  key={bk.id}
-                  className="dashboard-recent-bookings-item"
-                >
-                  <div>
-                    <div className="dashboard-recent-bookings-item-title">{bk.user?.name}</div>
-                    <div className="dashboard-recent-bookings-item-sub">
-                      {bk.billboard?.title} &middot; {bk.start_date?.slice(0, 10)} &rarr; {bk.end_date?.slice(0, 10)}
-                    </div>
-                  </div>
-                  <span className="dashboard-recent-bookings-badge">{bk.status}</span>
-                </div>
-              ))}
-              {bookings.length === 0 && <p className="dashboard-recent-bookings-empty">No booking requests yet.</p>}
-            </div>
-          </div>
-        </div>
-
-        {/* My billboards */}
-        <div className="dashboard-my-billboards-card">
-          <div className="dashboard-my-billboards-card-body">
-            <div className="dashboard-my-billboards-header">
-              <h2 className="dashboard-my-billboards-title">My billboards</h2>
-              <button type="button" className="dashboard-manage-btn" onClick={() => navigate('/owner/billboards')}>
-                Manage
-              </button>
-            </div>
-            <div className="dashboard-my-billboards-list">
-              {billboards.slice(0, 5).map((b) => (
-                <div
-                  key={b.id}
-                  className="dashboard-my-billboards-item"
-                >
-                  <div>
-                    <div className="dashboard-my-billboards-item-title">{b.title}</div>
-                    <div className="dashboard-my-billboards-item-sub">{b.address}</div>
-                  </div>
-                  <div className="dashboard-my-billboards-price">
-                    <div className="dashboard-my-billboards-price-amount">
-                      {b.pricing_mode === 'monthly' ? `${formatBDT(b.monthly_rate)}/mo` : `${formatBDT(b.daily_rate)}/day`}
-                    </div>
-                    <span className="dashboard-my-billboards-badge">{b.status}</span>
-                  </div>
-                </div>
-              ))}
-              {billboards.length === 0 && (
-                <p className="dashboard-my-billboards-empty">
-                  You haven&apos;t listed any billboards yet.{' '}
-                  <button
-                    type="button"
-                    className="dashboard-add-first-btn"
-                    onClick={() => navigate('/owner/billboards')}
-                  >
-                    Add your first
-                  </button>
-                  .
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
+        {BOXES.map((box) => {
+          if (box === 'recent-bookings') {
+            return <RecentBookingsBox key={box} bookings={bookings} onViewAll={() => navigate('/owner/bookings')} />;
+          }
+          if (box === 'my-billboards') {
+            return <MyBillboardsBox key={box} billboards={billboards} onManage={() => navigate('/owner/billboards')} />;
+          }
+          return null;
+        })}
       </div>
     </OwnerShell>
   );
