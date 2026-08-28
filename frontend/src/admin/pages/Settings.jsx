@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import api from '../../shared/api/axios';
-import AdminShell from '../../components/AdminShell';
-import './admin.css';
+import AdminShell from '../components/AdminShell';
+import './Settings.css';
 
-export default function SettingsPage() {
+export default function AdminSettings() {
   const [form, setForm] = useState({ commission_rate: '', advance_percentage: '', final_payment_days: '' });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
@@ -29,16 +29,16 @@ export default function SettingsPage() {
   return (
     <AdminShell title="Settings">
       {loading ? (
-        <p className="muted">Loading...</p>
+        <p className="admin-settings-muted">Loading...</p>
       ) : (
-        <div className="card" style={{ maxWidth: 400 }}>
-          <div className="card-body">
+        <div className="admin-settings-form-card">
+          <div className="admin-settings-form-card-body">
             <form onSubmit={handleSubmit}>
-              <div className="form-row">
-                <label className="form-label" htmlFor="commission">Commission rate (%)</label>
+              <div className="admin-settings-form-row">
+                <label className="admin-settings-commission-rate-label" htmlFor="commission">Commission rate (%)</label>
                 <input
                   id="commission"
-                  className="form-input"
+                  className="admin-settings-commission-rate-input"
                   type="number"
                   min="0"
                   max="100"
@@ -47,11 +47,11 @@ export default function SettingsPage() {
                   onChange={(e) => setForm({ ...form, commission_rate: e.target.value })}
                 />
               </div>
-              <div className="form-row">
-                <label className="form-label" htmlFor="advance">Advance percentage (%)</label>
+              <div className="admin-settings-form-row">
+                <label className="admin-settings-advance-percentage-label" htmlFor="advance">Advance percentage (%)</label>
                 <input
                   id="advance"
-                  className="form-input"
+                  className="admin-settings-advance-percentage-input"
                   type="number"
                   min="0"
                   max="100"
@@ -60,11 +60,11 @@ export default function SettingsPage() {
                   onChange={(e) => setForm({ ...form, advance_percentage: e.target.value })}
                 />
               </div>
-              <div className="form-row">
-                <label className="form-label" htmlFor="final-payment-days">Final payment window (days)</label>
+              <div className="admin-settings-form-row">
+                <label className="admin-settings-final-payment-days-label" htmlFor="final-payment-days">Final payment window (days)</label>
                 <input
                   id="final-payment-days"
-                  className="form-input"
+                  className="admin-settings-final-payment-days-input"
                   type="number"
                   min="1"
                   max="60"
@@ -72,16 +72,16 @@ export default function SettingsPage() {
                   value={form.final_payment_days}
                   onChange={(e) => setForm({ ...form, final_payment_days: e.target.value })}
                 />
-                <p className="muted" style={{ fontSize: 12, marginTop: 4 }}>
+                <p className="admin-settings-final-payment-days-help-text">
                   How many days a client has to pay the remaining 70% after the owner accepts a booking.
                 </p>
               </div>
               {message && (
-                <p className={message.type === 'success' ? 'success-text' : 'error-text'}>
+                <p className={message.type === 'success' ? 'admin-settings-success-text' : 'admin-settings-error-text'}>
                   {message.text}
                 </p>
               )}
-              <button type="submit" className="btn btn-primary">Save settings</button>
+              <button type="submit" className="admin-settings-save-settings-btn">Save settings</button>
             </form>
           </div>
         </div>

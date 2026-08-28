@@ -1,0 +1,318 @@
+/* ============================================================
+   Admin Billboards page — fully independent: every class is prefixed
+   .admin-billboards-* and fully self-contained, so nothing here can
+   ever be silently overridden by (or override) another admin page's
+   identical-looking class — this app bundles all CSS into one file
+   with no per-page code-splitting, so two files defining the exact
+   same bare selector (e.g. .card, .btn) collide, and whichever loads
+   later wins. Prefixing every class per-page is how that's avoided.
+   ============================================================ */
+
+/* "N billboards" count row + "Add billboard" button */
+.admin-billboards-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.admin-billboards-muted { color: #64748b; font-size: 14px; }
+
+/* "Add billboard" button */
+.admin-billboards-add-billboard-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: #2563eb;
+    color: #ffffff;
+    transition: background 0.15s;
+}
+.admin-billboards-add-billboard-btn:hover { background: #1d4ed8; }
+
+/* Add/edit billboard form card */
+.admin-billboards-form-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+.admin-billboards-form-card-body { padding: 20px; }
+.admin-billboards-form-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+.admin-billboards-error-text { color: #dc2626; font-size: 14px; margin-bottom: 8px; }
+
+/* Layout-only row/grid wrappers shared across all fields — no color, safe to share */
+.admin-billboards-form-row { margin-bottom: 16px; }
+.admin-billboards-form-grid { display: grid; gap: 16px; margin-bottom: 16px; }
+.admin-billboards-form-grid-2 { grid-template-columns: 1fr 1fr; }
+.admin-billboards-form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+/* Every field below is its own complete label/input rule — not a shared
+   base class — so editing one field's look here can never move another. */
+
+/* ---- "Title" field ---- */
+.admin-billboards-title-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-title-input {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-title-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Address" field ---- */
+.admin-billboards-address-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-address-input {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-address-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Latitude" field ---- */
+.admin-billboards-latitude-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-latitude-input {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-latitude-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Longitude" field ---- */
+.admin-billboards-longitude-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-longitude-input {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-longitude-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Type" field ---- */
+.admin-billboards-type-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-type-select {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-type-select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Size" field ---- */
+.admin-billboards-size-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-size-input {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-size-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Pricing mode" field ---- */
+.admin-billboards-pricing-mode-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-pricing-mode-select {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-pricing-mode-select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Daily rate" field ---- */
+.admin-billboards-daily-rate-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-daily-rate-input {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-daily-rate-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Monthly rate" field ---- */
+.admin-billboards-monthly-rate-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-monthly-rate-input {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-monthly-rate-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Status" field ---- */
+.admin-billboards-status-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-status-select {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-status-select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Rating" field ---- */
+.admin-billboards-rating-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-rating-input {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-rating-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Permit expiry" field ---- */
+.admin-billboards-permit-expiry-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-permit-expiry-input {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-billboards-permit-expiry-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---- "Description" field ---- */
+.admin-billboards-description-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+.admin-billboards-description-textarea {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #0f172a; background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    min-height: 80px; resize: vertical;
+}
+.admin-billboards-description-textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* Save/Cancel button row */
+.admin-billboards-form-actions { display: flex; gap: 8px; }
+
+/* "Save" button */
+.admin-billboards-save-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: #2563eb;
+    color: #ffffff;
+    transition: background 0.15s;
+}
+.admin-billboards-save-btn:hover { background: #1d4ed8; }
+
+/* "Cancel" button */
+.admin-billboards-cancel-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    transition: background 0.15s;
+}
+.admin-billboards-cancel-btn:hover { background: #f1f5f9; }
+
+/* Billboards table card + table */
+.admin-billboards-table-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.admin-billboards-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.admin-billboards-table thead th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+.admin-billboards-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+}
+.admin-billboards-table tbody tr:last-child td { border-bottom: none; }
+.admin-billboards-text-right { text-align: right; }
+.admin-billboards-row-title { font-weight: 500; color: #0f172a; }
+.admin-billboards-row-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+/* Type column (values come lowercase from the DB) */
+.admin-billboards-type-cell { text-transform: capitalize; }
+
+/* Status pill in the table (only the neutral look is used here) */
+.admin-billboards-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+    background: #f1f5f9;
+    color: #475569;
+}
+
+/* "EXPIRED" / "expiring soon" warning tags next to the permit date */
+.admin-billboards-permit-expired {
+    margin-left: 6px;
+    color: #b91c1c;
+    font-weight: 600;
+    font-size: 12px;
+}
+.admin-billboards-permit-near-expiry {
+    margin-left: 6px;
+    color: #b45309;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+/* "Edit" / "Delete" buttons on the right of each row */
+.admin-billboards-row-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.admin-billboards-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    transition: background 0.15s;
+}
+.admin-billboards-edit-btn:hover { background: #f1f5f9; }
+.admin-billboards-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: #dc2626;
+    color: #ffffff;
+    transition: background 0.15s;
+}
+.admin-billboards-delete-btn:hover { background: #b91c1c; }
+
+/* Stack the form's field grids on narrow screens */
+@media (max-width: 768px) {
+    .admin-billboards-form-grid-2, .admin-billboards-form-grid-3 { grid-template-columns: 1fr; }
+}

@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import api from '../../shared/api/axios';
-import AdminShell from '../../components/AdminShell';
+import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
-import './admin.css';
+import './Reports.css';
 
 const COLORS = ['#2563eb', '#93c5fd', '#15803d', '#b45309', '#dc2626', '#9333ea', '#0891b2', '#ea580c', '#65a30d', '#db2777', '#4f46e5'];
 
-export default function ReportsPage() {
+const KPIS = ['total-revenue', 'platform-commission', 'payable-to-owners'];
+
+export default function AdminReports() {
   const [revenue, setRevenue] = useState(null);
   const [occupancy, setOccupancy] = useState([]);
   const [billboards, setBillboards] = useState([]);
@@ -53,26 +55,35 @@ export default function ReportsPage() {
   if (loading) {
     return (
       <AdminShell title="Reports">
-        <p className="muted">Loading reports...</p>
+        <p className="admin-reports-muted">Loading reports...</p>
       </AdminShell>
     );
   }
 
+  const kpiValues = {
+    'total-revenue': { label: 'Total revenue (paid)', value: formatBDT(revenue?.totals?.gross ?? 0) },
+    'platform-commission': { label: 'Platform commission', value: formatBDT(revenue?.totals?.commission ?? 0) },
+    'payable-to-owners': { label: 'Payable to owners', value: formatBDT(revenue?.totals?.owner_payable ?? 0) },
+  };
+
   return (
     <AdminShell title="Reports">
-      <div className="kpi-grid">
-        <Kpi label="Total revenue (paid)" value={formatBDT(revenue?.totals?.gross ?? 0)} />
-        <Kpi label="Platform commission" value={formatBDT(revenue?.totals?.commission ?? 0)} />
-        <Kpi label="Payable to owners" value={formatBDT(revenue?.totals?.owner_payable ?? 0)} />
+      <div className="admin-reports-kpi-grid">
+        {KPIS.map((slug) => (
+          <div className={`admin-reports-kpi-card-${slug}`} key={slug}>
+            <div className={`admin-reports-kpi-label-${slug}`}>{kpiValues[slug].label}</div>
+            <div className={`admin-reports-kpi-value-${slug}`}>{kpiValues[slug].value}</div>
+          </div>
+        ))}
       </div>
 
-      <div className="two-col-grid">
-        <div className="card">
-          <div className="card-body">
-            <h2 className="section-title">Occupancy this month</h2>
-            <div style={{ height: 288 }}>
+      <div className="admin-reports-charts-grid">
+        <div className="admin-reports-occupancy-card">
+          <div className="admin-reports-occupancy-card-body">
+            <h2 className="admin-reports-occupancy-title">Occupancy this month</h2>
+            <div className="admin-reports-occupancy-chart-container">
               {occupancyThisMonth.length === 0 ? (
-                <div className="empty-state">No confirmed bookings this month.</div>
+                <div className="admin-reports-occupancy-empty">No confirmed bookings this month.</div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={occupancyThisMonth} layout="vertical" margin={{ left: 20 }}>
@@ -88,12 +99,12 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-body">
-            <h2 className="section-title">Revenue by billboard</h2>
-            <div style={{ height: 288 }}>
+        <div className="admin-reports-revenue-card">
+          <div className="admin-reports-revenue-card-body">
+            <h2 className="admin-reports-revenue-title">Revenue by billboard</h2>
+            <div className="admin-reports-revenue-chart-container">
               {revenueByBoard.length === 0 ? (
-                <div className="empty-state">No paid bookings yet.</div>
+                <div className="admin-reports-revenue-empty">No paid bookings yet.</div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={revenueByBoard} layout="vertical" margin={{ left: 20 }}>
@@ -109,11 +120,11 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        <div className="card" style={{ gridColumn: 'span 2' }}>
-          <div className="card-body">
-            <h2 className="section-title">Inventory by type</h2>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ height: 288, flex: 1, minWidth: 300 }}>
+        <div className="admin-reports-inventory-card">
+          <div className="admin-reports-inventory-card-body">
+            <h2 className="admin-reports-inventory-title">Inventory by type</h2>
+            <div className="admin-reports-inventory-content">
+              <div className="admin-reports-inventory-chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={typeShare} dataKey="value" nameKey="name" outerRadius={100} label>
@@ -125,12 +136,14 @@ export default function ReportsPage() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, minWidth: 180, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <ul className="admin-reports-inventory-legend-list">
                 {typeShare.map((t, i) => (
-                  <li key={t.name} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14 }}>
-                    <span style={{ width: 12, height: 12, borderRadius: '50%', background: COLORS[i % COLORS.length], flexShrink: 0 }} />
-                    <span style={{ textTransform: 'capitalize' }}>{t.name}</span>
-                    <span style={{ marginLeft: 'auto', fontWeight: 500, color: '#64748b' }}>{t.value}</span>
+                  <li key={t.name} className="admin-reports-inventory-legend-item">
+                    <span
+                      className={`admin-reports-inventory-legend-dot admin-reports-inventory-legend-dot-${i % COLORS.length}`}
+                    />
+                    <span className="admin-reports-inventory-legend-label">{t.name}</span>
+                    <span className="admin-reports-inventory-legend-value">{t.value}</span>
                   </li>
                 ))}
               </ul>
@@ -139,14 +152,5 @@ export default function ReportsPage() {
         </div>
       </div>
     </AdminShell>
-  );
-}
-
-function Kpi({ label, value }) {
-  return (
-    <div className="kpi-card">
-      <div className="kpi-label">{label}</div>
-      <div className="kpi-value" style={{ marginTop: 4 }}>{value}</div>
-    </div>
   );
 }

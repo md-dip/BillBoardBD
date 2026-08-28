@@ -1,0 +1,161 @@
+/* ============================================================
+   Admin Reports page — fully independent: every class is prefixed
+   .admin-reports-* and fully self-contained, so nothing here can
+   ever be silently overridden by (or override) another admin page's
+   identical-looking class — this app bundles all CSS into one file
+   with no per-page code-splitting, so two files defining the exact
+   same bare selector (e.g. .card, .kpi-card) collide, and whichever
+   loads later wins. Prefixing every class per-page is how that's
+   avoided for good.
+   ============================================================ */
+
+.admin-reports-muted { color: #64748b; font-size: 14px; }
+
+/* Total revenue / Platform commission / Payable to owners (array-driven) —
+   each card is its own complete rule, not a shared base class, so editing
+   one card's color here can never move the other two. */
+.admin-reports-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+/* ---- "Total revenue (paid)" KPI card ---- */
+.admin-reports-kpi-card-total-revenue {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+}
+.admin-reports-kpi-label-total-revenue { font-size: 13px; color: #64748b; }
+.admin-reports-kpi-value-total-revenue { font-size: 24px; font-weight: 600; color: #0f172a; margin-top: 4px; }
+
+/* ---- "Platform commission" KPI card ---- */
+.admin-reports-kpi-card-platform-commission {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+}
+.admin-reports-kpi-label-platform-commission { font-size: 13px; color: #64748b; }
+.admin-reports-kpi-value-platform-commission { font-size: 24px; font-weight: 600; color: #0f172a; margin-top: 4px; }
+
+/* ---- "Payable to owners" KPI card ---- */
+.admin-reports-kpi-card-payable-to-owners {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+}
+.admin-reports-kpi-label-payable-to-owners { font-size: 13px; color: #64748b; }
+.admin-reports-kpi-value-payable-to-owners { font-size: 24px; font-weight: 600; color: #0f172a; margin-top: 4px; }
+
+/* Two-wide chart grid — Inventory by type spans both columns */
+.admin-reports-charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* ---- "Occupancy this month" chart card ---- */
+.admin-reports-occupancy-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.admin-reports-occupancy-card-body { padding: 20px; }
+.admin-reports-occupancy-title { font-size: 16px; font-weight: 600; color: #0f172a; margin-bottom: 16px; }
+.admin-reports-occupancy-chart-container { height: 288px; }
+.admin-reports-occupancy-empty {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* ---- "Revenue by billboard" chart card ---- */
+.admin-reports-revenue-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.admin-reports-revenue-card-body { padding: 20px; }
+.admin-reports-revenue-title { font-size: 16px; font-weight: 600; color: #0f172a; margin-bottom: 16px; }
+.admin-reports-revenue-chart-container { height: 288px; }
+.admin-reports-revenue-empty {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* ---- "Inventory by type" pie chart + legend card (spans both columns) ---- */
+.admin-reports-inventory-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    grid-column: span 2;
+}
+.admin-reports-inventory-card-body { padding: 20px; }
+.admin-reports-inventory-title { font-size: 16px; font-weight: 600; color: #0f172a; margin-bottom: 16px; }
+.admin-reports-inventory-content {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.admin-reports-inventory-chart-container {
+    height: 288px;
+    flex: 1;
+    min-width: 300px;
+}
+.admin-reports-inventory-legend-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.admin-reports-inventory-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+.admin-reports-inventory-legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+/* One modifier per COLORS[] palette entry, applied by index (i % COLORS.length) */
+.admin-reports-inventory-legend-dot-0 { background: #2563eb; }
+.admin-reports-inventory-legend-dot-1 { background: #93c5fd; }
+.admin-reports-inventory-legend-dot-2 { background: #15803d; }
+.admin-reports-inventory-legend-dot-3 { background: #b45309; }
+.admin-reports-inventory-legend-dot-4 { background: #dc2626; }
+.admin-reports-inventory-legend-dot-5 { background: #9333ea; }
+.admin-reports-inventory-legend-dot-6 { background: #0891b2; }
+.admin-reports-inventory-legend-dot-7 { background: #ea580c; }
+.admin-reports-inventory-legend-dot-8 { background: #65a30d; }
+.admin-reports-inventory-legend-dot-9 { background: #db2777; }
+.admin-reports-inventory-legend-dot-10 { background: #4f46e5; }
+.admin-reports-inventory-legend-label { text-transform: capitalize; }
+.admin-reports-inventory-legend-value { margin-left: auto; font-weight: 500; color: #64748b; }
+
+/* Stack everything on narrow screens */
+@media (max-width: 900px) {
+    .admin-reports-kpi-grid { grid-template-columns: 1fr; }
+    .admin-reports-charts-grid { grid-template-columns: 1fr; }
+    .admin-reports-inventory-card { grid-column: span 1; }
+}

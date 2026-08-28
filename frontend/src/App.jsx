@@ -6,6 +6,7 @@ import ClientHowItWorks from './client/pages/HowItWorks';
 import ClientNavbar from './client/components/Navbar';
 import Footer from './client/components/Footer';
 import OwnerNavbar from './owner/components/Navbar';
+import AdminNavbar from './admin/components/Navbar';
 import Home from './shared/pages/Home';
 import HowItWorks from './shared/pages/HowItWorks';
 import Login from './shared/pages/Login';
@@ -13,13 +14,13 @@ import Register from './shared/pages/Register';
 import ProtectedRoute from './shared/components/ProtectedRoute';
 import DefaultNavbar from './shared/components/Navbar';
 import { useAuth } from './shared/context/AuthContext';
-import AdminDashboard from './pages/admin/Dashboard';
-import AdminBillboards from './pages/admin/BillboardsPage';
-import AdminBookings from './pages/admin/BookingsPage';
-import AdminPermits from './pages/admin/PermitsPage';
-import AdminReports from './pages/admin/ReportsPage';
-import AdminSettings from './pages/admin/SettingsPage';
-import AdminPayouts from './pages/admin/PayoutsPage';
+import AdminDashboard from './admin/pages/Dashboard';
+import AdminBillboards from './admin/pages/Billboards';
+import AdminBookings from './admin/pages/Bookings';
+import AdminPermits from './admin/pages/Permits';
+import AdminReports from './admin/pages/Reports';
+import AdminSettings from './admin/pages/Settings';
+import AdminPayouts from './admin/pages/Payouts';
 import OwnerDashboard from './owner/pages/Dashboard';
 import OwnerMyBillboards from './owner/pages/MyBillboards';
 import OwnerBookingRequests from './owner/pages/BookingRequests';
@@ -32,12 +33,12 @@ function AppRoutes() {
     const isOwner = pathname.startsWith('/owner');
     const showClientChrome = !isAdmin && !isOwner;
 
-    // On a shared/public page, an owner gets their own navbar (a badge
-    // linking back to /owner) instead of the client-only one — a logged-in
-    // client still gets ClientNavbar, and admin falls back to it too for
-    // now (admin hasn't been split into its own actor navbar yet).
+    // On a shared/public page, an owner/admin gets their own navbar (a badge
+    // linking back to /owner or /admin) instead of the client-only one —
+    // only a logged-in client falls through to ClientNavbar.
     let navbar = <DefaultNavbar />;
     if (showClientChrome && user?.role === 'owner') navbar = <OwnerNavbar />;
+    else if (showClientChrome && user?.role === 'admin') navbar = <AdminNavbar />;
     else if (showClientChrome && user) navbar = <ClientNavbar />;
 
     return (

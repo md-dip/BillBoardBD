@@ -10,9 +10,9 @@ import {
   ShieldAlert,
   Wallet,
 } from 'lucide-react';
-import { useAuth } from '../shared/context/AuthContext';
-import NotificationBell from '../shared/components/NotificationBell';
-import '../pages/admin/admin.css';
+import { useAuth } from '../../shared/context/AuthContext';
+import NotificationBell from '../../shared/components/NotificationBell';
+import './AdminShell.css';
 
 const NAV_ITEMS = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
@@ -55,10 +55,10 @@ export default function AdminShell({ children, title }) {
           <div className="admin-signed-in-label">Signed in as</div>
           <div className="admin-signed-in-name">{user?.name || 'Admin'}</div>
           <div className="admin-footer-actions">
-            <Link to="/" className="btn btn-outline btn-sm" style={{ flex: 1 }}>
+            <Link to="/" className="admin-site-link">
               <Home size={14} /> Site
             </Link>
-            <button type="button" className="btn btn-outline btn-sm btn-icon" onClick={logout}>
+            <button type="button" className="admin-logout-btn" onClick={logout}>
               <LogOut size={14} />
             </button>
           </div>
@@ -68,7 +68,7 @@ export default function AdminShell({ children, title }) {
       <div className="admin-main">
         <header className="admin-header">
           <h1 className="admin-title">{title ?? 'Admin'}</h1>
-          <div style={{ marginLeft: 'auto' }}>
+          <div className="admin-header-actions">
             <NotificationBell />
           </div>
         </header>

@@ -1,9 +1,9 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Check, ChevronDown, ChevronUp, X } from 'lucide-react';
 import api from '../../shared/api/axios';
-import AdminShell from '../../components/AdminShell';
+import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
-import './admin.css';
+import './Bookings.css';
 
 const STATUSES = [
   'pending_admin_review',
@@ -27,7 +27,7 @@ const STATUS_LABEL = {
   cancelled: 'cancelled',
 };
 
-export default function BookingsPage() {
+export default function AdminBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending_admin_review');
@@ -103,18 +103,18 @@ export default function BookingsPage() {
 
   return (
     <AdminShell title="Bookings">
-      {error && <p className="error-text">{error}</p>}
+      {error && <p className="admin-bookings-error-text">{error}</p>}
 
       {loading ? (
-        <p className="muted">Loading...</p>
+        <p className="admin-bookings-muted">Loading...</p>
       ) : (
         <>
-          <div className="tabs-list">
+          <div className="admin-bookings-tabs-list">
             {STATUSES.map((s) => (
               <button
                 key={s}
                 type="button"
-                className={`tab-trigger ${activeTab === s ? 'active' : ''}`}
+                className={`admin-bookings-tab-trigger ${activeTab === s ? 'active' : ''}`}
                 onClick={() => setActiveTab(s)}
               >
                 {STATUS_LABEL[s]} ({groups[s].length})
@@ -123,27 +123,27 @@ export default function BookingsPage() {
           </div>
 
           {activeTab === 'pending_admin_review' && (
-            <p className="muted mb-2" style={{ fontSize: 13 }}>
+            <p className="admin-bookings-tab-hint-text">
               Advance payment is confirmed before a request reaches this list. Approving forwards it to the billboard owner.
             </p>
           )}
           {activeTab === 'pending_proof_review' && (
-            <p className="muted mb-2" style={{ fontSize: 13 }}>
+            <p className="admin-bookings-tab-hint-text">
               The owner has uploaded installation photos. Verify to make the campaign go live.
             </p>
           )}
 
-          <div className="card">
-            <table className="admin-table">
+          <div className="admin-bookings-table-card">
+            <table className="admin-bookings-table">
               <thead>
                 <tr>
-                  <th style={{ width: 40 }} />
+                  <th className="admin-bookings-expand-col" />
                   <th>Client</th>
                   <th>Billboard</th>
                   <th>Dates</th>
                   <th>Total</th>
                   <th>Payment</th>
-                  <th className="text-right">Actions</th>
+                  <th className="admin-bookings-text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -157,45 +157,44 @@ export default function BookingsPage() {
                         <td>
                           <button
                             type="button"
-                            className="btn btn-ghost btn-icon"
+                            className="admin-bookings-expand-btn"
                             onClick={() => setExpandedId(expanded ? null : bk.id)}
                           >
                             {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                           </button>
                         </td>
                         <td>
-                          <div className="row-title">{bk.user?.name || 'N/A'}</div>
-                          <div className="row-sub">#{bk.id}</div>
+                          <div className="admin-bookings-row-title">{bk.user?.name || 'N/A'}</div>
+                          <div className="admin-bookings-row-sub">#{bk.id}</div>
                         </td>
                         <td>{bk.billboard?.title || 'N/A'}</td>
-                        <td style={{ fontSize: 13 }}>{bk.start_date?.slice(0, 10)} → {bk.end_date?.slice(0, 10)}</td>
-                        <td style={{ fontWeight: 600 }}>{formatBDT(bk.total_amount)}</td>
+                        <td className="admin-bookings-dates-cell">{bk.start_date?.slice(0, 10)} → {bk.end_date?.slice(0, 10)}</td>
+                        <td className="admin-bookings-total-cell">{formatBDT(bk.total_amount)}</td>
                         <td>
                           {advancePayment ? (
-                            <span className="badge badge-neutral">advance {advancePayment.status}</span>
+                            <span className="admin-bookings-badge">advance {advancePayment.status}</span>
                           ) : 'N/A'}
                         </td>
-                        <td className="text-right">
+                        <td className="admin-bookings-text-right">
                           {activeTab === 'pending_admin_review' ? (
                             rejectingId === bk.id ? (
-                              <div className="flex flex-gap-2 justify-end items-center">
+                              <div className="admin-bookings-inline-form">
                                 <input
-                                  className="form-input"
-                                  style={{ width: 160, padding: '6px 10px', fontSize: 12 }}
+                                  className="admin-bookings-reject-reason-input"
                                   placeholder="Rejection reason"
                                   value={reason}
                                   onChange={(e) => setReason(e.target.value)}
                                 />
-                                <button className="btn btn-primary btn-sm" onClick={() => submitReject(bk.id)}>Confirm</button>
-                                <button className="btn btn-outline btn-sm" onClick={() => setRejectingId(null)}>Cancel</button>
+                                <button className="admin-bookings-confirm-btn" onClick={() => submitReject(bk.id)}>Confirm</button>
+                                <button className="admin-bookings-cancel-btn" onClick={() => setRejectingId(null)}>Cancel</button>
                               </div>
                             ) : (
-                              <div className="flex flex-gap-2 justify-end">
-                                <button className="btn btn-primary btn-sm" onClick={() => handleApprove(bk.id)}>
+                              <div className="admin-bookings-row-actions">
+                                <button className="admin-bookings-approve-btn" onClick={() => handleApprove(bk.id)}>
                                   <Check size={14} /> Approve
                                 </button>
                                 <button
-                                  className="btn btn-outline btn-sm"
+                                  className="admin-bookings-reject-btn"
                                   onClick={() => { setRejectingId(bk.id); setReason(''); }}
                                 >
                                   <X size={14} /> Reject
@@ -204,32 +203,31 @@ export default function BookingsPage() {
                             )
                           ) : activeTab === 'confirmed' ? (
                             balancePayment?.status === 'paid' ? (
-                              <span className="badge badge-success">balance paid</span>
+                              <span className="admin-bookings-badge-success">balance paid</span>
                             ) : (
-                              <button className="btn btn-outline btn-sm" onClick={() => handleRecordBalance(bk.id)}>
+                              <button className="admin-bookings-record-balance-btn" onClick={() => handleRecordBalance(bk.id)}>
                                 Record balance (cash)
                               </button>
                             )
                           ) : activeTab === 'pending_proof_review' ? (
                             rejectingId === bk.id ? (
-                              <div className="flex flex-gap-2 justify-end items-center">
+                              <div className="admin-bookings-inline-form">
                                 <input
-                                  className="form-input"
-                                  style={{ width: 160, padding: '6px 10px', fontSize: 12 }}
+                                  className="admin-bookings-reject-reason-input"
                                   placeholder="Rejection reason"
                                   value={reason}
                                   onChange={(e) => setReason(e.target.value)}
                                 />
-                                <button className="btn btn-primary btn-sm" onClick={() => submitRejectProof(bk.id)}>Confirm</button>
-                                <button className="btn btn-outline btn-sm" onClick={() => setRejectingId(null)}>Cancel</button>
+                                <button className="admin-bookings-confirm-btn" onClick={() => submitRejectProof(bk.id)}>Confirm</button>
+                                <button className="admin-bookings-cancel-btn" onClick={() => setRejectingId(null)}>Cancel</button>
                               </div>
                             ) : (
-                              <div className="flex flex-gap-2 justify-end">
-                                <button className="btn btn-primary btn-sm" onClick={() => handleVerifyProof(bk.id)}>
+                              <div className="admin-bookings-row-actions">
+                                <button className="admin-bookings-verify-btn" onClick={() => handleVerifyProof(bk.id)}>
                                   <Check size={14} /> Verify
                                 </button>
                                 <button
-                                  className="btn btn-outline btn-sm"
+                                  className="admin-bookings-reject-btn"
                                   onClick={() => { setRejectingId(bk.id); setReason(''); }}
                                 >
                                   <X size={14} /> Reject
@@ -237,21 +235,21 @@ export default function BookingsPage() {
                               </div>
                             )
                           ) : activeTab === 'rejected' ? (
-                            <span className="row-sub">{bk.rejection_reason || 'N/A'}</span>
+                            <span className="admin-bookings-row-sub">{bk.rejection_reason || 'N/A'}</span>
                           ) : (
-                            <span className="row-sub">N/A</span>
+                            <span className="admin-bookings-row-sub">N/A</span>
                           )}
                         </td>
                       </tr>
                       {expanded && (
                         <tr>
-                          <td colSpan={7} style={{ background: '#f8fafc' }}>
-                            <div className="flex flex-gap-3" style={{ padding: '8px 0', flexWrap: 'wrap' }}>
+                          <td colSpan={7} className="admin-bookings-expanded-row-cell">
+                            <div className="admin-bookings-expanded-row-content">
                               {bk.creative_url && (
                                 <img
                                   src={bk.creative_url}
                                   alt="Ad creative"
-                                  style={{ width: 128, height: 96, borderRadius: 6, border: '1px solid #e2e8f0', objectFit: 'cover' }}
+                                  className="admin-bookings-expanded-row-photo"
                                 />
                               )}
                               {bk.proof_of_postings?.map((p) => (
@@ -260,20 +258,20 @@ export default function BookingsPage() {
                                   src={p.photo_url}
                                   alt="Proof of posting"
                                   title={`Proof: ${p.status}`}
-                                  style={{ width: 128, height: 96, borderRadius: 6, border: '1px solid #e2e8f0', objectFit: 'cover' }}
+                                  className="admin-bookings-expanded-row-photo"
                                 />
                               ))}
-                              <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, fontSize: 13 }}>
+                              <div className="admin-bookings-expanded-row-detail-grid">
                                 <div>
-                                  <div className="mini-stat-label">Brand</div>
+                                  <div className="admin-bookings-mini-stat-label">Brand</div>
                                   <div>{bk.brand_name || 'N/A'}</div>
                                 </div>
                                 <div>
-                                  <div className="mini-stat-label">Category</div>
+                                  <div className="admin-bookings-mini-stat-label">Category</div>
                                   <div>{bk.ad_category || 'N/A'}</div>
                                 </div>
-                                <div style={{ gridColumn: 'span 3' }}>
-                                  <div className="mini-stat-label">Campaign description</div>
+                                <div className="admin-bookings-expanded-row-detail-span">
+                                  <div className="admin-bookings-mini-stat-label">Campaign description</div>
                                   <div>{bk.campaign_description || 'N/A'}</div>
                                 </div>
                               </div>
@@ -286,7 +284,7 @@ export default function BookingsPage() {
                 })}
                 {rows.length === 0 && (
                   <tr>
-                    <td colSpan={7} style={{ padding: 32, textAlign: 'center', color: '#64748b' }}>
+                    <td colSpan={7} className="admin-bookings-table-empty">
                       No bookings in this stage.
                     </td>
                   </tr>

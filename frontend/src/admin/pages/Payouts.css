@@ -1,0 +1,188 @@
+/* ============================================================
+   Admin Payouts page — fully independent: every class is prefixed
+   .admin-payouts-* and fully self-contained, so nothing here can
+   ever be silently overridden by (or override) another admin page's
+   identical-looking class — this app bundles all CSS into one file
+   with no per-page code-splitting, so two files defining the exact
+   same bare selector (e.g. .card, .btn) collide, and whichever loads
+   later wins. Prefixing every class per-page is how that's avoided.
+   ============================================================ */
+
+.admin-payouts-intro-text { color: #64748b; font-size: 14px; margin-bottom: 16px; }
+.admin-payouts-muted { color: #64748b; font-size: 14px; }
+.admin-payouts-error-text { color: #dc2626; font-size: 14px; margin-bottom: 8px; }
+
+.admin-payouts-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 12px;
+}
+
+/* Outstanding balances table */
+.admin-payouts-outstanding-table-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+/* Payout history table */
+.admin-payouts-history-table-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* ---- "Outstanding balances" table — own complete table shell, independent of "Payout history" ---- */
+.admin-payouts-outstanding-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.admin-payouts-outstanding-table thead th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+.admin-payouts-outstanding-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+}
+.admin-payouts-outstanding-table tbody tr:last-child td { border-bottom: none; }
+.admin-payouts-text-right { text-align: right; }
+.admin-payouts-row-title { font-weight: 500; color: #0f172a; }
+.admin-payouts-row-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+.admin-payouts-amount-cell { font-weight: 600; }
+
+/* "No owners currently have an outstanding balance" empty row */
+.admin-payouts-outstanding-table-empty {
+    padding: 32px;
+    text-align: center;
+    color: #64748b;
+}
+
+/* ---- "Payout history" table — own complete table shell, independent of "Outstanding balances" ---- */
+.admin-payouts-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.admin-payouts-history-table thead th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+.admin-payouts-history-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+}
+.admin-payouts-history-table tbody tr:last-child td { border-bottom: none; }
+.admin-payouts-method-cell { text-transform: capitalize; }
+
+/* "No payouts recorded yet" empty row */
+.admin-payouts-history-table-empty {
+    padding: 32px;
+    text-align: center;
+    color: #64748b;
+}
+
+/* Inline "Pay out" form (method select + reference input + Confirm + Cancel) */
+.admin-payouts-inline-form {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+.admin-payouts-method-select {
+    width: 110px;
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #0f172a;
+    background: #ffffff;
+}
+.admin-payouts-reference-input {
+    width: 140px;
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #0f172a;
+    background: #ffffff;
+}
+.admin-payouts-method-select:focus,
+.admin-payouts-reference-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* "Pay out" button */
+.admin-payouts-pay-out-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: #2563eb;
+    color: #ffffff;
+    transition: background 0.15s;
+}
+.admin-payouts-pay-out-btn:hover { background: #1d4ed8; }
+
+/* "Confirm" button */
+.admin-payouts-confirm-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: #2563eb;
+    color: #ffffff;
+    transition: background 0.15s;
+}
+.admin-payouts-confirm-btn:hover { background: #1d4ed8; }
+
+/* "Cancel" button */
+.admin-payouts-cancel-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    transition: background 0.15s;
+}
+.admin-payouts-cancel-btn:hover { background: #f1f5f9; }
