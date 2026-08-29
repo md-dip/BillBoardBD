@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Bell } from 'lucide-react';
 import api from '../api/axios';
+import './NotificationBell.css';
 
+// Genuinely shared: rendered inside the client Navbar, AdminShell's header,
+// and OwnerShell's header alike. Fully self-contained (own CSS import right
+// here), so none of those three consumers need to style it themselves.
 function timeAgo(dateStr) {
   const diffMs = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diffMs / 60000);
@@ -43,34 +47,34 @@ export default function NotificationBell() {
   const unreadCount = notifications.filter((n) => !n.read_at).length;
 
   return (
-    <div className="notif-bell-wrap" ref={wrapRef}>
+    <div className="notification-bell-wrap" ref={wrapRef}>
       <button
         type="button"
-        className="notif-bell-btn"
+        className="notification-bell-toggle-btn"
         onClick={() => setOpen((v) => !v)}
         aria-label="Notifications"
       >
         <Bell size={18} />
-        {unreadCount > 0 && <span className="notif-bell-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>}
+        {unreadCount > 0 && <span className="notification-bell-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>}
       </button>
 
       {open && (
-        <div className="notif-dropdown">
-          <div className="notif-dropdown-header">
+        <div className="notification-bell-dropdown">
+          <div className="notification-bell-dropdown-header">
             <span>Notifications</span>
             {unreadCount > 0 && (
-              <button type="button" className="notif-mark-all" onClick={markAllRead}>
+              <button type="button" className="notification-bell-mark-all-read-btn" onClick={markAllRead}>
                 Mark all read
               </button>
             )}
           </div>
-          <div className="notif-list">
-            {notifications.length === 0 && <p className="notif-empty">No notifications yet.</p>}
+          <div className="notification-bell-list">
+            {notifications.length === 0 && <p className="notification-bell-empty">No notifications yet.</p>}
             {notifications.map((n) => (
-              <div key={n.id} className={`notif-item ${!n.read_at ? 'unread' : ''}`}>
-                <div className="notif-item-title">{n.data.title}</div>
-                <div className="notif-item-body">{n.data.body}</div>
-                <div className="notif-item-time">{timeAgo(n.created_at)}</div>
+              <div key={n.id} className={`notification-bell-item ${!n.read_at ? 'unread' : ''}`}>
+                <div className="notification-bell-item-title">{n.data.title}</div>
+                <div className="notification-bell-item-body">{n.data.body}</div>
+                <div className="notification-bell-item-time">{timeAgo(n.created_at)}</div>
               </div>
             ))}
           </div>

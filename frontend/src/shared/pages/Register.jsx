@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import './Register.css';
 
 export default function Register() {
     const { register } = useAuth();
@@ -49,94 +50,94 @@ export default function Register() {
     }
 
     return (
-        <div className="auth-wrap">
-            <div className="auth-card">
-                <h1 className="auth-title">Create an account</h1>
-                <p className="auth-subtitle">Book billboards or list your own space for hire.</p>
+        <div className="register-wrap">
+            <div className="register-card">
+                <h1 className="register-title">Create an account</h1>
+                <p className="register-subtitle">Book billboards or list your own space for hire.</p>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="auth-field">
-                        <label className="auth-label">I want to</label>
-                        <div className="role-toggle">
+                    <div className="register-field">
+                        <label className="register-label">I want to</label>
+                        <div className="register-role-toggle">
                             <button
                                 type="button"
-                                className={`role-option ${form.role === 'client' ? 'active' : ''}`}
+                                className={`register-role-book-billboards-btn ${form.role === 'client' ? 'active' : ''}`}
                                 onClick={() => selectRole('client')}
                             >
-                                <div className="role-option-title">Book billboards</div>
-                                <div className="role-option-desc">Advertiser / brand</div>
+                                <div className="register-role-book-billboards-title">Book billboards</div>
+                                <div className="register-role-book-billboards-desc">Advertiser / brand</div>
                             </button>
                             <button
                                 type="button"
-                                className={`role-option ${form.role === 'owner' ? 'active' : ''}`}
+                                className={`register-role-list-my-billboards-btn ${form.role === 'owner' ? 'active' : ''}`}
                                 onClick={() => selectRole('owner')}
                             >
-                                <div className="role-option-title">List my billboards</div>
-                                <div className="role-option-desc">Billboard owner</div>
+                                <div className="register-role-list-my-billboards-title">List my billboards</div>
+                                <div className="register-role-list-my-billboards-desc">Billboard owner</div>
                             </button>
                         </div>
                     </div>
 
-                    <div className="auth-field">
-                        <label className="auth-label" htmlFor="name">
+                    <div className="register-field">
+                        <label className="register-label" htmlFor="name">
                             {form.role === 'owner' ? 'Company name' : 'Full name / Company'}
                         </label>
                         <input
                             id="name"
                             name="name"
-                            className="auth-input"
+                            className="register-input"
                             value={form.name}
                             onChange={handleChange}
                             required
                         />
                     </div>
 
-                    <div className="auth-field">
-                        <label className="auth-label" htmlFor="email">Email</label>
+                    <div className="register-field">
+                        <label className="register-label" htmlFor="email">Email</label>
                         <input
                             id="email"
                             type="email"
                             name="email"
-                            className="auth-input"
+                            className="register-input"
                             value={form.email}
                             onChange={handleChange}
                             required
                         />
                     </div>
 
-                    <div className="auth-field">
-                        <label className="auth-label" htmlFor="password">Password</label>
+                    <div className="register-field">
+                        <label className="register-label" htmlFor="password">Password</label>
                         <input
                             id="password"
                             type="password"
                             name="password"
-                            className="auth-input"
+                            className="register-input"
                             value={form.password}
                             onChange={handleChange}
                             required
                         />
                     </div>
 
-                    <div className="auth-field">
-                        <label className="auth-label" htmlFor="phone">Phone (optional)</label>
+                    <div className="register-field">
+                        <label className="register-label" htmlFor="phone">Phone (optional)</label>
                         <input
                             id="phone"
                             name="phone"
-                            className="auth-input"
+                            className="register-input"
                             value={form.phone}
                             onChange={handleChange}
                         />
                     </div>
 
                     {Object.values(errors).flat().map((msg, i) => (
-                        <p className="auth-error" key={i}>{msg}</p>
+                        <p className="register-error-text" key={i}>{msg}</p>
                     ))}
 
-                    <button type="submit" className="auth-submit" disabled={submitting}>
+                    <button type="submit" className="register-register-btn" disabled={submitting}>
                         {submitting ? 'Creating account...' : 'Register'}
                     </button>
 
-                    <p className="auth-footer">
+                    <p className="register-footer">
                         Already have an account? <Link to="/login">Log in</Link>
                     </p>
                 </form>

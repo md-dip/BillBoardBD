@@ -1,0 +1,16 @@
+/* ============================================================
+   How it works page (public, shown to logged-out visitors) — fully
+   independent: every class is prefixed .how-it-works-* and fully
+   self-contained. Note: client/pages/HowItWorks.jsx is a DIFFERENT,
+   logged-in-client-only page with its own independent CSS — this file
+   is only the shared/public version, shown when no client is logged in.
+   ============================================================ */
+
+.how-it-works-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 32px;
+}
+.how-it-works-title { font-size: 36px; margin-bottom: 8px; }
+.how-it-works-subtitle { color: #6e6e73; margin-bottom: 24px; }
+.how-it-works-steps-list { margin-top: 24px; line-height: 2; padding-left: 20px; }

@@ -1,0 +1,155 @@
+/* ============================================================
+   Home page (public landing page, shown to logged-out visitors and to
+   any logged-in actor browsing the shared/public part of the site) —
+   fully independent: every class is prefixed .home-* and fully
+   self-contained, so nothing here can ever be silently overridden by
+   (or override) another page's identical-looking class — this app
+   bundles all CSS into one file with no per-page code-splitting, so
+   two files defining the exact same bare selector collide, and
+   whichever loads later wins. Prefixing every class per-page avoids
+   that for good.
+   ============================================================ */
+
+.home-page { width: 100%; }
+
+/* ---- Hero ---- */
+.home-hero {
+    background: linear-gradient(135deg, #0071e3 0%, #0a5bd0 55%, #1e40af 100%);
+    color: #ffffff;
+    padding: 96px 32px;
+}
+.home-hero-inner { max-width: 1100px; margin: 0 auto; }
+.home-hero-badge {
+    display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.12);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+}
+.home-hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.08;
+    max-width: 640px;
+    margin-bottom: 20px;
+}
+.home-hero-title-soft { color: rgba(255, 255, 255, 0.8); }
+.home-hero-subtitle {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 560px;
+    margin-bottom: 32px;
+}
+.home-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 44px; }
+
+/* "Search billboards" button */
+.home-search-billboards-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.98rem;
+    background: #ffffff;
+    color: #0071e3;
+}
+.home-search-billboards-btn:hover { background: #f1f5f9; }
+.home-search-billboards-btn-icon { display: inline-flex; }
+.home-search-billboards-btn-icon svg { width: 16px; height: 16px; }
+
+/* "List your billboard" button */
+.home-list-your-billboard-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.98rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.home-list-your-billboard-btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+.home-hero-stats { display: flex; gap: 48px; }
+.home-hero-stat-n { font-size: 1.6rem; font-weight: 700; }
+.home-hero-stat-l {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ---- Features ---- */
+.home-features { max-width: 1100px; margin: 0 auto; padding: 80px 32px; }
+.home-features-head { text-align: center; max-width: 640px; margin: 0 auto 48px; }
+.home-features-title { font-size: 2.2rem; font-weight: 700; color: #0f172a; }
+.home-features-sub { margin-top: 12px; color: #64748b; }
+.home-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+.home-feature-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 28px;
+    transition: box-shadow 0.2s ease;
+}
+.home-feature-card:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06); }
+.home-feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #e6f0fd;
+    color: #0071e3;
+    display: grid;
+    place-items: center;
+    margin-bottom: 18px;
+}
+.home-feature-icon svg { width: 22px; height: 22px; }
+.home-feature-title { font-size: 1.15rem; font-weight: 600; color: #0f172a; margin-bottom: 8px; }
+.home-feature-desc { font-size: 0.92rem; color: #64748b; line-height: 1.55; }
+
+/* ---- CTA ---- */
+.home-cta-wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px 96px; }
+.home-cta-banner {
+    background: linear-gradient(135deg, #0071e3 0%, #1e40af 100%);
+    border-radius: 20px;
+    padding: 44px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+.home-cta-title { font-size: 1.9rem; font-weight: 700; }
+.home-cta-sub { margin-top: 8px; color: rgba(255, 255, 255, 0.85); }
+
+/* "Open the map" button */
+.home-open-the-map-btn {
+    background: #ffffff;
+    color: #0071e3;
+    padding: 12px 26px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.home-open-the-map-btn:hover { background: #f1f5f9; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .home-hero { padding: 64px 20px; }
+    .home-hero-title { font-size: 2.4rem; }
+    .home-hero-stats { gap: 28px; }
+    .home-features { padding: 56px 20px; }
+    .home-features-grid { grid-template-columns: 1fr; }
+    .home-cta-banner { flex-direction: column; align-items: flex-start; padding: 32px; }
+}

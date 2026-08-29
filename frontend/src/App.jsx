@@ -4,7 +4,7 @@ import BillboardDetail from './client/pages/BillboardDetail';
 import MyBookings from './client/pages/MyBookings';
 import ClientHowItWorks from './client/pages/HowItWorks';
 import ClientNavbar from './client/components/Navbar';
-import Footer from './client/components/Footer';
+import Footer from './shared/components/Footer';
 import OwnerNavbar from './owner/components/Navbar';
 import AdminNavbar from './admin/components/Navbar';
 import Home from './shared/pages/Home';

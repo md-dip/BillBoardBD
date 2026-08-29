@@ -301,3 +301,18 @@
 .status.error {
     color: #d70015;
 }
+
+/* Dead code, kept rather than silently deleted: this page's local
+   makeIcon()/'billboard-marker' divIcon is defined but never actually
+   called — markers are rendered via the shared getBillboardIcon()
+   helper instead (class 'billboard-marker-icon', styled above). Moved
+   here from the old global shared/styles/index.css during the shared/
+   folder restructure, since this is the feature it actually belongs to. */
+.billboard-marker {
+    background: transparent;
+    border: none;
+}
+.billboard-marker svg {
+    display: block;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}

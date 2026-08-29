@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import './Home.css';
 
 // Small inline-SVG icons (stroke uses currentColor, so the icon box colour controls them).
 // This avoids adding the lucide-react dependency the reference project used.
@@ -51,65 +52,65 @@ const features = [
 
 export default function Home() {
     return (
-        <div className="landing">
+        <div className="home-page">
             {/* Hero */}
-            <section className="hero">
-                <div className="hero-inner">
-                    <span className="hero-badge">✦ Bangladesh&apos;s first map-based billboard marketplace</span>
-                    <h1 className="hero-title">
-                        Find the perfect billboard in <span className="hero-title-soft">seconds</span>, not weeks.
+            <section className="home-hero">
+                <div className="home-hero-inner">
+                    <span className="home-hero-badge">✦ Bangladesh&apos;s first map-based billboard marketplace</span>
+                    <h1 className="home-hero-title">
+                        Find the perfect billboard in <span className="home-hero-title-soft">seconds</span>, not weeks.
                     </h1>
-                    <p className="hero-subtitle">
+                    <p className="home-hero-subtitle">
                         Browse thousands of outdoor advertising spaces on an interactive map. Compare prices, check availability, book online.
                     </p>
-                    <div className="hero-actions">
-                        <Link to="/billboards" className="hero-btn-primary">
-                            <span className="hero-btn-icon">{icons.search}</span> Search billboards
+                    <div className="home-hero-actions">
+                        <Link to="/billboards" className="home-search-billboards-btn">
+                            <span className="home-search-billboards-btn-icon">{icons.search}</span> Search billboards
                         </Link>
-                        <Link to="/register" className="hero-btn-outline">List your billboard</Link>
+                        <Link to="/register" className="home-list-your-billboard-btn">List your billboard</Link>
                     </div>
-                    <div className="hero-stats">
-                        <div className="hero-stat">
-                            <div className="hero-stat-n">500+</div>
-                            <div className="hero-stat-l">billboards</div>
+                    <div className="home-hero-stats">
+                        <div className="home-hero-stat">
+                            <div className="home-hero-stat-n">500+</div>
+                            <div className="home-hero-stat-l">billboards</div>
                         </div>
-                        <div className="hero-stat">
-                            <div className="hero-stat-n">12</div>
-                            <div className="hero-stat-l">cities</div>
+                        <div className="home-hero-stat">
+                            <div className="home-hero-stat-n">12</div>
+                            <div className="home-hero-stat-l">cities</div>
                         </div>
-                        <div className="hero-stat">
-                            <div className="hero-stat-n">99%</div>
-                            <div className="hero-stat-l">uptime</div>
+                        <div className="home-hero-stat">
+                            <div className="home-hero-stat-n">99%</div>
+                            <div className="home-hero-stat-l">uptime</div>
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* Features */}
-            <section className="features">
-                <div className="features-head">
-                    <h2 className="features-title">Everything you need to run an outdoor campaign</h2>
-                    <p className="features-sub">From discovery to invoicing, we cover the full billboard workflow.</p>
+            <section className="home-features">
+                <div className="home-features-head">
+                    <h2 className="home-features-title">Everything you need to run an outdoor campaign</h2>
+                    <p className="home-features-sub">From discovery to invoicing, we cover the full billboard workflow.</p>
                 </div>
-                <div className="features-grid">
+                <div className="home-features-grid">
                     {features.map((f) => (
-                        <div className="feature-card" key={f.title}>
-                            <div className="feature-icon">{f.icon}</div>
-                            <h3 className="feature-title">{f.title}</h3>
-                            <p className="feature-desc">{f.desc}</p>
+                        <div className="home-feature-card" key={f.title}>
+                            <div className="home-feature-icon">{f.icon}</div>
+                            <h3 className="home-feature-title">{f.title}</h3>
+                            <p className="home-feature-desc">{f.desc}</p>
                         </div>
                     ))}
                 </div>
             </section>
 
             {/* CTA */}
-            <section className="cta-wrap">
-                <div className="cta-banner">
+            <section className="home-cta-wrap">
+                <div className="home-cta-banner">
                     <div>
-                        <h3 className="cta-title">Ready to see what&apos;s available near you?</h3>
-                        <p className="cta-sub">Open the map, filter by type and price, and book in a few clicks.</p>
+                        <h3 className="home-cta-title">Ready to see what&apos;s available near you?</h3>
+                        <p className="home-cta-sub">Open the map, filter by type and price, and book in a few clicks.</p>
                     </div>
-                    <Link to="/billboards" className="cta-btn">Open the map</Link>
+                    <Link to="/billboards" className="home-open-the-map-btn">Open the map</Link>
                 </div>
             </section>
         </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import './Login.css';
 
 const DEMO_ACCOUNTS = [
     { label: 'Client', email: 'client@test.com' },
@@ -43,59 +44,59 @@ export default function Login() {
     }
 
     return (
-        <div className="auth-wrap">
-            <div className="auth-card">
-                <h1 className="auth-title">Welcome back</h1>
-                <p className="auth-subtitle">Log in to book billboards or manage your listings.</p>
+        <div className="login-wrap">
+            <div className="login-card">
+                <h1 className="login-title">Welcome back</h1>
+                <p className="login-subtitle">Log in to book billboards or manage your listings.</p>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="auth-field">
-                        <label className="auth-label" htmlFor="email">Email</label>
+                    <div className="login-field">
+                        <label className="login-label" htmlFor="email">Email</label>
                         <input
                             id="email"
                             type="email"
-                            className="auth-input"
+                            className="login-input"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>
 
-                    <div className="auth-field">
-                        <label className="auth-label" htmlFor="password">Password</label>
+                    <div className="login-field">
+                        <label className="login-label" htmlFor="password">Password</label>
                         <input
                             id="password"
                             type="password"
-                            className="auth-input"
+                            className="login-input"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
                     </div>
 
-                    {error && <p className="auth-error">{error}</p>}
+                    {error && <p className="login-error-text">{error}</p>}
 
-                    <button type="submit" className="auth-submit" disabled={submitting}>
+                    <button type="submit" className="login-log-in-btn" disabled={submitting}>
                         {submitting ? 'Logging in...' : 'Log in'}
                     </button>
 
-                    <p className="auth-footer">
+                    <p className="login-footer">
                         No account? <Link to="/register">Register</Link>
                     </p>
 
-                    <div className="demo-box">
-                        <div className="demo-box-title">Demo accounts</div>
+                    <div className="login-demo-box">
+                        <div className="login-demo-box-title">Demo accounts</div>
                         {DEMO_ACCOUNTS.map((d) => (
                             <button
                                 type="button"
                                 key={d.email}
-                                className="demo-account"
+                                className="login-demo-account-btn"
                                 onClick={() => fillDemo(d.email)}
                             >
                                 {d.label}: {d.email}
                             </button>
                         ))}
-                        <div className="demo-note">Any password works.</div>
+                        <div className="login-demo-note">Any password works.</div>
                     </div>
                 </form>
             </div>
