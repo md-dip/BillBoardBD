@@ -9,4 +9,4 @@ Web-based billboard advertising platform for Dhaka. Laravel 13 backend + React f
 - PostgreSQL 18+
 - Git
 
-## Setup
+
