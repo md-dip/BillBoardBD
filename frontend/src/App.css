@@ -1,0 +1,23 @@
+/* ============================================================
+   App shell — sticky-footer layout for the client-chrome pages
+   (navbar + routed page + shared Footer, see App.jsx).
+
+   Without this, the shared Footer is just the last sibling in the
+   flow, so on a short page (e.g. /how-it-works) it floats up under
+   the content and leaves a blank gap beneath it. Making the shell a
+   full-height flex column and letting .app-main absorb the spare
+   height pins the footer to the bottom of the viewport. On a tall
+   page nothing changes — .app-main simply grows past 100vh.
+   ============================================================ */
+
+.app-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Routed page content between navbar and footer: eats all leftover
+   vertical space so the footer sits at the bottom on short pages. */
+.app-main {
+    flex: 1;
+}

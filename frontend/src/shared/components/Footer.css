@@ -1,11 +1,3 @@
-/* ============================================================
-   Footer — site-wide footer shown under every client page.
-
-   .logo-accent (the blue "BD") previously had no styling here at all —
-   the only existing rule was ".navbar .logo-accent" in Navbar.css, so
-   this footer's "BD" was silently rendering plain black. Fixed below by
-   scoping a copy to .footer-brand-name.
-   ============================================================ */
 
 /* Outer footer bar */
 .site-footer {
