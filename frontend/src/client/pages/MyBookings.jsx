@@ -83,6 +83,7 @@ export default function Dashboard() {
                     const expanded = expandedId === b.id;
                     const { text: paymentText, payable } = paymentSummary(b);
                     const isPaying = payingId === b.id;
+                    const refund = b.payments?.find((p) => p.payment_type === 'refund');
 
                     return (
                         <div className="mybookings-card" key={b.id}>
@@ -194,6 +195,13 @@ export default function Dashboard() {
                                     </div>
                                     {b.status === 'rejected' && b.rejection_reason && (
                                         <div className="mybookings-rejection">Rejected: {b.rejection_reason}</div>
+                                    )}
+                                    {refund && (
+                                        <div className="mybookings-refund">
+                                            Advance of {formatBDT(refund.amount)} refunded to your {refund.method} account
+                                            {refund.refunded_at ? ` on ${refund.refunded_at.slice(0, 10)}` : ''}
+                                            {refund.transaction_ref ? ` · ref ${refund.transaction_ref}` : ''}
+                                        </div>
                                     )}
                                     {b.proof_of_postings?.some((p) => p.status === 'verified') && (
                                         <div className="mybookings-proof">

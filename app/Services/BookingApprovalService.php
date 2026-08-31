@@ -11,9 +11,14 @@ use App\Notifications\BookingStatusNotification;
  * the billboard owner for their own acceptance (stage 3) — it does not create
  * the balance payment or touch the calendar; that happens once the owner
  * actually accepts.
+ *
+ * Rejecting here is terminal: the advance the client already paid is auto
+ * refunded to their source account (see RefundService).
  */
 class BookingApprovalService
 {
+    public function __construct(private readonly RefundService $refunds) {}
+
     /**
      * @return array{ok: bool, status: int, message: string, booking?: Booking}
      */
@@ -60,20 +65,30 @@ class BookingApprovalService
             'rejection_reason' => $reason,
         ]);
 
-        // The advance was paid up front, so a rejection auto-refunds it (mock —
-        // no real gateway call, matches how "paying" is mocked elsewhere).
-        $booking->payments()
-            ->where('payment_type', 'advance')
-            ->where('status', 'paid')
-            ->update(['status' => 'refunded', 'refunded_at' => now()]);
+        // The advance was paid up front, so a rejection auto-refunds it to the
+        // account it came from (mock — no real gateway call, matches how
+        // "paying" is mocked elsewhere).
+        $refund = $this->refunds->refundAdvance($booking);
 
-        $booking = $booking->fresh(['billboard', 'user']);
+        $booking = $booking->fresh(['billboard', 'user', 'payments']);
+
+        $body = "Your booking for \"{$booking->billboard?->title}\" was rejected by admin. Reason: {$reason}";
+        if ($refund) {
+            $amount = '৳'.number_format((float) $refund->amount);
+            $body .= " Your advance of {$amount} has been refunded to your {$refund->method} account (ref {$refund->transaction_ref}).";
+        }
+
         $booking->user->notify(new BookingStatusNotification(
             $booking,
-            'Booking rejected',
-            "Your booking for \"{$booking->billboard?->title}\" was rejected by admin. Reason: {$reason}",
+            $refund ? 'Booking rejected — advance refunded' : 'Booking rejected',
+            $body,
         ));
 
-        return ['ok' => true, 'status' => 200, 'message' => 'Booking rejected', 'booking' => $booking];
+        return [
+            'ok' => true,
+            'status' => 200,
+            'message' => $refund ? 'Booking rejected and advance refunded' : 'Booking rejected',
+            'booking' => $booking,
+        ];
     }
 }

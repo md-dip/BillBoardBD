@@ -116,6 +116,23 @@
     color: #15803d;
 }
 
+/* "Rejected" tab actions cell: reason line + auto-refund confirmation */
+.admin-bookings-rejected-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+.admin-bookings-refund-note {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #dcfce7;
+    color: #15803d;
+}
+
 /* Inline reject-reason form (input + Confirm + Cancel) */
 .admin-bookings-inline-form {
     display: flex;

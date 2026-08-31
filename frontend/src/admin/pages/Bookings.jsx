@@ -235,7 +235,12 @@ export default function AdminBookings() {
                               </div>
                             )
                           ) : activeTab === 'rejected' ? (
-                            <span className="admin-bookings-row-sub">{bk.rejection_reason || 'N/A'}</span>
+                            <div className="admin-bookings-rejected-cell">
+                              <span className="admin-bookings-row-sub">{bk.rejection_reason || 'N/A'}</span>
+                              {bk.payments?.some((p) => p.payment_type === 'refund') && (
+                                <span className="admin-bookings-refund-note">advance refunded</span>
+                              )}
+                            </div>
                           ) : (
                             <span className="admin-bookings-row-sub">N/A</span>
                           )}

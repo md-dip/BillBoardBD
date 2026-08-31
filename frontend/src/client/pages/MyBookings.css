@@ -193,6 +193,17 @@
     font-size: 0.85rem;
 }
 
+/* Green confirmation that the 30% advance was auto-refunded after an admin
+   rejection — shown just under .mybookings-rejection in the expanded card. */
+.mybookings-refund {
+    margin-top: 8px;
+    background: #ecfdf5;
+    color: #047857;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+}
+
 /* Stack the card's row into one column on narrow screens */
 @media (max-width: 640px) {
     .mybookings-row { flex-direction: column; align-items: flex-start; }
