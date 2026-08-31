@@ -18,7 +18,7 @@ class PayPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'method' => ['required', 'in:bkash,nagad,bank,cash'],
+            'method' => ['required', 'in:bkash,nagad,bank'],
             'transaction_ref' => ['required', 'string', 'max:100'],
         ];
     }

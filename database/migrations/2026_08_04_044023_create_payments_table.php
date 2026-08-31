@@ -16,7 +16,7 @@ return new class extends Migration
         $table->foreignId('booking_id')->constrained()->cascadeOnDelete();
         $table->decimal('amount', 12, 2);
         $table->string('payment_type');              // 'advance' or 'balance'
-        $table->string('method')->nullable();        // bkash/nagad/bank/cash — null until paid
+        $table->string('method')->nullable();        // bkash/nagad/bank — null until paid
         $table->string('transaction_ref')->nullable();
         $table->string('status')->default('pending');
         $table->decimal('commission_amount', 12, 2); // platform's cut, frozen here

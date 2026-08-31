@@ -69,7 +69,7 @@ export default function AdminBookings() {
 
   async function handleRecordBalance(id) {
     try {
-      await api.post(`/admin/bookings/${id}/balance-payment`, { method: 'cash' });
+      await api.post(`/admin/bookings/${id}/balance-payment`, { method: 'bank' });
       load();
     } catch (err) {
       setError(err.response?.data?.message || 'Could not record balance payment.');
@@ -206,7 +206,7 @@ export default function AdminBookings() {
                               <span className="admin-bookings-badge-success">balance paid</span>
                             ) : (
                               <button className="admin-bookings-record-balance-btn" onClick={() => handleRecordBalance(bk.id)}>
-                                Record balance (cash)
+                                Record balance (bank)
                               </button>
                             )
                           ) : activeTab === 'pending_proof_review' ? (

@@ -47,7 +47,7 @@ class PayoutController extends Controller
         }
 
         $validated = $request->validate([
-            'method' => ['nullable', 'in:bkash,nagad,bank,cash'],
+            'method' => ['nullable', 'in:bkash,nagad,bank'],
             'reference' => ['nullable', 'string', 'max:100'],
             'note' => ['nullable', 'string', 'max:500'],
         ]);

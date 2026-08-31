@@ -31,7 +31,7 @@ class PaymentController extends Controller
         }
 
         $validated = $request->validate([
-            'method' => ['nullable', 'in:bkash,nagad,bank,cash'],
+            'method' => ['nullable', 'in:bkash,nagad,bank'],
             'transaction_ref' => ['nullable', 'string', 'max:100'],
         ]);
 
@@ -42,7 +42,7 @@ class PaymentController extends Controller
 
         if ($payment) {
             $payment->update([
-                'method' => $validated['method'] ?? 'cash',
+                'method' => $validated['method'] ?? 'bank',
                 'transaction_ref' => $validated['transaction_ref'] ?? null,
                 'status' => 'paid',
                 'paid_at' => now(),
@@ -52,7 +52,7 @@ class PaymentController extends Controller
                 'booking_id' => $booking->id,
                 'amount' => $balanceAmount,
                 'payment_type' => 'balance',
-                'method' => $validated['method'] ?? 'cash',
+                'method' => $validated['method'] ?? 'bank',
                 'transaction_ref' => $validated['transaction_ref'] ?? null,
                 'status' => 'paid',
                 'commission_amount' => 0,

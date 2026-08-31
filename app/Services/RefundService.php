@@ -8,7 +8,7 @@ use App\Models\Payment;
 /**
  * Mock refund gateway. When a booking is rejected after the client has already
  * paid the 30% advance, that advance goes straight back to the account it came
- * from — same method (bKash/Nagad/bank/cash), with a fresh refund reference.
+ * from — same method (bKash/Nagad/bank), with a fresh refund reference.
  * There is no real gateway call here, mirroring how "paying" is mocked across
  * the rest of the app (see PaymentController).
  */

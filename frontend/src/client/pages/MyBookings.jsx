@@ -5,7 +5,7 @@ import api from '../../shared/api/axios';
 import { formatBDT } from '../../shared/utils/formatPrice';
 import './MyBookings.css';
 
-const METHODS = ['bkash', 'nagad', 'bank', 'cash'];
+const METHODS = ['bkash', 'nagad', 'bank'];
 
 const STATUS_LABEL = {
     pending_payment: 'Payment due',

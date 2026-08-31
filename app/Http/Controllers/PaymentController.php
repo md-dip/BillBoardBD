@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 class PaymentController extends Controller
 {
-    /** Mock bKash/Nagad/bank/cash flow — no real payment gateway. */
+    /** Mock bKash/Nagad/bank flow — no real payment gateway. */
     public function pay(PayPaymentRequest $request, Payment $payment): JsonResponse
     {
         if ($payment->booking->user_id !== $request->user()->id) {

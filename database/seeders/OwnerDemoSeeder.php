@@ -339,7 +339,7 @@ class OwnerDemoSeeder extends Seeder
                         'status' => $isSettled ? 'paid' : 'pending',
                         'commission_amount' => 0,
                         'owner_payable' => $balanceAmount,
-                        'method' => $isSettled ? 'cash' : null,
+                        'method' => $isSettled ? 'bank' : null,
                         'paid_at' => $isSettled ? now() : null,
                     ]
                 );

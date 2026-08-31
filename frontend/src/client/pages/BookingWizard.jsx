@@ -4,7 +4,7 @@ import { daysBetweenInclusive, todayIso } from '../../shared/utils/dateRange';
 import { formatBDT } from '../../shared/utils/formatPrice';
 import './BookingWizard.css';
 
-const METHODS = ['bkash', 'nagad', 'bank', 'cash'];
+const METHODS = ['bkash', 'nagad', 'bank'];
 
 export default function BookingWizard({ billboard, advancePercentage, holdMinutes = 15 }) {
     const [step, setStep] = useState('dates'); // 'dates' | 'campaign' | 'review' | 'done'

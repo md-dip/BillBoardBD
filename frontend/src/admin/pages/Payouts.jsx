@@ -4,7 +4,7 @@ import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
 import './Payouts.css';
 
-const METHODS = ['bkash', 'nagad', 'bank', 'cash'];
+const METHODS = ['bkash', 'nagad', 'bank'];
 
 export default function AdminPayouts() {
   const [outstanding, setOutstanding] = useState([]);

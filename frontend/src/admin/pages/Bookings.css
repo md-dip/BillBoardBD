@@ -247,7 +247,7 @@
 }
 .admin-bookings-reject-btn:hover { background: #f1f5f9; }
 
-/* "Record balance (cash)" button */
+/* "Record balance (bank)" button */
 .admin-bookings-record-balance-btn {
     display: inline-flex;
     align-items: center;
