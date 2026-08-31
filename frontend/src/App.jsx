@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import FindBillboards from './client/pages/FindBillboards';
 import BillboardDetail from './client/pages/BillboardDetail';
 import MyBookings from './client/pages/MyBookings';
+import ClientInvoice from './client/pages/Invoice';
 import ClientHowItWorks from './client/pages/HowItWorks';
 import ClientNavbar from './client/components/Navbar';
 import Footer from './shared/components/Footer';
@@ -18,6 +19,7 @@ import './App.css';
 import AdminDashboard from './admin/pages/Dashboard';
 import AdminBillboards from './admin/pages/Billboards';
 import AdminBookings from './admin/pages/Bookings';
+import AdminInvoice from './admin/pages/Invoice';
 import AdminPermits from './admin/pages/Permits';
 import AdminReports from './admin/pages/Reports';
 import AdminSettings from './admin/pages/Settings';
@@ -54,10 +56,12 @@ function AppRoutes() {
                     <Route path="/register" element={<Register />} />
                     <Route path="/billboards/:id" element={<BillboardDetail />} />
                     <Route path="/dashboard" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
+                    <Route path="/bookings/:bookingId/invoice" element={<ProtectedRoute><ClientInvoice /></ProtectedRoute>} />
 
                     <Route path="/admin" element={<ProtectedRoute requireRole="admin"><AdminDashboard /></ProtectedRoute>} />
                     <Route path="/admin/billboards" element={<ProtectedRoute requireRole="admin"><AdminBillboards /></ProtectedRoute>} />
                     <Route path="/admin/bookings" element={<ProtectedRoute requireRole="admin"><AdminBookings /></ProtectedRoute>} />
+                    <Route path="/admin/bookings/:bookingId/invoice" element={<ProtectedRoute requireRole="admin"><AdminInvoice /></ProtectedRoute>} />
                     <Route path="/admin/permits" element={<ProtectedRoute requireRole="admin"><AdminPermits /></ProtectedRoute>} />
                     <Route path="/admin/reports" element={<ProtectedRoute requireRole="admin"><AdminReports /></ProtectedRoute>} />
                     <Route path="/admin/settings" element={<ProtectedRoute requireRole="admin"><AdminSettings /></ProtectedRoute>} />

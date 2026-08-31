@@ -6,10 +6,13 @@ use App\Http\Requests\PayPaymentRequest;
 use App\Models\Payment;
 use App\Models\User;
 use App\Notifications\BookingStatusNotification;
+use App\Services\InvoiceService;
 use Illuminate\Http\JsonResponse;
 
 class PaymentController extends Controller
 {
+    public function __construct(private readonly InvoiceService $invoices) {}
+
     /** Mock bKash/Nagad/bank flow — no real payment gateway. */
     public function pay(PayPaymentRequest $request, Payment $payment): JsonResponse
     {
@@ -48,6 +51,14 @@ class PaymentController extends Controller
             foreach (User::query()->where('role', 'admin')->get() as $admin) {
                 $admin->notify(new BookingStatusNotification($booking, $title, $body));
             }
+
+            // Advance paid → the advance invoice is generated now.
+            $invoice = $this->invoices->issue($booking, 'advance');
+            $request->user()->notify(new BookingStatusNotification(
+                $booking,
+                'Advance invoice ready',
+                "Invoice {$invoice->number} for your advance payment on \"{$booking->billboard?->title}\" is ready to view and download.",
+            ));
         } elseif ($payment->payment_type === 'balance') {
             $payment->booking->update(['status' => 'paid_in_full']);
 
@@ -61,6 +72,14 @@ class PaymentController extends Controller
             foreach (User::query()->where('role', 'admin')->get() as $admin) {
                 $admin->notify(new BookingStatusNotification($booking, 'Payment recorded', "Final payment recorded for \"{$booking->billboard?->title}\"."));
             }
+
+            // Booking fully paid → the final invoice is generated now.
+            $invoice = $this->invoices->issue($booking, 'final');
+            $request->user()->notify(new BookingStatusNotification(
+                $booking,
+                'Final invoice ready',
+                "Invoice {$invoice->number} for \"{$booking->billboard?->title}\" is ready — your booking is now paid in full.",
+            ));
         }
 
         return response()->json([

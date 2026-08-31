@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
-import { Check, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Check, ChevronDown, ChevronUp, FileText, X } from 'lucide-react';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
@@ -280,6 +281,14 @@ export default function AdminBookings() {
                                   <div>{bk.campaign_description || 'N/A'}</div>
                                 </div>
                               </div>
+                              {bk.invoices?.length > 0 && (
+                                <Link
+                                  to={`/admin/bookings/${bk.id}/invoice`}
+                                  className="admin-bookings-invoice-link"
+                                >
+                                  <FileText size={14} /> View invoice
+                                </Link>
+                              )}
                             </div>
                           </td>
                         </tr>

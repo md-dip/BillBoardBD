@@ -1,0 +1,220 @@
+/* ============================================================
+   Client invoice page (/bookings/:bookingId/invoice) — the advance or
+   final invoice a client can view and print. Fully self-contained:
+   every class is prefixed .client-invoice-*. The admin has its own
+   separate copy at admin/pages/Invoice.css — the client version never
+   shows the platform-commission / payable-to-owner split.
+   ============================================================ */
+
+.client-invoice-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+}
+
+/* Top bar with the back link + print button — hidden when printing. */
+.client-invoice-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+.client-invoice-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #0071e3;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.client-invoice-back-link:hover { text-decoration: underline; }
+.client-invoice-print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.88rem;
+    color: #334155;
+    cursor: pointer;
+}
+.client-invoice-print-btn:hover { background: #f8fafc; }
+
+.client-invoice-status { color: #64748b; padding: 40px 0; text-align: center; }
+
+.client-invoice-empty {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 40px 24px;
+    text-align: center;
+    color: #475569;
+}
+.client-invoice-empty-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #0071e3;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.client-invoice-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.client-invoice-heading-title { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
+.client-invoice-kind-pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+.client-invoice-kind-pill-advance { background: #fef3c7; color: #92400e; }
+.client-invoice-kind-pill-final { background: #dcfce7; color: #15803d; }
+
+/* ---- The printable document card ---- */
+.client-invoice-doc {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 32px;
+}
+
+.client-invoice-doc-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #eef2f7;
+}
+.client-invoice-brand-name { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+.client-invoice-brand-accent { color: #0071e3; }
+.client-invoice-brand-line { font-size: 0.8rem; color: #64748b; line-height: 1.6; }
+.client-invoice-meta { text-align: right; }
+.client-invoice-meta-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+.client-invoice-number { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 2px 0 6px; }
+.client-invoice-meta-line { font-size: 0.8rem; color: #64748b; line-height: 1.6; }
+
+.client-invoice-parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 22px 0;
+    border-bottom: 1px solid #eef2f7;
+}
+.client-invoice-party-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 6px;
+}
+.client-invoice-party-name { font-weight: 600; color: #0f172a; font-size: 0.95rem; }
+.client-invoice-party-line { font-size: 0.82rem; color: #64748b; line-height: 1.6; }
+
+.client-invoice-section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin: 22px 0 8px;
+}
+
+.client-invoice-lines,
+.client-invoice-payments {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+}
+.client-invoice-lines th,
+.client-invoice-payments th {
+    text-align: left;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    padding: 8px 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.client-invoice-lines td,
+.client-invoice-payments td {
+    padding: 10px 8px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+}
+.client-invoice-lines tfoot td,
+.client-invoice-payments tfoot td {
+    border-bottom: none;
+    font-weight: 600;
+    color: #0f172a;
+    padding-top: 12px;
+}
+.client-invoice-num { text-align: right; }
+.client-invoice-method { text-transform: capitalize; }
+.client-invoice-line-title { font-weight: 600; color: #0f172a; }
+.client-invoice-line-sub { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; }
+
+.client-invoice-balance-row td {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #0071e3;
+}
+
+.client-invoice-note {
+    margin-top: 18px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.82rem;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.client-invoice-footer-note {
+    margin-top: 26px;
+    padding-top: 18px;
+    border-top: 1px solid #eef2f7;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #94a3b8;
+}
+
+@media (max-width: 640px) {
+    .client-invoice-doc { padding: 20px; }
+    .client-invoice-doc-head { flex-direction: column; }
+    .client-invoice-meta { text-align: left; }
+    .client-invoice-parties { grid-template-columns: 1fr; }
+}
+
+/* Print: show only the document, drop the page chrome (navbar/footer/topbar). */
+@media print {
+    body * { visibility: hidden; }
+    .client-invoice-doc, .client-invoice-doc * { visibility: visible; }
+    .client-invoice-doc {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+    }
+    .client-invoice-page { padding: 0; max-width: none; }
+}

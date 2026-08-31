@@ -7,7 +7,9 @@ use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Payout;
 use App\Models\ProofOfPosting;
+use App\Models\Setting;
 use App\Models\User;
+use App\Services\InvoiceService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 
@@ -36,6 +38,8 @@ class OwnerDemoSeeder extends Seeder
         if (! $owner || ! $client) {
             return;
         }
+
+        $invoices = app(InvoiceService::class);
 
         $billboards = [
             'Gulshan-2 Circle Unipole' => '2027-03-15',
@@ -310,7 +314,8 @@ class OwnerDemoSeeder extends Seeder
                 ]
             );
 
-            $commission = round($row['total_amount'] * 0.10, 2);
+            $commissionRate = (float) Setting::get('commission_rate', 10);
+            $commission = round($row['total_amount'] * $commissionRate / 100, 2);
             $ownerPayable = round($row['total_amount'] - $commission, 2);
             $balanceAmount = round($row['total_amount'] - $row['advance_amount'], 2);
 
@@ -343,6 +348,18 @@ class OwnerDemoSeeder extends Seeder
                         'paid_at' => $isSettled ? now() : null,
                     ]
                 );
+            }
+
+            // Invoices, mirroring what the live payment flow would have issued:
+            // an advance invoice once the advance clears, a final one once the
+            // booking is settled. (A rejected booking's advance was refunded,
+            // so it never gets one.)
+            if ($advanceStatus === 'paid') {
+                $invoices->issue($booking->fresh(), 'advance');
+
+                if ($isSettled) {
+                    $invoices->issue($booking->fresh(), 'final');
+                }
             }
 
             // "active" = owner uploaded proof AND admin already verified it.

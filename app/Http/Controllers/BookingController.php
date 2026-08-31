@@ -9,14 +9,17 @@ use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Setting;
 use App\Services\BookingPricingService;
+use App\Services\InvoiceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class BookingController extends Controller
 {
-    public function __construct(private readonly BookingPricingService $pricing)
-    {
+    public function __construct(
+        private readonly BookingPricingService $pricing,
+        private readonly InvoiceService $invoices,
+    ) {
     }
 
     /** Step 1: pick dates, lock the slot for hold_minutes while the user fills in the rest. */
@@ -137,13 +140,48 @@ class BookingController extends Controller
         $bookings = $request->user()
             ->bookings()
             ->where('status', '!=', 'held')
-            ->with(['billboard', 'payments', 'proofOfPostings'])
+            ->with(['billboard', 'payments', 'proofOfPostings', 'invoices'])
             ->latest()
             ->get();
 
         return response()->json([
             'success' => true,
             'data' => $bookings,
+            'message' => null,
+        ]);
+    }
+
+    /**
+     * The client's invoice for a booking — the final invoice once it exists,
+     * otherwise the advance one. Never exposes the platform commission split.
+     */
+    public function invoice(Request $request, Booking $booking): JsonResponse
+    {
+        if ($booking->user_id !== $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'data' => null,
+                'message' => 'Forbidden: this is not your booking.',
+            ], 403);
+        }
+
+        $invoice = $booking->invoices()
+            ->when($request->query('kind'), fn ($q, $kind) => $q->where('kind', $kind))
+            ->orderByDesc('issued_at')
+            ->orderByDesc('id')          // tiebreaker: the 'final' row is always the newer one
+            ->first();
+
+        if (! $invoice) {
+            return response()->json([
+                'success' => false,
+                'data' => null,
+                'message' => 'No invoice yet. It is generated once the advance is paid.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $this->invoices->payload($invoice, showOwnerSplit: false),
             'message' => null,
         ]);
     }

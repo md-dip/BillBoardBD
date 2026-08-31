@@ -307,3 +307,16 @@
 
 /* "Brand" / "Category" / "Campaign description" labels in the expanded row */
 .admin-bookings-mini-stat-label { font-size: 12px; color: #64748b; }
+
+/* "View invoice" link under the expanded row's detail grid */
+.admin-bookings-invoice-link {
+    flex-basis: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #2563eb;
+    text-decoration: none;
+}
+.admin-bookings-invoice-link:hover { text-decoration: underline; }

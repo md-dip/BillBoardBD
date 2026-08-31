@@ -53,6 +53,11 @@ class Booking extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
     public function proofOfPostings(): HasMany
     {
         return $this->hasMany(ProofOfPosting::class);

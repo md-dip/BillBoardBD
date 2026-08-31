@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Image as ImageIcon, Printer, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Image as ImageIcon } from 'lucide-react';
 import api from '../../shared/api/axios';
 import { formatBDT } from '../../shared/utils/formatPrice';
 import './MyBookings.css';
@@ -35,7 +35,6 @@ export default function Dashboard() {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedId, setExpandedId] = useState(null);
-    const [invoiceBooking, setInvoiceBooking] = useState(null);
     const [payingId, setPayingId] = useState(null);
     const [method, setMethod] = useState('bkash');
     const [txnRef, setTxnRef] = useState('');
@@ -138,9 +137,11 @@ export default function Dashboard() {
                                     >
                                         {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />} View
                                     </button>
-                                    <button type="button" className="invoice-btn" onClick={() => setInvoiceBooking(b)}>
-                                        Invoice
-                                    </button>
+                                    {b.invoices?.length > 0 && (
+                                        <Link to={`/bookings/${b.id}/invoice`} className="invoice-btn">
+                                            Invoice
+                                        </Link>
+                                    )}
                                 </div>
                             </div>
 
@@ -220,76 +221,6 @@ export default function Dashboard() {
                         </div>
                     );
                 })}
-            </div>
-
-            {invoiceBooking && (
-                <InvoiceModal booking={invoiceBooking} onClose={() => setInvoiceBooking(null)} />
-            )}
-        </div>
-    );
-}
-
-function InvoiceModal({ booking, onClose }) {
-    return (
-        <div className="mb-invoice-overlay" onClick={onClose}>
-            <div className="mb-invoice-modal" onClick={(e) => e.stopPropagation()}>
-                <div className="mb-invoice-header">
-                    <h3>Invoice &middot; Booking #{booking.id}</h3>
-                    <button type="button" className="mb-invoice-close" onClick={onClose}>
-                        <X size={18} />
-                    </button>
-                </div>
-
-                <div className="mb-invoice-body">
-                    <div className="mb-invoice-row"><span>Billboard</span><span>{booking.billboard?.title}</span></div>
-                    <div className="mb-invoice-row"><span>Address</span><span>{booking.billboard?.address}</span></div>
-                    <div className="mb-invoice-row">
-                        <span>Dates</span>
-                        <span>{booking.start_date?.slice(0, 10)} &rarr; {booking.end_date?.slice(0, 10)}</span>
-                    </div>
-                    <div className="mb-invoice-row"><span>Booked on</span><span>{booking.created_at?.slice(0, 10)}</span></div>
-                    <div className="mb-invoice-row">
-                        <span>Status</span>
-                        <span style={{ textTransform: 'capitalize' }}>{booking.status.replace('_', ' ')}</span>
-                    </div>
-
-                    <table className="mb-invoice-table">
-                        <thead>
-                            <tr>
-                                <th>Item</th>
-                                <th>Method</th>
-                                <th>Status</th>
-                                <th className="num">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {booking.payments?.map((p) => (
-                                <tr key={p.id}>
-                                    <td style={{ textTransform: 'capitalize' }}>{p.payment_type}</td>
-                                    <td style={{ textTransform: 'capitalize' }}>{p.method || 'N/A'}</td>
-                                    <td style={{ textTransform: 'capitalize' }}>{p.status}</td>
-                                    <td className="num">{formatBDT(p.amount)}</td>
-                                </tr>
-                            ))}
-                            {(!booking.payments || booking.payments.length === 0) && (
-                                <tr><td colSpan={4}>No payments recorded yet.</td></tr>
-                            )}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colSpan={3}>Total</td>
-                                <td className="num">{formatBDT(booking.total_amount)}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-
-                <div className="mb-invoice-footer">
-                    <button type="button" className="close-btn" onClick={onClose}>Close</button>
-                    <button type="button" className="print-btn" onClick={() => window.print()}>
-                        <Printer size={14} /> Print
-                    </button>
-                </div>
             </div>
         </div>
     );

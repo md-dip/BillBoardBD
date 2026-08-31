@@ -7,11 +7,14 @@ use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\User;
 use App\Notifications\BookingStatusNotification;
+use App\Services\InvoiceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
+    public function __construct(private readonly InvoiceService $invoices) {}
+
     public function recordBalance(Request $request, Booking $booking): JsonResponse
     {
         if ($booking->status !== 'confirmed') {
@@ -62,7 +65,7 @@ class PaymentController extends Controller
         }
 
         $booking->update(['status' => 'paid_in_full']);
-        $booking = $booking->fresh(['billboard.owner']);
+        $booking = $booking->fresh(['billboard.owner', 'user']);
 
         if ($owner = $booking->billboard?->owner) {
             $owner->notify(new BookingStatusNotification(
@@ -74,6 +77,14 @@ class PaymentController extends Controller
         foreach (User::query()->where('role', 'admin')->get() as $admin) {
             $admin->notify(new BookingStatusNotification($booking, 'Payment recorded', "Final payment recorded for \"{$booking->billboard?->title}\"."));
         }
+
+        // Booking fully paid → the final invoice is generated now.
+        $invoice = $this->invoices->issue($booking, 'final');
+        $booking->user?->notify(new BookingStatusNotification(
+            $booking,
+            'Final invoice ready',
+            "Invoice {$invoice->number} for \"{$booking->billboard?->title}\" is ready — your booking is now paid in full.",
+        ));
 
         return response()->json([
             'success' => true,

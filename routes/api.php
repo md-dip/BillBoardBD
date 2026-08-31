@@ -38,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/bookings/hold', [BookingController::class, 'hold']);                          // step 1
     Route::post('/bookings/{booking}/campaign', [BookingController::class, 'submitCampaign']);  // step 2
     Route::get('/bookings/my', [BookingController::class, 'myBookings']);                        // My Bookings
+    Route::get('/bookings/{booking}/invoice', [BookingController::class, 'invoice']);            // advance/final invoice
 
     // Mock payment gateway
     Route::post('/payments/{payment}/pay', [PaymentController::class, 'pay']);                   // step 3
@@ -56,6 +57,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
     // Bookings review + approval workflow
     Route::get('/bookings', [AdminBookingController::class, 'index']);
+    Route::get('/bookings/{booking}/invoice', [AdminBookingController::class, 'invoice']);
     Route::patch('/bookings/{booking}/approve', [AdminBookingController::class, 'approve']);
     Route::patch('/bookings/{booking}/reject', [AdminBookingController::class, 'reject']);
     Route::post('/bookings/{booking}/balance-payment', [AdminPaymentController::class, 'recordBalance']);
