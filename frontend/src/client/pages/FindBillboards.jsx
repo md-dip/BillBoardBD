@@ -101,6 +101,7 @@ export default function FindBillboards() {
     const [radius, setRadius] = useState(null);
     const [userPos, setUserPos] = useState(null);
     const [geoError, setGeoError] = useState(null);
+    const [nameQuery, setNameQuery] = useState('');
     const [typeFilter, setTypeFilter] = useState('');
     const [sizeFilter, setSizeFilter] = useState('');
     const [minPrice, setMinPrice] = useState('');
@@ -158,6 +159,7 @@ export default function FindBillboards() {
     };
 
     const filteredBillboards = billboards.filter((b) => {
+        if (nameQuery.trim() && !b.title.toLowerCase().includes(nameQuery.trim().toLowerCase())) return false;
         if (typeFilter && b.type !== typeFilter) return false;
         if (sizeFilter.trim() && !normalizeSize(b.size).includes(normalizeSize(sizeFilter))) return false;
         const price = effectivePrice(b);
@@ -187,6 +189,16 @@ export default function FindBillboards() {
                     {geoError && (
                         <p className="geo-warning">📍 Location unavailable showing all boards</p>
                     )}
+
+                    <div className="filter-search-row">
+                        <input
+                            className="filter-search"
+                            type="search"
+                            placeholder="Search by billboard name…"
+                            value={nameQuery}
+                            onChange={(e) => setNameQuery(e.target.value)}
+                        />
+                    </div>
 
                     <div className="radius-pills">
                         {RADII.map((r) => (
