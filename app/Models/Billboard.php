@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,28 @@ class Billboard extends Model
         'daily_rate', 'monthly_rate', 'pricing_mode', 'photo', 'rating', 'status',
         'permit_expiry_date',
     ];
+
+    protected $appends = ['photo_url'];
+
+    /**
+     * Image URL for the frontend. Photos live at frontend/public/billboards/<id>.jpg
+     * (committed, served by the SPA itself), so `photo` is already a usable
+     * root-relative URL like "/billboards/1.jpg". Absolute URLs pass through; a
+     * legacy bare path gets a leading slash. Null when there is no photo.
+     */
+    protected function photoUrl(): Attribute
+    {
+        return Attribute::get(function () {
+            if (! $this->photo) {
+                return null;
+            }
+            if (str_starts_with($this->photo, 'http') || str_starts_with($this->photo, '/')) {
+                return $this->photo;
+            }
+
+            return '/'.ltrim($this->photo, '/');
+        });
+    }
 
     protected function casts(): array
     {

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SettingSeeder::class,
             BillboardSeeder::class,
+            BillboardPhotoSeeder::class,
             UserSeeder::class,
             OwnerDemoSeeder::class,
         ]);

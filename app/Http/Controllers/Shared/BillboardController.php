@@ -34,11 +34,11 @@ class BillboardController extends Controller
         // Haversine formula: distance in km between two lat/lng points on Earth.
         // 6371 = Earth's mean radius in kilometers.
         // We compute distance in an inner subquery so WHERE can filter on it.
-        $haversine = "(6371 * acos(
+        $haversine = '(6371 * acos(
             cos(radians(?)) * cos(radians(latitude)) *
             cos(radians(longitude) - radians(?)) +
             sin(radians(?)) * sin(radians(latitude))
-        ))";
+        ))';
 
         $billboards = DB::table(DB::raw("(
             SELECT *, {$haversine} AS distance_km
@@ -48,7 +48,17 @@ class BillboardController extends Controller
             ->addBinding([$lat, $lng, $lat], 'select')
             ->where('distance_km', '<=', $radius)
             ->orderBy('distance_km')
-            ->get();
+            ->get()
+            // raw rows skip the Eloquent accessor, so mirror photo_url here too
+            ->map(function ($b) {
+                $b->photo_url = match (true) {
+                    empty($b->photo) => null,
+                    str_starts_with($b->photo, 'http'), str_starts_with($b->photo, '/') => $b->photo,
+                    default => '/'.ltrim($b->photo, '/'),
+                };
+
+                return $b;
+            });
 
         return response()->json([
             'success' => true,

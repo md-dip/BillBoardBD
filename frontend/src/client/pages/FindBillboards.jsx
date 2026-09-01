@@ -265,7 +265,11 @@ export default function FindBillboards() {
                             className={`board-card-link ${selectedId === b.id ? 'selected' : ''}`}
                         >
                             <div className="board-card">
-                                <div className="board-photo">No photo</div>
+                                <div className="board-photo">
+                                    {b.photo_url
+                                        ? <img src={b.photo_url} alt={b.title} className="board-photo-img" />
+                                        : 'No photo'}
+                                </div>
                                 <div className="board-info">
                                     <div className="board-title-row">
                                         <h2>{b.title}</h2>
@@ -324,6 +328,9 @@ export default function FindBillboards() {
                             }}
                         >
                             <Popup>
+                                {b.photo_url && (
+                                    <img src={b.photo_url} alt={b.title} className="popup-photo" />
+                                )}
                                 <strong>{b.title}</strong><br />
                                 {b.address}<br />
                                 <span style={{color: TYPE_COLORS[b.type], fontWeight: 600}}>

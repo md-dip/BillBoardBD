@@ -75,8 +75,8 @@ export default function BillboardDetail() {
 
             <div>
                 <div className="detail-photo">
-                    {billboard.photo ? (
-                        <img src={billboard.photo} alt={billboard.title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
+                    {billboard.photo_url ? (
+                        <img src={billboard.photo_url} alt={billboard.title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
                     ) : (
                         'No photo available'
                     )}
