@@ -1,9 +1,8 @@
 import L from 'leaflet';
 
 function markerColor(billboard) {
-  if (billboard.status === 'booked') return '#ef4444';
-  if (billboard.status === 'maintenance') return '#f59e0b';
-  if (billboard.status === 'hidden') return '#94a3b8';
+  // A billboard's marker colour is fixed by its type / group - status
+  // (booked, maintenance, hidden) never changes it.
   switch (billboard.type) {
     case 'led':
       return '#8b5cf6';
@@ -32,7 +31,7 @@ function markerColor(billboard) {
   }
 }
 
-/** A billboard-on-a-pole glyph, colored by status/type. */
+/** A billboard-on-a-pole glyph, coloured by billboard type only. */
 export function getBillboardIcon(billboard) {
   const color = markerColor(billboard);
   const svg = `
