@@ -4,7 +4,7 @@ One customised prompt for every one of the 99 seeded billboards. Paste a prompt 
 
 **How the 12 slices map to real structures:** `unipole` = one single steel pole; `multipole` = 2-4 pole braced frame; `gantry` = spans over the road; `rooftop` = on a building roof; `wall` = vinyl wrap flat on a building side-wall; `led` = digital video screen; `neon` = small glowing-tube shop sign; `backlit` = internally-lit light box; `frontlit` = lit by external flood lamps; `freestanding` = low ground-mounted frame; `static` = ordinary printed (non-digital) hoarding.
 
-**Lighting rule:** only `led`, `neon`, `backlit` and `frontlit` are illuminated - every other type (`unipole`, `multipole`, `gantry`, `rooftop`, `wall`, `freestanding`, `static`) is a plain matte printed face with **no lamps, no light box, no screen, no neon**. Each prompt states this explicitly so the generator doesn't add floodlights to a unipole, extra poles to a unipole, etc.
+**Lighting rule:** only `led`, `neon`, `backlit` and `frontlit` are illuminated - every other type (`unipole`, `multipole`, `gantry`, `rooftop`, `wall`, `freestanding`, `static`) is a plain matte printed face with **no lamps, no light box, no screen, no neon**. Each prompt states this explicitly so the generator doesn't add floodlights to a unipole, extra poles to a unipole, etc. **`backlit` prompts are always a NIGHT scene** - the whole point is the panel glowing from the inside against a dark street, so every backlit prompt forces night light and 'light source is inside the box'.
 
 
 ---
@@ -545,21 +545,22 @@ electronic screen emitting its own light - not a printed sheet with lamps pointe
 not a translucent glowing light box (backlit), not neon tubing. The billboard is located at Road 11,
 Banani, Dhaka; the visible ad face is about 15ft x 25ft (15ft wide by 25ft tall). On the face: a
 telecom home-internet package advert with a router and speed figures (fictional ISP). Setting:
-glass-clad corporate office towers catching the light, with light traffic, just a few rickshaws and
-pedestrians on the road. Board lighting: the LED panel bright and clearly powered on, emitting its
-own light. Ambient light & weather: blue-hour dusk, street lamps and shopfronts glowing along the
-road, unusually crisp, clean air right after rain. Camera: eye-level shot from the opposite side of
-the road, 70 mm slightly compressed look from across the intersection. Photorealistic editorial
-street photograph, real-world out-of-home advertising documentation style, shot on a full-frame
-DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of field, authentic
-Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-detailed,
-looks like a genuine site photo taken for a media-owner's inventory listing. Avoid: cartoon or CGI /
-3D-render look, illustration, warped or gibberish text, a billboard floating with no visible
-support, Western or European streetscape, snow or autumn leaves, an absurdly oversized billboard,
-more than one main billboard, duplicated structures, heavy lens flare, watermark, border, frame. Do
-NOT borrow features from any other billboard category - no lighting rig, light box, LED screen, neon
-tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS board's type
-described above. (inventory reference BBD-003 - keep this composition unique)
+glass-clad corporate office towers, their windows mirroring the surrounding city lights, with light
+traffic, just a few rickshaws and pedestrians on the road. Board lighting: the LED panel bright and
+clearly powered on, emitting its own light. Ambient light & weather: blue-hour dusk, street lamps
+and shopfronts glowing along the road, unusually crisp, clean air right after rain. Camera: eye-
+level shot from the opposite side of the road, 70 mm slightly compressed look from across the
+intersection. Photorealistic editorial street photograph, real-world out-of-home advertising
+documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard
+face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation,
+high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-owner's
+inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a
+billboard floating with no visible support, Western or European streetscape, snow or autumn leaves,
+an absurdly oversized billboard, more than one main billboard, duplicated structures, heavy lens
+flare, watermark, border, frame. Do NOT borrow features from any other billboard category - no
+lighting rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless
+it is explicitly part of THIS board's type described above. (inventory reference BBD-003 - keep this
+composition unique)
 ```
 
 ### #9 - Mirpur-10 Circle LED
@@ -685,22 +686,22 @@ electronic screen emitting its own light - not a printed sheet with lamps pointe
 not a translucent glowing light box (backlit), not neon tubing. The billboard is located at Zero
 Point, Gulistan, Dhaka; the visible ad face is about 15ft x 25ft (15ft wide by 25ft tall). On the
 face: a generic colourful mobile-network promotion (bright gradient, big happy faces, NO real brand
-logo). Setting: glass-clad corporate office towers catching the light, with heavy mixed Dhaka
-traffic below - local buses, green CNG auto-rickshaws, cycle rickshaws, motorbikes. Board lighting:
-the LED panel bright and clearly powered on, emitting its own light. Ambient light & weather: warm
-evening a few minutes after sunset, the sky still glowing orange, a thin layer of city haze
-softening the distance. Camera: tight three-quarter framing that exaggerates the scale of the
-structure, 70 mm slightly compressed look from across the intersection. Photorealistic editorial
-street photograph, real-world out-of-home advertising documentation style, shot on a full-frame
-DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of field, authentic
-Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-detailed,
-looks like a genuine site photo taken for a media-owner's inventory listing. Avoid: cartoon or CGI /
-3D-render look, illustration, warped or gibberish text, a billboard floating with no visible
-support, Western or European streetscape, snow or autumn leaves, an absurdly oversized billboard,
-more than one main billboard, duplicated structures, heavy lens flare, watermark, border, frame. Do
-NOT borrow features from any other billboard category - no lighting rig, light box, LED screen, neon
-tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS board's type
-described above. (inventory reference BBD-038 - keep this composition unique)
+logo). Setting: glass-clad corporate office towers, their windows mirroring the surrounding city
+lights, with heavy mixed Dhaka traffic below - local buses, green CNG auto-rickshaws, cycle
+rickshaws, motorbikes. Board lighting: the LED panel bright and clearly powered on, emitting its own
+light. Ambient light & weather: warm evening a few minutes after sunset, the sky still glowing
+orange, a thin layer of city haze softening the distance. Camera: tight three-quarter framing that
+exaggerates the scale of the structure, 70 mm slightly compressed look from across the intersection.
+Photorealistic editorial street photograph, real-world out-of-home advertising documentation style,
+shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of
+field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range,
+ultra-detailed, looks like a genuine site photo taken for a media-owner's inventory listing. Avoid:
+cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard floating with
+no visible support, Western or European streetscape, snow or autumn leaves, an absurdly oversized
+billboard, more than one main billboard, duplicated structures, heavy lens flare, watermark, border,
+frame. Do NOT borrow features from any other billboard category - no lighting rig, light box, LED
+screen, neon tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS
+board's type described above. (inventory reference BBD-038 - keep this composition unique)
 ```
 
 ### #42 - Kuril Bishwa Road LED
@@ -888,22 +889,22 @@ light box, no neon tubing, no external flood lamps whatsoever. Just a printed sh
 frame. The billboard is located at Badda Link Road, Dhaka; the visible ad face is about 20ft x 10ft
 (20ft wide by 10ft tall). On the face: a beverage / tea brand advert with steam and warm tones
 (fictional brand) - printed flat on a matte flex sheet, the face itself does NOT glow or light up.
-Setting: glass-clad corporate office towers catching the light, with light traffic, just a few
-rickshaws and pedestrians on the road. Board lighting: the printed face itself is unlit, only
-catching daylight and ambient street light - no lamps, no light box, no screen. Ambient light &
-weather: cool hazy winter morning, low sun, slight mist and dust in the air, a completely clear dry-
-season sky. Camera: from a nearby pedestrian foot-overbridge looking across at the face, 35 mm
-reportage framing. Photorealistic editorial street photograph, real-world out-of-home advertising
-documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard
-face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation,
-high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-owner's
-inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a
-billboard floating with no visible support, Western or European streetscape, snow or autumn leaves,
-an absurdly oversized billboard, more than one main billboard, duplicated structures, heavy lens
-flare, watermark, border, frame. Do NOT borrow features from any other billboard category - no
-lighting rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless
-it is explicitly part of THIS board's type described above. (inventory reference BBD-021 - keep this
-composition unique)
+Setting: glass-clad corporate office towers, their windows mirroring the surrounding city lights,
+with light traffic, just a few rickshaws and pedestrians on the road. Board lighting: the printed
+face itself is unlit, only catching daylight and ambient street light - no lamps, no light box, no
+screen. Ambient light & weather: cool hazy winter morning, low sun, slight mist and dust in the air,
+a completely clear dry-season sky. Camera: from a nearby pedestrian foot-overbridge looking across
+at the face, 35 mm reportage framing. Photorealistic editorial street photograph, real-world out-of-
+home advertising documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on
+the billboard face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2
+landscape orientation, high dynamic range, ultra-detailed, looks like a genuine site photo taken for
+a media-owner's inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or
+gibberish text, a billboard floating with no visible support, Western or European streetscape, snow
+or autumn leaves, an absurdly oversized billboard, more than one main billboard, duplicated
+structures, heavy lens flare, watermark, border, frame. Do NOT borrow features from any other
+billboard category - no lighting rig, light box, LED screen, neon tubing, extra poles, gantry span
+or rooftop mount unless it is explicitly part of THIS board's type described above. (inventory
+reference BBD-021 - keep this composition unique)
 ```
 
 ### #58 - Mohammadpur Town Hall Static Panel
@@ -1401,22 +1402,22 @@ lighting hardware of any kind - no flood lamps, no light box, no LED, no neon; p
 face. The billboard is located at Gulshan 1 DCC Market, Gulshan, Dhaka; the visible ad face is about
 30ft x 15ft (30ft wide by 15ft tall). On the face: a generic colourful mobile-network promotion
 (bright gradient, big happy faces, NO real brand logo) - printed flat on a matte flex sheet, the
-face itself does NOT glow or light up. Setting: glass-clad corporate office towers catching the
-light, with heavy mixed Dhaka traffic below - local buses, green CNG auto-rickshaws, cycle
-rickshaws, motorbikes. Board lighting: the printed face itself is unlit, only catching daylight and
-ambient street light - no lamps, no light box, no screen. Ambient light & weather: flat soft light
-under a bright overcast sky, a thin layer of city haze softening the distance. Camera: eye-level
-shot from the opposite side of the road, 50 mm natural perspective. Photorealistic editorial street
-photograph, real-world out-of-home advertising documentation style, shot on a full-frame DSLR, true-
-to-life colour, sharp focus on the billboard face, natural depth of field, authentic Dhaka /
-Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-detailed, looks like
-a genuine site photo taken for a media-owner's inventory listing. Avoid: cartoon or CGI / 3D-render
-look, illustration, warped or gibberish text, a billboard floating with no visible support, Western
-or European streetscape, snow or autumn leaves, an absurdly oversized billboard, more than one main
-billboard, duplicated structures, heavy lens flare, watermark, border, frame. Do NOT borrow features
-from any other billboard category - no lighting rig, light box, LED screen, neon tubing, extra
-poles, gantry span or rooftop mount unless it is explicitly part of THIS board's type described
-above. (inventory reference BBD-002 - keep this composition unique)
+face itself does NOT glow or light up. Setting: glass-clad corporate office towers, their windows
+mirroring the surrounding city lights, with heavy mixed Dhaka traffic below - local buses, green CNG
+auto-rickshaws, cycle rickshaws, motorbikes. Board lighting: the printed face itself is unlit, only
+catching daylight and ambient street light - no lamps, no light box, no screen. Ambient light &
+weather: flat soft light under a bright overcast sky, a thin layer of city haze softening the
+distance. Camera: eye-level shot from the opposite side of the road, 50 mm natural perspective.
+Photorealistic editorial street photograph, real-world out-of-home advertising documentation style,
+shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of
+field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range,
+ultra-detailed, looks like a genuine site photo taken for a media-owner's inventory listing. Avoid:
+cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard floating with
+no visible support, Western or European streetscape, snow or autumn leaves, an absurdly oversized
+billboard, more than one main billboard, duplicated structures, heavy lens flare, watermark, border,
+frame. Do NOT borrow features from any other billboard category - no lighting rig, light box, LED
+screen, neon tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS
+board's type described above. (inventory reference BBD-002 - keep this composition unique)
 ```
 
 ### #7 - Motijheel Shapla Chattar Billboard
@@ -1707,22 +1708,23 @@ building. No lighting - no flood lamps, no light box, no LED, no neon; just the 
 wall. The billboard is located at Rampura Bridge, Dhaka; the visible ad face is about 25ft x 12ft
 (25ft wide by 12ft tall). On the face: a real-estate apartment-project advert - a rendered building
 and a phone number (fictional developer) - printed flat on a matte flex sheet, the face itself does
-NOT glow or light up. Setting: glass-clad corporate office towers catching the light, with heavy
-mixed Dhaka traffic below - local buses, green CNG auto-rickshaws, cycle rickshaws, motorbikes.
-Board lighting: the printed face itself is unlit, only catching daylight and ambient street light -
-no lamps, no light box, no screen. Ambient light & weather: harsh vertical noon sun, short dark
-shadows, heat haze, a few tall monsoon clouds building on the horizon. Camera: from a nearby
-pedestrian foot-overbridge looking across at the face, 24 mm wide environmental view. Photorealistic
-editorial street photograph, real-world out-of-home advertising documentation style, shot on a full-
-frame DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of field,
-authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-
-detailed, looks like a genuine site photo taken for a media-owner's inventory listing. Avoid:
-cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard floating with
-no visible support, Western or European streetscape, snow or autumn leaves, an absurdly oversized
-billboard, more than one main billboard, duplicated structures, heavy lens flare, watermark, border,
-frame. Do NOT borrow features from any other billboard category - no lighting rig, light box, LED
-screen, neon tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS
-board's type described above. (inventory reference BBD-020 - keep this composition unique)
+NOT glow or light up. Setting: glass-clad corporate office towers, their windows mirroring the
+surrounding city lights, with heavy mixed Dhaka traffic below - local buses, green CNG auto-
+rickshaws, cycle rickshaws, motorbikes. Board lighting: the printed face itself is unlit, only
+catching daylight and ambient street light - no lamps, no light box, no screen. Ambient light &
+weather: harsh vertical noon sun, short dark shadows, heat haze, a few tall monsoon clouds building
+on the horizon. Camera: from a nearby pedestrian foot-overbridge looking across at the face, 24 mm
+wide environmental view. Photorealistic editorial street photograph, real-world out-of-home
+advertising documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the
+billboard face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape
+orientation, high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-
+owner's inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish
+text, a billboard floating with no visible support, Western or European streetscape, snow or autumn
+leaves, an absurdly oversized billboard, more than one main billboard, duplicated structures, heavy
+lens flare, watermark, border, frame. Do NOT borrow features from any other billboard category - no
+lighting rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless
+it is explicitly part of THIS board's type described above. (inventory reference BBD-020 - keep this
+composition unique)
 ```
 
 ### #26 - Tejgaon Industrial Area Wall
@@ -1797,22 +1799,23 @@ building. No lighting - no flood lamps, no light box, no LED, no neon; just the 
 wall. The billboard is located at Sayedabad Bus Terminal, Dhaka; the visible ad face is about 25ft x
 12ft (25ft wide by 12ft tall). On the face: a telecom home-internet package advert with a router and
 speed figures (fictional ISP) - printed flat on a matte flex sheet, the face itself does NOT glow or
-light up. Setting: glass-clad corporate office towers catching the light, with light traffic, just a
-few rickshaws and pedestrians on the road. Board lighting: the printed face itself is unlit, only
-catching daylight and ambient street light - no lamps, no light box, no screen. Ambient light &
-weather: bright afternoon just after monsoon rain, wet road surface throwing reflections, unusually
-crisp, clean air right after rain. Camera: tight three-quarter framing that exaggerates the scale of
-the structure, 135 mm telephoto isolating the board against the sky. Photorealistic editorial street
-photograph, real-world out-of-home advertising documentation style, shot on a full-frame DSLR, true-
-to-life colour, sharp focus on the billboard face, natural depth of field, authentic Dhaka /
-Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-detailed, looks like
-a genuine site photo taken for a media-owner's inventory listing. Avoid: cartoon or CGI / 3D-render
-look, illustration, warped or gibberish text, a billboard floating with no visible support, Western
-or European streetscape, snow or autumn leaves, an absurdly oversized billboard, more than one main
-billboard, duplicated structures, heavy lens flare, watermark, border, frame. Do NOT borrow features
-from any other billboard category - no lighting rig, light box, LED screen, neon tubing, extra
-poles, gantry span or rooftop mount unless it is explicitly part of THIS board's type described
-above. (inventory reference BBD-039 - keep this composition unique)
+light up. Setting: glass-clad corporate office towers, their windows mirroring the surrounding city
+lights, with light traffic, just a few rickshaws and pedestrians on the road. Board lighting: the
+printed face itself is unlit, only catching daylight and ambient street light - no lamps, no light
+box, no screen. Ambient light & weather: bright afternoon just after monsoon rain, wet road surface
+throwing reflections, unusually crisp, clean air right after rain. Camera: tight three-quarter
+framing that exaggerates the scale of the structure, 135 mm telephoto isolating the board against
+the sky. Photorealistic editorial street photograph, real-world out-of-home advertising
+documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard
+face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation,
+high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-owner's
+inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a
+billboard floating with no visible support, Western or European streetscape, snow or autumn leaves,
+an absurdly oversized billboard, more than one main billboard, duplicated structures, heavy lens
+flare, watermark, border, frame. Do NOT borrow features from any other billboard category - no
+lighting rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless
+it is explicitly part of THIS board's type described above. (inventory reference BBD-039 - keep this
+composition unique)
 ```
 
 ### #43 - Gabtoli Bus Terminal Wall
@@ -2359,219 +2362,279 @@ board's type described above. (inventory reference BBD-085 - keep this compositi
 `backlit` | 30ft x 15ft | Baridhara DOHS | BDT 250,000/month | rating 4.5 | booked
 
 ```text
-a BACKLIT light-box billboard: a sealed box with a translucent printed face lit EVENLY FROM BEHIND
-so the whole panel glows with a smooth uniform brightness, slim aluminium edge frame, crispest in
-low light. IMPORTANT, keep it strictly this type: The glow is internal and completely even - there
-are NO external lamps on arms (that is frontlit), it is NOT a pixel LED screen and NOT neon tubing.
-The billboard is located at Baridhara DOHS, Dhaka; the visible ad face is about 30ft x 15ft (30ft
-wide by 15ft tall). On the face: a government public-service message - dengue prevention or road-
-safety - in a formal layout. Setting: a level rail crossing with a lowered barrier and a waiting
-crowd, with an almost empty road early in the morning, shutters still down. Board lighting: the
-light-box glowing evenly from within. Ambient light & weather: harsh vertical noon sun, short dark
-shadows, heat haze, a few tall monsoon clouds building on the horizon. Camera: low-angle shot
-looking up at the face from the footpath directly below, 70 mm slightly compressed look from across
-the intersection. Photorealistic editorial street photograph, real-world out-of-home advertising
-documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard
-face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation,
-high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-owner's
-inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a
-billboard floating with no visible support, Western or European streetscape, snow or autumn leaves,
-an absurdly oversized billboard, more than one main billboard, duplicated structures, heavy lens
-flare, watermark, border, frame. Do NOT borrow features from any other billboard category - no
-lighting rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless
-it is explicitly part of THIS board's type described above. (inventory reference BBD-028 - keep this
-composition unique)
+a BACKLIT light-box billboard photographed AT NIGHT: a sealed box whose translucent printed face is
+lit ENTIRELY FROM INSIDE by fluorescent tubes / LED strips behind the graphic, so the whole panel
+glows with a smooth, even, self-contained light while the street around it is dark; slim aluminium
+edge frame, faint light spilling from the panel onto the frame and the ground just below. IMPORTANT,
+keep it strictly this type: The light source is INSIDE the box and nowhere else - the panel glows on
+its own against a dark night scene. NO external lamps on arms (that is frontlit), NOT a pixel/video
+LED screen, NOT neon tubing, and NOT a daytime shot - it must be night. The billboard is located at
+Baridhara DOHS, Dhaka; the visible ad face is about 30ft x 15ft (30ft wide by 15ft tall). On the
+face: a government public-service message - dengue prevention or road-safety - in a formal layout -
+the artwork is printed on the translucent panel and lit through from behind so its colours glow.
+Setting: a level rail crossing with a lowered barrier and a waiting crowd, with a handful of people
+waiting at a dimly lit bus stop under the board. Board lighting: the translucent face glowing bright
+and perfectly even from tubes / LED strips INSIDE the box - the panel itself is the main light
+source in the picture, no external fixtures anywhere. Scene & weather: deep evening, headlights and
+tail-lights streaking on the road below the softly glowing board, a few tall monsoon clouds building
+on the horizon. Camera: low-angle shot looking up at the face from the footpath directly below, 70
+mm slightly compressed look from across the intersection. Photorealistic editorial street
+photograph, real-world out-of-home advertising documentation style, shot on a full-frame DSLR, true-
+to-life colour, sharp focus on the billboard face, natural depth of field, authentic Dhaka /
+Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-detailed, looks like
+a genuine site photo taken for a media-owner's inventory listing. Night photograph: the illuminated
+panel is exposed correctly and reads bright and clean while everything around it falls into deep
+shadow; no daylight anywhere in the frame. Avoid: cartoon or CGI / 3D-render look, illustration,
+warped or gibberish text, a billboard floating with no visible support, Western or European
+streetscape, snow or autumn leaves, an absurdly oversized billboard, more than one main billboard,
+duplicated structures, heavy lens flare, watermark, border, frame. Do NOT borrow features from any
+other billboard category - no lighting rig, light box, LED screen, neon tubing, extra poles, gantry
+span or rooftop mount unless it is explicitly part of THIS board's type described above. (inventory
+reference BBD-028 - keep this composition unique)
 ```
 
 ### #56 - Uttara President Road Backlit Sign
 `backlit` | 20ft x 10ft | Uttara | BDT 188,000/month | rating 4.1 | available
 
 ```text
-a BACKLIT light-box billboard: a sealed box with a translucent printed face lit EVENLY FROM BEHIND
-so the whole panel glows with a smooth uniform brightness, slim aluminium edge frame, crispest in
-low light. IMPORTANT, keep it strictly this type: The glow is internal and completely even - there
-are NO external lamps on arms (that is frontlit), it is NOT a pixel LED screen and NOT neon tubing.
-The billboard is located at President Road, Sector 11, Uttara, Dhaka; the visible ad face is about
-20ft x 10ft (20ft wide by 10ft tall). On the face: a real-estate apartment-project advert - a
-rendered building and a phone number (fictional developer). Setting: glass-clad corporate office
-towers catching the light, with heavy mixed Dhaka traffic below - local buses, green CNG auto-
-rickshaws, cycle rickshaws, motorbikes. Board lighting: the light-box glowing evenly from within.
-Ambient light & weather: clear late-morning sun, hard blue sky, a few tall monsoon clouds building
-on the horizon. Camera: low-angle shot looking up at the face from the footpath directly below, 35
-mm reportage framing. Photorealistic editorial street photograph, real-world out-of-home advertising
+a BACKLIT light-box billboard photographed AT NIGHT: a sealed box whose translucent printed face is
+lit ENTIRELY FROM INSIDE by fluorescent tubes / LED strips behind the graphic, so the whole panel
+glows with a smooth, even, self-contained light while the street around it is dark; slim aluminium
+edge frame, faint light spilling from the panel onto the frame and the ground just below. IMPORTANT,
+keep it strictly this type: The light source is INSIDE the box and nowhere else - the panel glows on
+its own against a dark night scene. NO external lamps on arms (that is frontlit), NOT a pixel/video
+LED screen, NOT neon tubing, and NOT a daytime shot - it must be night. The billboard is located at
+President Road, Sector 11, Uttara, Dhaka; the visible ad face is about 20ft x 10ft (20ft wide by
+10ft tall). On the face: a real-estate apartment-project advert - a rendered building and a phone
+number (fictional developer) - the artwork is printed on the translucent panel and lit through from
+behind so its colours glow. Setting: glass-clad corporate office towers, their windows mirroring the
+surrounding city lights, with light late-evening traffic below - a few buses and CNGs with
+headlights on. Board lighting: the translucent face glowing bright and perfectly even from tubes /
+LED strips INSIDE the box - the panel itself is the main light source in the picture, no external
+fixtures anywhere. Scene & weather: full dark night, the street around it barely lit, the glowing
+panel by far the brightest thing in the frame, a few tall monsoon clouds building on the horizon.
+Camera: low-angle shot looking up at the face from the footpath directly below, 35 mm reportage
+framing. Photorealistic editorial street photograph, real-world out-of-home advertising
 documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard
 face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation,
 high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-owner's
-inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a
-billboard floating with no visible support, Western or European streetscape, snow or autumn leaves,
-an absurdly oversized billboard, more than one main billboard, duplicated structures, heavy lens
-flare, watermark, border, frame. Do NOT borrow features from any other billboard category - no
-lighting rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless
-it is explicitly part of THIS board's type described above. (inventory reference BBD-056 - keep this
-composition unique)
+inventory listing. Night photograph: the illuminated panel is exposed correctly and reads bright and
+clean while everything around it falls into deep shadow; no daylight anywhere in the frame. Avoid:
+cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard floating with
+no visible support, Western or European streetscape, snow or autumn leaves, an absurdly oversized
+billboard, more than one main billboard, duplicated structures, heavy lens flare, watermark, border,
+frame. Do NOT borrow features from any other billboard category - no lighting rig, light box, LED
+screen, neon tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS
+board's type described above. (inventory reference BBD-056 - keep this composition unique)
 ```
 
 ### #64 - Mirpur-11 Pallabi Backlit Sign
 `backlit` | 20ft x 10ft | Mirpur 11 | BDT 190,000/month | rating 4.2 | available
 
 ```text
-a BACKLIT light-box billboard: a sealed box with a translucent printed face lit EVENLY FROM BEHIND
-so the whole panel glows with a smooth uniform brightness, slim aluminium edge frame, crispest in
-low light. IMPORTANT, keep it strictly this type: The glow is internal and completely even - there
-are NO external lamps on arms (that is frontlit), it is NOT a pixel LED screen and NOT neon tubing.
-The billboard is located at Pallabi, Mirpur 11, Dhaka; the visible ad face is about 20ft x 10ft
-(20ft wide by 10ft tall). On the face: a government public-service message - dengue prevention or
-road-safety - in a formal layout. Setting: a level rail crossing with a lowered barrier and a
-waiting crowd, with an almost empty road early in the morning, shutters still down. Board lighting:
-the light-box glowing evenly from within. Ambient light & weather: clear late-morning sun, hard blue
-sky, a few tall monsoon clouds building on the horizon. Camera: wide establishing shot that shows
-the entire support structure ground-to-top, 135 mm telephoto isolating the board against the sky.
-Photorealistic editorial street photograph, real-world out-of-home advertising documentation style,
-shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of
-field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range,
-ultra-detailed, looks like a genuine site photo taken for a media-owner's inventory listing. Avoid:
-cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard floating with
-no visible support, Western or European streetscape, snow or autumn leaves, an absurdly oversized
-billboard, more than one main billboard, duplicated structures, heavy lens flare, watermark, border,
-frame. Do NOT borrow features from any other billboard category - no lighting rig, light box, LED
-screen, neon tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS
-board's type described above. (inventory reference BBD-064 - keep this composition unique)
+a BACKLIT light-box billboard photographed AT NIGHT: a sealed box whose translucent printed face is
+lit ENTIRELY FROM INSIDE by fluorescent tubes / LED strips behind the graphic, so the whole panel
+glows with a smooth, even, self-contained light while the street around it is dark; slim aluminium
+edge frame, faint light spilling from the panel onto the frame and the ground just below. IMPORTANT,
+keep it strictly this type: The light source is INSIDE the box and nowhere else - the panel glows on
+its own against a dark night scene. NO external lamps on arms (that is frontlit), NOT a pixel/video
+LED screen, NOT neon tubing, and NOT a daytime shot - it must be night. The billboard is located at
+Pallabi, Mirpur 11, Dhaka; the visible ad face is about 20ft x 10ft (20ft wide by 10ft tall). On the
+face: a government public-service message - dengue prevention or road-safety - in a formal layout -
+the artwork is printed on the translucent panel and lit through from behind so its colours glow.
+Setting: a level rail crossing with a lowered barrier and a waiting crowd, with a handful of people
+waiting at a dimly lit bus stop under the board. Board lighting: the translucent face glowing bright
+and perfectly even from tubes / LED strips INSIDE the box - the panel itself is the main light
+source in the picture, no external fixtures anywhere. Scene & weather: full dark night, the street
+around it barely lit, the glowing panel by far the brightest thing in the frame, a few tall monsoon
+clouds building on the horizon. Camera: wide establishing shot that shows the entire support
+structure ground-to-top, 135 mm telephoto isolating the board against the sky. Photorealistic
+editorial street photograph, real-world out-of-home advertising documentation style, shot on a full-
+frame DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of field,
+authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-
+detailed, looks like a genuine site photo taken for a media-owner's inventory listing. Night
+photograph: the illuminated panel is exposed correctly and reads bright and clean while everything
+around it falls into deep shadow; no daylight anywhere in the frame. Avoid: cartoon or CGI /
+3D-render look, illustration, warped or gibberish text, a billboard floating with no visible
+support, Western or European streetscape, snow or autumn leaves, an absurdly oversized billboard,
+more than one main billboard, duplicated structures, heavy lens flare, watermark, border, frame. Do
+NOT borrow features from any other billboard category - no lighting rig, light box, LED screen, neon
+tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS board's type
+described above. (inventory reference BBD-064 - keep this composition unique)
 ```
 
 ### #65 - Mirpur-12 Kalshi Backlit Panel
 `backlit` | 20ft x 10ft | Mirpur 12 | BDT 205,000/month | rating 4.3 | available
 
 ```text
-a BACKLIT light-box billboard: a sealed box with a translucent printed face lit EVENLY FROM BEHIND
-so the whole panel glows with a smooth uniform brightness, slim aluminium edge frame, crispest in
-low light. IMPORTANT, keep it strictly this type: The glow is internal and completely even - there
-are NO external lamps on arms (that is frontlit), it is NOT a pixel LED screen and NOT neon tubing.
-The billboard is located at Kalshi, Mirpur 12, Dhaka; the visible ad face is about 20ft x 10ft (20ft
-wide by 10ft tall). On the face: a clean corporate mobile-financial-service / bank advert, lots of
-flat blue and white (fictional brand). Setting: a level rail crossing with a lowered barrier and a
-waiting crowd, with an almost empty road early in the morning, shutters still down. Board lighting:
-the light-box glowing evenly from within. Ambient light & weather: warm golden-hour light in the
-late afternoon, long shadows, a completely clear dry-season sky. Camera: wide establishing shot that
-shows the entire support structure ground-to-top, 24 mm wide environmental view. Photorealistic
-editorial street photograph, real-world out-of-home advertising documentation style, shot on a full-
-frame DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of field,
-authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-
-detailed, looks like a genuine site photo taken for a media-owner's inventory listing. Avoid:
-cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard floating with
-no visible support, Western or European streetscape, snow or autumn leaves, an absurdly oversized
-billboard, more than one main billboard, duplicated structures, heavy lens flare, watermark, border,
-frame. Do NOT borrow features from any other billboard category - no lighting rig, light box, LED
-screen, neon tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS
-board's type described above. (inventory reference BBD-065 - keep this composition unique)
+a BACKLIT light-box billboard photographed AT NIGHT: a sealed box whose translucent printed face is
+lit ENTIRELY FROM INSIDE by fluorescent tubes / LED strips behind the graphic, so the whole panel
+glows with a smooth, even, self-contained light while the street around it is dark; slim aluminium
+edge frame, faint light spilling from the panel onto the frame and the ground just below. IMPORTANT,
+keep it strictly this type: The light source is INSIDE the box and nowhere else - the panel glows on
+its own against a dark night scene. NO external lamps on arms (that is frontlit), NOT a pixel/video
+LED screen, NOT neon tubing, and NOT a daytime shot - it must be night. The billboard is located at
+Kalshi, Mirpur 12, Dhaka; the visible ad face is about 20ft x 10ft (20ft wide by 10ft tall). On the
+face: a clean corporate mobile-financial-service / bank advert, lots of flat blue and white
+(fictional brand) - the artwork is printed on the translucent panel and lit through from behind so
+its colours glow. Setting: a level rail crossing with a lowered barrier and a waiting crowd, with a
+handful of people waiting at a dimly lit bus stop under the board. Board lighting: the translucent
+face glowing bright and perfectly even from tubes / LED strips INSIDE the box - the panel itself is
+the main light source in the picture, no external fixtures anywhere. Scene & weather: night, wet
+road after rain mirroring the panel's even glow in a long reflection, a completely clear dry-season
+sky. Camera: wide establishing shot that shows the entire support structure ground-to-top, 24 mm
+wide environmental view. Photorealistic editorial street photograph, real-world out-of-home
+advertising documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the
+billboard face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape
+orientation, high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-
+owner's inventory listing. Night photograph: the illuminated panel is exposed correctly and reads
+bright and clean while everything around it falls into deep shadow; no daylight anywhere in the
+frame. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard
+floating with no visible support, Western or European streetscape, snow or autumn leaves, an
+absurdly oversized billboard, more than one main billboard, duplicated structures, heavy lens flare,
+watermark, border, frame. Do NOT borrow features from any other billboard category - no lighting
+rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless it is
+explicitly part of THIS board's type described above. (inventory reference BBD-065 - keep this
+composition unique)
 ```
 
 ### #66 - Mirpur-14 Signboard Backlit Display
 `backlit` | 20ft x 10ft | Mirpur 14 | BDT 198,000/month | rating 4.1 | available
 
 ```text
-a BACKLIT light-box billboard: a sealed box with a translucent printed face lit EVENLY FROM BEHIND
-so the whole panel glows with a smooth uniform brightness, slim aluminium edge frame, crispest in
-low light. IMPORTANT, keep it strictly this type: The glow is internal and completely even - there
-are NO external lamps on arms (that is frontlit), it is NOT a pixel LED screen and NOT neon tubing.
-The billboard is located at Signboard, Mirpur 14, Dhaka; the visible ad face is about 20ft x 10ft
-(20ft wide by 10ft tall). On the face: a ride-hailing / food-delivery app advert (fictional app,
-generic phone mock-up). Setting: a mosque dome and minaret rising a block behind, with busy office-
-hour foot traffic streaming along the footpath. Board lighting: the light-box glowing evenly from
-within. Ambient light & weather: flat soft light under a bright overcast sky, a thin layer of city
-haze softening the distance. Camera: tight three-quarter framing that exaggerates the scale of the
+a BACKLIT light-box billboard photographed AT NIGHT: a sealed box whose translucent printed face is
+lit ENTIRELY FROM INSIDE by fluorescent tubes / LED strips behind the graphic, so the whole panel
+glows with a smooth, even, self-contained light while the street around it is dark; slim aluminium
+edge frame, faint light spilling from the panel onto the frame and the ground just below. IMPORTANT,
+keep it strictly this type: The light source is INSIDE the box and nowhere else - the panel glows on
+its own against a dark night scene. NO external lamps on arms (that is frontlit), NOT a pixel/video
+LED screen, NOT neon tubing, and NOT a daytime shot - it must be night. The billboard is located at
+Signboard, Mirpur 14, Dhaka; the visible ad face is about 20ft x 10ft (20ft wide by 10ft tall). On
+the face: a ride-hailing / food-delivery app advert (fictional app, generic phone mock-up) - the
+artwork is printed on the translucent panel and lit through from behind so its colours glow.
+Setting: a mosque dome and minaret rising a block behind, with a quiet road, a lone motorbike
+passing, pools of street-lamp light on the tarmac. Board lighting: the translucent face glowing
+bright and perfectly even from tubes / LED strips INSIDE the box - the panel itself is the main
+light source in the picture, no external fixtures anywhere. Scene & weather: late night, sky
+completely black, only distant street lamps and a few lit windows behind, a thin layer of city haze
+softening the distance. Camera: tight three-quarter framing that exaggerates the scale of the
 structure, 35 mm reportage framing. Photorealistic editorial street photograph, real-world out-of-
 home advertising documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on
 the billboard face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2
 landscape orientation, high dynamic range, ultra-detailed, looks like a genuine site photo taken for
-a media-owner's inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or
-gibberish text, a billboard floating with no visible support, Western or European streetscape, snow
-or autumn leaves, an absurdly oversized billboard, more than one main billboard, duplicated
-structures, heavy lens flare, watermark, border, frame. Do NOT borrow features from any other
-billboard category - no lighting rig, light box, LED screen, neon tubing, extra poles, gantry span
-or rooftop mount unless it is explicitly part of THIS board's type described above. (inventory
-reference BBD-066 - keep this composition unique)
+a media-owner's inventory listing. Night photograph: the illuminated panel is exposed correctly and
+reads bright and clean while everything around it falls into deep shadow; no daylight anywhere in
+the frame. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a
+billboard floating with no visible support, Western or European streetscape, snow or autumn leaves,
+an absurdly oversized billboard, more than one main billboard, duplicated structures, heavy lens
+flare, watermark, border, frame. Do NOT borrow features from any other billboard category - no
+lighting rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless
+it is explicitly part of THIS board's type described above. (inventory reference BBD-066 - keep this
+composition unique)
 ```
 
 ### #67 - Agargaon IDB Bhaban Backlit Sign
 `backlit` | 20ft x 10ft | Agargaon | BDT 215,000/month | rating 4.4 | available
 
 ```text
-a BACKLIT light-box billboard: a sealed box with a translucent printed face lit EVENLY FROM BEHIND
-so the whole panel glows with a smooth uniform brightness, slim aluminium edge frame, crispest in
-low light. IMPORTANT, keep it strictly this type: The glow is internal and completely even - there
-are NO external lamps on arms (that is frontlit), it is NOT a pixel LED screen and NOT neon tubing.
-The billboard is located at IDB Bhaban, Agargaon, Dhaka; the visible ad face is about 20ft x 10ft
-(20ft wide by 10ft tall). On the face: a fashion / clothing retail campaign with a single model and
-a sale line (invented brand name). Setting: a mosque dome and minaret rising a block behind, with
-busy office-hour foot traffic streaming along the footpath. Board lighting: the light-box glowing
-evenly from within. Ambient light & weather: blue-hour dusk, street lamps and shopfronts glowing
-along the road, unusually crisp, clean air right after rain. Camera: tight three-quarter framing
-that exaggerates the scale of the structure, 50 mm natural perspective. Photorealistic editorial
-street photograph, real-world out-of-home advertising documentation style, shot on a full-frame
-DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of field, authentic
-Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-detailed,
-looks like a genuine site photo taken for a media-owner's inventory listing. Avoid: cartoon or CGI /
-3D-render look, illustration, warped or gibberish text, a billboard floating with no visible
-support, Western or European streetscape, snow or autumn leaves, an absurdly oversized billboard,
-more than one main billboard, duplicated structures, heavy lens flare, watermark, border, frame. Do
-NOT borrow features from any other billboard category - no lighting rig, light box, LED screen, neon
-tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS board's type
-described above. (inventory reference BBD-067 - keep this composition unique)
+a BACKLIT light-box billboard photographed AT NIGHT: a sealed box whose translucent printed face is
+lit ENTIRELY FROM INSIDE by fluorescent tubes / LED strips behind the graphic, so the whole panel
+glows with a smooth, even, self-contained light while the street around it is dark; slim aluminium
+edge frame, faint light spilling from the panel onto the frame and the ground just below. IMPORTANT,
+keep it strictly this type: The light source is INSIDE the box and nowhere else - the panel glows on
+its own against a dark night scene. NO external lamps on arms (that is frontlit), NOT a pixel/video
+LED screen, NOT neon tubing, and NOT a daytime shot - it must be night. The billboard is located at
+IDB Bhaban, Agargaon, Dhaka; the visible ad face is about 20ft x 10ft (20ft wide by 10ft tall). On
+the face: a fashion / clothing retail campaign with a single model and a sale line (invented brand
+name) - the artwork is printed on the translucent panel and lit through from behind so its colours
+glow. Setting: a mosque dome and minaret rising a block behind, with a quiet road, a lone motorbike
+passing, pools of street-lamp light on the tarmac. Board lighting: the translucent face glowing
+bright and perfectly even from tubes / LED strips INSIDE the box - the panel itself is the main
+light source in the picture, no external fixtures anywhere. Scene & weather: night, a faint orange
+city glow low on the horizon, the foreground dropping into shadow, unusually crisp, clean air right
+after rain. Camera: tight three-quarter framing that exaggerates the scale of the structure, 50 mm
+natural perspective. Photorealistic editorial street photograph, real-world out-of-home advertising
+documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard
+face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation,
+high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-owner's
+inventory listing. Night photograph: the illuminated panel is exposed correctly and reads bright and
+clean while everything around it falls into deep shadow; no daylight anywhere in the frame. Avoid:
+cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard floating with
+no visible support, Western or European streetscape, snow or autumn leaves, an absurdly oversized
+billboard, more than one main billboard, duplicated structures, heavy lens flare, watermark, border,
+frame. Do NOT borrow features from any other billboard category - no lighting rig, light box, LED
+screen, neon tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS
+board's type described above. (inventory reference BBD-067 - keep this composition unique)
 ```
 
 ### #68 - Sher-e-Bangla Nagar Backlit Panel
 `backlit` | 20ft x 10ft | Sher-e-Bangla Nagar | BDT 208,000/month | rating 4.2 | available
 
 ```text
-a BACKLIT light-box billboard: a sealed box with a translucent printed face lit EVENLY FROM BEHIND
-so the whole panel glows with a smooth uniform brightness, slim aluminium edge frame, crispest in
-low light. IMPORTANT, keep it strictly this type: The glow is internal and completely even - there
-are NO external lamps on arms (that is frontlit), it is NOT a pixel LED screen and NOT neon tubing.
-The billboard is located at Sher-e-Bangla Nagar, Dhaka; the visible ad face is about 20ft x 10ft
-(20ft wide by 10ft tall). On the face: a real-estate apartment-project advert - a rendered building
-and a phone number (fictional developer). Setting: a wide intersection with painted lane markings
-and a traffic police box, with busy office-hour foot traffic streaming along the footpath. Board
-lighting: the light-box glowing evenly from within. Ambient light & weather: harsh vertical noon
-sun, short dark shadows, heat haze, a few tall monsoon clouds building on the horizon. Camera: from
-a side street, the billboard sitting in the mid-ground above the traffic, 70 mm slightly compressed
-look from across the intersection. Photorealistic editorial street photograph, real-world out-of-
-home advertising documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on
-the billboard face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2
-landscape orientation, high dynamic range, ultra-detailed, looks like a genuine site photo taken for
-a media-owner's inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or
-gibberish text, a billboard floating with no visible support, Western or European streetscape, snow
-or autumn leaves, an absurdly oversized billboard, more than one main billboard, duplicated
-structures, heavy lens flare, watermark, border, frame. Do NOT borrow features from any other
-billboard category - no lighting rig, light box, LED screen, neon tubing, extra poles, gantry span
-or rooftop mount unless it is explicitly part of THIS board's type described above. (inventory
-reference BBD-068 - keep this composition unique)
+a BACKLIT light-box billboard photographed AT NIGHT: a sealed box whose translucent printed face is
+lit ENTIRELY FROM INSIDE by fluorescent tubes / LED strips behind the graphic, so the whole panel
+glows with a smooth, even, self-contained light while the street around it is dark; slim aluminium
+edge frame, faint light spilling from the panel onto the frame and the ground just below. IMPORTANT,
+keep it strictly this type: The light source is INSIDE the box and nowhere else - the panel glows on
+its own against a dark night scene. NO external lamps on arms (that is frontlit), NOT a pixel/video
+LED screen, NOT neon tubing, and NOT a daytime shot - it must be night. The billboard is located at
+Sher-e-Bangla Nagar, Dhaka; the visible ad face is about 20ft x 10ft (20ft wide by 10ft tall). On
+the face: a real-estate apartment-project advert - a rendered building and a phone number (fictional
+developer) - the artwork is printed on the translucent panel and lit through from behind so its
+colours glow. Setting: a wide intersection with painted lane markings and a traffic police box, with
+a quiet road, a lone motorbike passing, pools of street-lamp light on the tarmac. Board lighting:
+the translucent face glowing bright and perfectly even from tubes / LED strips INSIDE the box - the
+panel itself is the main light source in the picture, no external fixtures anywhere. Scene &
+weather: deep evening, headlights and tail-lights streaking on the road below the softly glowing
+board, a few tall monsoon clouds building on the horizon. Camera: from a side street, the billboard
+sitting in the mid-ground above the traffic, 70 mm slightly compressed look from across the
+intersection. Photorealistic editorial street photograph, real-world out-of-home advertising
+documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard
+face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation,
+high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-owner's
+inventory listing. Night photograph: the illuminated panel is exposed correctly and reads bright and
+clean while everything around it falls into deep shadow; no daylight anywhere in the frame. Avoid:
+cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard floating with
+no visible support, Western or European streetscape, snow or autumn leaves, an absurdly oversized
+billboard, more than one main billboard, duplicated structures, heavy lens flare, watermark, border,
+frame. Do NOT borrow features from any other billboard category - no lighting rig, light box, LED
+screen, neon tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS
+board's type described above. (inventory reference BBD-068 - keep this composition unique)
 ```
 
 ### #69 - Green Road Backlit Display
 `backlit` | 20ft x 10ft | Green Road | BDT 6,200/day | rating 4.0 | available
 
 ```text
-a BACKLIT light-box billboard: a sealed box with a translucent printed face lit EVENLY FROM BEHIND
-so the whole panel glows with a smooth uniform brightness, slim aluminium edge frame, crispest in
-low light. IMPORTANT, keep it strictly this type: The glow is internal and completely even - there
-are NO external lamps on arms (that is frontlit), it is NOT a pixel LED screen and NOT neon tubing.
-The billboard is located at Green Road, Dhaka; the visible ad face is about 20ft x 10ft (20ft wide
-by 10ft tall). On the face: a beverage / tea brand advert with steam and warm tones (fictional
-brand). Setting: a wide intersection with painted lane markings and a traffic police box, with a
-signal queue of vehicles stopped bumper-to-bumper under the board. Board lighting: the light-box
-glowing evenly from within. Ambient light & weather: cool hazy winter morning, low sun, slight mist
-and dust in the air, a completely clear dry-season sky. Camera: from a side street, the billboard
-sitting in the mid-ground above the traffic, 135 mm telephoto isolating the board against the sky.
-Photorealistic editorial street photograph, real-world out-of-home advertising documentation style,
-shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of
-field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range,
-ultra-detailed, looks like a genuine site photo taken for a media-owner's inventory listing. Avoid:
-cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard floating with
-no visible support, Western or European streetscape, snow or autumn leaves, an absurdly oversized
-billboard, more than one main billboard, duplicated structures, heavy lens flare, watermark, border,
-frame. Do NOT borrow features from any other billboard category - no lighting rig, light box, LED
-screen, neon tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS
-board's type described above. (inventory reference BBD-069 - keep this composition unique)
+a BACKLIT light-box billboard photographed AT NIGHT: a sealed box whose translucent printed face is
+lit ENTIRELY FROM INSIDE by fluorescent tubes / LED strips behind the graphic, so the whole panel
+glows with a smooth, even, self-contained light while the street around it is dark; slim aluminium
+edge frame, faint light spilling from the panel onto the frame and the ground just below. IMPORTANT,
+keep it strictly this type: The light source is INSIDE the box and nowhere else - the panel glows on
+its own against a dark night scene. NO external lamps on arms (that is frontlit), NOT a pixel/video
+LED screen, NOT neon tubing, and NOT a daytime shot - it must be night. The billboard is located at
+Green Road, Dhaka; the visible ad face is about 20ft x 10ft (20ft wide by 10ft tall). On the face: a
+beverage / tea brand advert with steam and warm tones (fictional brand) - the artwork is printed on
+the translucent panel and lit through from behind so its colours glow. Setting: a wide intersection
+with painted lane markings and a traffic police box, with a short queue of cars stopped at a red
+signal beneath the board, brake lights glowing. Board lighting: the translucent face glowing bright
+and perfectly even from tubes / LED strips INSIDE the box - the panel itself is the main light
+source in the picture, no external fixtures anywhere. Scene & weather: clear cold winter night, the
+crisp light-box standing out sharp against a black sky, a completely clear dry-season sky. Camera:
+from a side street, the billboard sitting in the mid-ground above the traffic, 135 mm telephoto
+isolating the board against the sky. Photorealistic editorial street photograph, real-world out-of-
+home advertising documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on
+the billboard face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2
+landscape orientation, high dynamic range, ultra-detailed, looks like a genuine site photo taken for
+a media-owner's inventory listing. Night photograph: the illuminated panel is exposed correctly and
+reads bright and clean while everything around it falls into deep shadow; no daylight anywhere in
+the frame. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a
+billboard floating with no visible support, Western or European streetscape, snow or autumn leaves,
+an absurdly oversized billboard, more than one main billboard, duplicated structures, heavy lens
+flare, watermark, border, frame. Do NOT borrow features from any other billboard category - no
+lighting rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless
+it is explicitly part of THIS board's type described above. (inventory reference BBD-069 - keep this
+composition unique)
 ```
 
 
@@ -2616,21 +2679,22 @@ face. IMPORTANT, keep it strictly this type: The lamps are external and out in f
 panel itself does NOT glow from within (that is backlit), it is NOT an LED screen and NOT neon. The
 billboard is located at BNS Center, Sector 7, Uttara, Dhaka; the visible ad face is about 18ft x
 10ft (18ft wide by 10ft tall). On the face: a beverage / tea brand advert with steam and warm tones
-(fictional brand). Setting: glass-clad corporate office towers catching the light, with light
-traffic, just a few rickshaws and pedestrians on the road. Board lighting: the external gooseneck
-flood lamps switched on, their light cones raking across the face. Ambient light & weather: warm
-golden-hour light in the late afternoon, long shadows, a completely clear dry-season sky. Camera:
-low-angle shot looking up at the face from the footpath directly below, 50 mm natural perspective.
-Photorealistic editorial street photograph, real-world out-of-home advertising documentation style,
-shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of
-field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range,
-ultra-detailed, looks like a genuine site photo taken for a media-owner's inventory listing. Avoid:
-cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard floating with
-no visible support, Western or European streetscape, snow or autumn leaves, an absurdly oversized
-billboard, more than one main billboard, duplicated structures, heavy lens flare, watermark, border,
-frame. Do NOT borrow features from any other billboard category - no lighting rig, light box, LED
-screen, neon tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS
-board's type described above. (inventory reference BBD-057 - keep this composition unique)
+(fictional brand). Setting: glass-clad corporate office towers, their windows mirroring the
+surrounding city lights, with light traffic, just a few rickshaws and pedestrians on the road. Board
+lighting: the external gooseneck flood lamps switched on, their light cones raking across the face.
+Ambient light & weather: warm golden-hour light in the late afternoon, long shadows, a completely
+clear dry-season sky. Camera: low-angle shot looking up at the face from the footpath directly
+below, 50 mm natural perspective. Photorealistic editorial street photograph, real-world out-of-home
+advertising documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the
+billboard face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape
+orientation, high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-
+owner's inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish
+text, a billboard floating with no visible support, Western or European streetscape, snow or autumn
+leaves, an absurdly oversized billboard, more than one main billboard, duplicated structures, heavy
+lens flare, watermark, border, frame. Do NOT borrow features from any other billboard category - no
+lighting rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless
+it is explicitly part of THIS board's type described above. (inventory reference BBD-057 - keep this
+composition unique)
 ```
 
 ### #70 - Panthapath Square Frontlit Panel
@@ -2755,22 +2819,23 @@ face. IMPORTANT, keep it strictly this type: The lamps are external and out in f
 panel itself does NOT glow from within (that is backlit), it is NOT an LED screen and NOT neon. The
 billboard is located at Dilkusha C/A, Dhaka; the visible ad face is about 18ft x 10ft (18ft wide by
 10ft tall). On the face: a generic colourful mobile-network promotion (bright gradient, big happy
-faces, NO real brand logo). Setting: glass-clad corporate office towers catching the light, with
-heavy mixed Dhaka traffic below - local buses, green CNG auto-rickshaws, cycle rickshaws,
-motorbikes. Board lighting: the external gooseneck flood lamps switched on, their light cones raking
-across the face. Ambient light & weather: flat soft light under a bright overcast sky, a thin layer
-of city haze softening the distance. Camera: three-quarter angle as if from a slow-moving vehicle in
-the next lane, 135 mm telephoto isolating the board against the sky. Photorealistic editorial street
-photograph, real-world out-of-home advertising documentation style, shot on a full-frame DSLR, true-
-to-life colour, sharp focus on the billboard face, natural depth of field, authentic Dhaka /
-Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-detailed, looks like
-a genuine site photo taken for a media-owner's inventory listing. Avoid: cartoon or CGI / 3D-render
-look, illustration, warped or gibberish text, a billboard floating with no visible support, Western
-or European streetscape, snow or autumn leaves, an absurdly oversized billboard, more than one main
-billboard, duplicated structures, heavy lens flare, watermark, border, frame. Do NOT borrow features
-from any other billboard category - no lighting rig, light box, LED screen, neon tubing, extra
-poles, gantry span or rooftop mount unless it is explicitly part of THIS board's type described
-above. (inventory reference BBD-074 - keep this composition unique)
+faces, NO real brand logo). Setting: glass-clad corporate office towers, their windows mirroring the
+surrounding city lights, with heavy mixed Dhaka traffic below - local buses, green CNG auto-
+rickshaws, cycle rickshaws, motorbikes. Board lighting: the external gooseneck flood lamps switched
+on, their light cones raking across the face. Ambient light & weather: flat soft light under a
+bright overcast sky, a thin layer of city haze softening the distance. Camera: three-quarter angle
+as if from a slow-moving vehicle in the next lane, 135 mm telephoto isolating the board against the
+sky. Photorealistic editorial street photograph, real-world out-of-home advertising documentation
+style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard face, natural
+depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic
+range, ultra-detailed, looks like a genuine site photo taken for a media-owner's inventory listing.
+Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a billboard floating
+with no visible support, Western or European streetscape, snow or autumn leaves, an absurdly
+oversized billboard, more than one main billboard, duplicated structures, heavy lens flare,
+watermark, border, frame. Do NOT borrow features from any other billboard category - no lighting
+rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless it is
+explicitly part of THIS board's type described above. (inventory reference BBD-074 - keep this
+composition unique)
 ```
 
 ### #75 - Gendaria Bridge Frontlit Sign
@@ -2783,22 +2848,22 @@ face. IMPORTANT, keep it strictly this type: The lamps are external and out in f
 panel itself does NOT glow from within (that is backlit), it is NOT an LED screen and NOT neon. The
 billboard is located at Gendaria Bridge, Dhaka; the visible ad face is about 18ft x 10ft (18ft wide
 by 10ft tall). On the face: a telecom home-internet package advert with a router and speed figures
-(fictional ISP). Setting: glass-clad corporate office towers catching the light, with light traffic,
-just a few rickshaws and pedestrians on the road. Board lighting: the external gooseneck flood lamps
-switched on, their light cones raking across the face. Ambient light & weather: blue-hour dusk,
-street lamps and shopfronts glowing along the road, unusually crisp, clean air right after rain.
-Camera: three-quarter angle as if from a slow-moving vehicle in the next lane, 24 mm wide
-environmental view. Photorealistic editorial street photograph, real-world out-of-home advertising
-documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard
-face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation,
-high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-owner's
-inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a
-billboard floating with no visible support, Western or European streetscape, snow or autumn leaves,
-an absurdly oversized billboard, more than one main billboard, duplicated structures, heavy lens
-flare, watermark, border, frame. Do NOT borrow features from any other billboard category - no
-lighting rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless
-it is explicitly part of THIS board's type described above. (inventory reference BBD-075 - keep this
-composition unique)
+(fictional ISP). Setting: glass-clad corporate office towers, their windows mirroring the
+surrounding city lights, with light traffic, just a few rickshaws and pedestrians on the road. Board
+lighting: the external gooseneck flood lamps switched on, their light cones raking across the face.
+Ambient light & weather: blue-hour dusk, street lamps and shopfronts glowing along the road,
+unusually crisp, clean air right after rain. Camera: three-quarter angle as if from a slow-moving
+vehicle in the next lane, 24 mm wide environmental view. Photorealistic editorial street photograph,
+real-world out-of-home advertising documentation style, shot on a full-frame DSLR, true-to-life
+colour, sharp focus on the billboard face, natural depth of field, authentic Dhaka / Bangladesh
+urban setting, 3:2 landscape orientation, high dynamic range, ultra-detailed, looks like a genuine
+site photo taken for a media-owner's inventory listing. Avoid: cartoon or CGI / 3D-render look,
+illustration, warped or gibberish text, a billboard floating with no visible support, Western or
+European streetscape, snow or autumn leaves, an absurdly oversized billboard, more than one main
+billboard, duplicated structures, heavy lens flare, watermark, border, frame. Do NOT borrow features
+from any other billboard category - no lighting rig, light box, LED screen, neon tubing, extra
+poles, gantry span or rooftop mount unless it is explicitly part of THIS board's type described
+above. (inventory reference BBD-075 - keep this composition unique)
 ```
 
 
@@ -2938,22 +3003,23 @@ wall. No lighting rig - no flood lamps, no light box, no LED, no neon; plain mat
 billboard is located at Fakirapool, Dhaka; the visible ad face is about 25ft x 15ft (25ft wide by
 15ft tall). On the face: a real-estate apartment-project advert - a rendered building and a phone
 number (fictional developer) - printed flat on a matte flex sheet, the face itself does NOT glow or
-light up. Setting: glass-clad corporate office towers catching the light, with heavy mixed Dhaka
-traffic below - local buses, green CNG auto-rickshaws, cycle rickshaws, motorbikes. Board lighting:
-the printed face itself is unlit, only catching daylight and ambient street light - no lamps, no
-light box, no screen. Ambient light & weather: harsh vertical noon sun, short dark shadows, heat
-haze, a few tall monsoon clouds building on the horizon. Camera: wide establishing shot that shows
-the entire support structure ground-to-top, 50 mm natural perspective. Photorealistic editorial
-street photograph, real-world out-of-home advertising documentation style, shot on a full-frame
-DSLR, true-to-life colour, sharp focus on the billboard face, natural depth of field, authentic
-Dhaka / Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-detailed,
-looks like a genuine site photo taken for a media-owner's inventory listing. Avoid: cartoon or CGI /
-3D-render look, illustration, warped or gibberish text, a billboard floating with no visible
-support, Western or European streetscape, snow or autumn leaves, an absurdly oversized billboard,
-more than one main billboard, duplicated structures, heavy lens flare, watermark, border, frame. Do
-NOT borrow features from any other billboard category - no lighting rig, light box, LED screen, neon
-tubing, extra poles, gantry span or rooftop mount unless it is explicitly part of THIS board's type
-described above. (inventory reference BBD-092 - keep this composition unique)
+light up. Setting: glass-clad corporate office towers, their windows mirroring the surrounding city
+lights, with heavy mixed Dhaka traffic below - local buses, green CNG auto-rickshaws, cycle
+rickshaws, motorbikes. Board lighting: the printed face itself is unlit, only catching daylight and
+ambient street light - no lamps, no light box, no screen. Ambient light & weather: harsh vertical
+noon sun, short dark shadows, heat haze, a few tall monsoon clouds building on the horizon. Camera:
+wide establishing shot that shows the entire support structure ground-to-top, 50 mm natural
+perspective. Photorealistic editorial street photograph, real-world out-of-home advertising
+documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on the billboard
+face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2 landscape orientation,
+high dynamic range, ultra-detailed, looks like a genuine site photo taken for a media-owner's
+inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or gibberish text, a
+billboard floating with no visible support, Western or European streetscape, snow or autumn leaves,
+an absurdly oversized billboard, more than one main billboard, duplicated structures, heavy lens
+flare, watermark, border, frame. Do NOT borrow features from any other billboard category - no
+lighting rig, light box, LED screen, neon tubing, extra poles, gantry span or rooftop mount unless
+it is explicitly part of THIS board's type described above. (inventory reference BBD-092 - keep this
+composition unique)
 ```
 
 ### #93 - Arambagh Rooftop Board
@@ -2968,20 +3034,20 @@ wall. No lighting rig - no flood lamps, no light box, no LED, no neon; plain mat
 billboard is located at Arambagh, Dhaka; the visible ad face is about 25ft x 15ft (25ft wide by 15ft
 tall). On the face: a beverage / tea brand advert with steam and warm tones (fictional brand) -
 printed flat on a matte flex sheet, the face itself does NOT glow or light up. Setting: glass-clad
-corporate office towers catching the light, with light traffic, just a few rickshaws and pedestrians
-on the road. Board lighting: the printed face itself is unlit, only catching daylight and ambient
-street light - no lamps, no light box, no screen. Ambient light & weather: cool hazy winter morning,
-low sun, slight mist and dust in the air, a completely clear dry-season sky. Camera: wide
-establishing shot that shows the entire support structure ground-to-top, 70 mm slightly compressed
-look from across the intersection. Photorealistic editorial street photograph, real-world out-of-
-home advertising documentation style, shot on a full-frame DSLR, true-to-life colour, sharp focus on
-the billboard face, natural depth of field, authentic Dhaka / Bangladesh urban setting, 3:2
-landscape orientation, high dynamic range, ultra-detailed, looks like a genuine site photo taken for
-a media-owner's inventory listing. Avoid: cartoon or CGI / 3D-render look, illustration, warped or
-gibberish text, a billboard floating with no visible support, Western or European streetscape, snow
-or autumn leaves, an absurdly oversized billboard, more than one main billboard, duplicated
-structures, heavy lens flare, watermark, border, frame. Do NOT borrow features from any other
-billboard category - no lighting rig, light box, LED screen, neon tubing, extra poles, gantry span
-or rooftop mount unless it is explicitly part of THIS board's type described above. (inventory
-reference BBD-093 - keep this composition unique)
+corporate office towers, their windows mirroring the surrounding city lights, with light traffic,
+just a few rickshaws and pedestrians on the road. Board lighting: the printed face itself is unlit,
+only catching daylight and ambient street light - no lamps, no light box, no screen. Ambient light &
+weather: cool hazy winter morning, low sun, slight mist and dust in the air, a completely clear dry-
+season sky. Camera: wide establishing shot that shows the entire support structure ground-to-top, 70
+mm slightly compressed look from across the intersection. Photorealistic editorial street
+photograph, real-world out-of-home advertising documentation style, shot on a full-frame DSLR, true-
+to-life colour, sharp focus on the billboard face, natural depth of field, authentic Dhaka /
+Bangladesh urban setting, 3:2 landscape orientation, high dynamic range, ultra-detailed, looks like
+a genuine site photo taken for a media-owner's inventory listing. Avoid: cartoon or CGI / 3D-render
+look, illustration, warped or gibberish text, a billboard floating with no visible support, Western
+or European streetscape, snow or autumn leaves, an absurdly oversized billboard, more than one main
+billboard, duplicated structures, heavy lens flare, watermark, border, frame. Do NOT borrow features
+from any other billboard category - no lighting rig, light box, LED screen, neon tubing, extra
+poles, gantry span or rooftop mount unless it is explicitly part of THIS board's type described
+above. (inventory reference BBD-093 - keep this composition unique)
 ```
