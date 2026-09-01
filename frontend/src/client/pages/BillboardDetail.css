@@ -112,7 +112,7 @@
     text-transform: capitalize;
 }
 
-/* "About this billboard" / "Availability" / "Location" section headings */
+/* "About this billboard" / "Location" section headings */
 .detail-section-title {
     font-size: 20px;
     font-weight: 700;
@@ -133,16 +133,6 @@
     padding: 80px;
     color: #64748b;
 }
-
-/* "Currently booked" date-range list under Availability */
-.detail-booked { list-style: none; padding: 0; margin: 0; }
-.detail-booked li {
-    color: #475569;
-    font-size: 0.92rem;
-    padding: 6px 0;
-    border-bottom: 1px solid #f1f5f9;
-}
-.detail-booked-tag { color: #94a3b8; }
 
 /* Small Leaflet map showing just this billboard's location */
 .detail-map {

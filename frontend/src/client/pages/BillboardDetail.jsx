@@ -68,7 +68,6 @@ export default function BillboardDetail() {
     const lat = Number(billboard.latitude);
     const lng = Number(billboard.longitude);
     const hasCoords = !Number.isNaN(lat) && !Number.isNaN(lng);
-    const bookedRanges = billboard.booked_ranges || [];
 
     return (
         <div className="detail-wrap">
@@ -111,17 +110,6 @@ export default function BillboardDetail() {
                 <p className="detail-description">
                     {billboard.description || `Prime ${billboard.type} advertising space at ${billboard.address}.`}
                 </p>
-
-                <h2 className="detail-section-title">Availability</h2>
-                {bookedRanges.length > 0 ? (
-                    <ul className="detail-booked">
-                        {bookedRanges.map((r, i) => (
-                            <li key={i}>{r.start_date} to {r.end_date} <span className="detail-booked-tag">(booked)</span></li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="detail-description">No bookings yet - every date is open.</p>
-                )}
 
                 {hasCoords && (
                     <>
