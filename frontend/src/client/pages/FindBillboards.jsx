@@ -160,7 +160,7 @@ export default function FindBillboards() {
 
     const filteredBillboards = billboards.filter((b) => {
         if (nameQuery.trim() && !b.title.toLowerCase().includes(nameQuery.trim().toLowerCase())) return false;
-        if (typeFilter && b.type !== typeFilter) return false;
+        if (typeFilter && b.type.toLowerCase() !== typeFilter.toLowerCase()) return false;
         if (sizeFilter.trim() && !normalizeSize(b.size).includes(normalizeSize(sizeFilter))) return false;
         const price = effectivePrice(b);
         if (minPrice !== '' && price < Number(minPrice)) return false;

@@ -1290,7 +1290,7 @@ class BillboardSeeder extends Seeder
                 'latitude' => 23.8916,
                 'longitude' => 90.3882,
                 'size' => '15ft x 25ft',
-                'type' => 'Static',
+                'type' => 'static',
                 'pricing_mode' => 'monthly',
                 'daily_rate' => 0,
                 'monthly_rate' => 130000,
