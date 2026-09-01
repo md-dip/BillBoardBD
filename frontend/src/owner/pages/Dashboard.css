@@ -2,7 +2,7 @@
 .dashboard-muted { color: #64748b; font-size: 14px; }
 
 /* ============ KPI cards row ============ */
-/* Layout for the row of 4 cards — shared because it's purely
+/* Layout for the row of 4 cards - shared because it's purely
    structural (how many columns, the gap), not a visual style of any
    one card */
 .dashboard-kpi-grid {
@@ -12,7 +12,7 @@
     margin-bottom: 24px;
 }
 
-/* Every KPI card's shared layout shape (size/spacing only — never a
+/* Every KPI card's shared layout shape (size/spacing only - never a
    color); each of the 4 cards' own colors are set separately below */
 .dashboard-kpi-card {
     border-radius: 10px;

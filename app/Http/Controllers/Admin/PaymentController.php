@@ -83,7 +83,7 @@ class PaymentController extends Controller
         $booking->user?->notify(new BookingStatusNotification(
             $booking,
             'Final invoice ready',
-            "Invoice {$invoice->number} for \"{$booking->billboard?->title}\" is ready — your booking is now paid in full.",
+            "Invoice {$invoice->number} for \"{$booking->billboard?->title}\" is ready - your booking is now paid in full.",
         ));
 
         return response()->json([

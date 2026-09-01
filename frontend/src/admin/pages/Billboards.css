@@ -1,8 +1,8 @@
 /* ============================================================
-   Admin Billboards page — fully independent: every class is prefixed
+   Admin Billboards page - fully independent: every class is prefixed
    .admin-billboards-* and fully self-contained, so nothing here can
    ever be silently overridden by (or override) another admin page's
-   identical-looking class — this app bundles all CSS into one file
+   identical-looking class - this app bundles all CSS into one file
    with no per-page code-splitting, so two files defining the exact
    same bare selector (e.g. .card, .btn) collide, and whichever loads
    later wins. Prefixing every class per-page is how that's avoided.
@@ -51,14 +51,14 @@
 }
 .admin-billboards-error-text { color: #dc2626; font-size: 14px; margin-bottom: 8px; }
 
-/* Layout-only row/grid wrappers shared across all fields — no color, safe to share */
+/* Layout-only row/grid wrappers shared across all fields - no color, safe to share */
 .admin-billboards-form-row { margin-bottom: 16px; }
 .admin-billboards-form-grid { display: grid; gap: 16px; margin-bottom: 16px; }
 .admin-billboards-form-grid-2 { grid-template-columns: 1fr 1fr; }
 .admin-billboards-form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
 
-/* Every field below is its own complete label/input rule — not a shared
-   base class — so editing one field's look here can never move another. */
+/* Every field below is its own complete label/input rule - not a shared
+   base class - so editing one field's look here can never move another. */
 
 /* ---- "Title" field ---- */
 .admin-billboards-title-label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 6px; }

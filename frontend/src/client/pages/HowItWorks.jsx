@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Search, Clock, Megaphone, ShieldCheck, UserCheck, CreditCard, Camera } from 'lucide-react';
 import './HowItWorks.css';
 
-// The client-only "How it works" page — shows the REAL 7-step booking
+// The client-only "How it works" page - shows the REAL 7-step booking
 // lifecycle a client's own request goes through. Anyone not logged in as
 // a client (including logged-out visitors) still sees the simple 3-step
 // version at shared/pages/HowItWorks.jsx.

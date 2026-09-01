@@ -13,7 +13,7 @@ function daysUntil(dateStr) {
 const KPIS = ['revenue', 'commission', 'pending-bookings', 'permits-expiring'];
 const BOXES = ['inventory', 'booking-pipeline'];
 
-// "Inventory" box — every mini-stat gets its own fully independent class
+// "Inventory" box - every mini-stat gets its own fully independent class
 // tree (mini-stat / label / value), so editing one stat's color in the CSS
 // never touches the others or the "Booking pipeline" box next to it.
 function InventoryBox({ billboards }) {
@@ -44,7 +44,7 @@ function InventoryBox({ billboards }) {
   );
 }
 
-// "Booking pipeline" box — same treatment: every mini-stat fully independent.
+// "Booking pipeline" box - same treatment: every mini-stat fully independent.
 function BookingPipelineBox({ bookings }) {
   const stats = [
     { slug: 'pending-review', label: 'Pending review', value: bookings.filter((b) => b.status === 'pending_admin_review').length },

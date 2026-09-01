@@ -63,7 +63,7 @@
     border-bottom-color: #0071e3;
 }
 
-/* Right-hand action group: My bookings, name, bell, logout — far right */
+/* Right-hand action group: My bookings, name, bell, logout - far right */
 .nav-actions {
     margin-left: auto;
     display: flex;
@@ -71,7 +71,7 @@
     gap: 8px;
 }
 
-/* "My bookings" button — its own class named after the button itself
+/* "My bookings" button - its own class named after the button itself
    (not the generic .btn-ghost name), styled to look like the app-wide
    ghost-button shape */
 .nav-actions .my-bookings-btn {
@@ -97,7 +97,7 @@
 }
 
 /* Notification bell rendered here comes fully styled from its own file
-   (shared/components/NotificationBell.css) — nothing to duplicate here. */
+   (shared/components/NotificationBell.css) - nothing to duplicate here. */
 
 /* ---- Logout button ---- */
 

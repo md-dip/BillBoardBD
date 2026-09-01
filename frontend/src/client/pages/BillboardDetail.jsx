@@ -120,7 +120,7 @@ export default function BillboardDetail() {
                         ))}
                     </ul>
                 ) : (
-                    <p className="detail-description">No bookings yet — every date is open.</p>
+                    <p className="detail-description">No bookings yet - every date is open.</p>
                 )}
 
                 {hasCoords && (

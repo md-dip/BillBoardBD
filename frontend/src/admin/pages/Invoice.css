@@ -1,5 +1,5 @@
 /* ============================================================
-   Admin invoice page (/admin/bookings/:bookingId/invoice) — the admin's
+   Admin invoice page (/admin/bookings/:bookingId/invoice) - the admin's
    internal copy of a booking's invoice. Same document the client sees,
    plus the platform-commission and payable-to-owner split. Fully
    self-contained: every class is prefixed .admin-invoice-*. The client
@@ -158,7 +158,7 @@
 .admin-invoice-line-title { font-weight: 600; color: #0f172a; }
 .admin-invoice-line-sub { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; }
 
-/* The commission / payable-to-owner rows — admin-only. */
+/* The commission / payable-to-owner rows - admin-only. */
 .admin-invoice-split-row td { color: #b91c1c; font-weight: 500; }
 .admin-invoice-owner-row td { color: #0f172a; }
 

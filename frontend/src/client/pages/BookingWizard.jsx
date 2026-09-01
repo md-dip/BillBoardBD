@@ -4,8 +4,6 @@ import { daysBetweenInclusive, todayIso } from '../../shared/utils/dateRange';
 import { formatBDT } from '../../shared/utils/formatPrice';
 import './BookingWizard.css';
 
-const METHODS = ['bkash', 'nagad', 'bank'];
-
 export default function BookingWizard({ billboard, advancePercentage, holdMinutes = 15 }) {
     const [step, setStep] = useState('dates'); // 'dates' | 'campaign' | 'review' | 'done'
     const [startDate, setStartDate] = useState(todayIso());
@@ -19,11 +17,6 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
     const [campaignDescription, setCampaignDescription] = useState('');
     const [creative, setCreative] = useState(null);
 
-    // Step 3 pay fields
-    const [payOpen, setPayOpen] = useState(false);
-    const [method, setMethod] = useState('bkash');
-    const [txnRef, setTxnRef] = useState('');
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [secondsLeft, setSecondsLeft] = useState(null);
@@ -35,7 +28,7 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
     const previewTotal = Math.round(rate * days);
     const previewAdvance = Math.round(previewTotal * (advancePercentage / 100));
 
-    // Countdown timer — runs while a hold is active (steps 2 & 3).
+    // Countdown timer - runs while a hold is active (steps 2 & 3).
     useEffect(() => {
         if (!booking?.expires_at) return;
         const tick = () => {
@@ -84,17 +77,17 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
         } finally { setLoading(false); }
     }
 
-    async function handlePay() {
+    async function handleCheckout() {
         setLoading(true); setError('');
         try {
-            await api.post(`/payments/${payment.id}/pay`, {
-                method,
-                transaction_ref: txnRef,
-            });
-            setStep('done');
+            const res = await api.post(`/payments/${payment.id}/checkout`);
+            // Leave the SPA for the SSLCommerz hosted page. The browser comes
+            // back to /dashboard?payment=<result> once payment finishes.
+            window.location.assign(res.data.data.gateway_url);
         } catch (err) {
-            setError(err.response?.data?.message || 'Payment failed.');
-        } finally { setLoading(false); }
+            setError(err.response?.data?.message || 'Could not start checkout.');
+            setLoading(false);
+        }
     }
 
     // Values shown after the hold exists come from the SERVER booking, not preview.
@@ -120,7 +113,7 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
                 </div>
             )}
 
-            {/* STEP 1 — DATES */}
+            {/* STEP 1 - DATES */}
             {step === 'dates' && (
                 <>
                     <div className="booking-dates">
@@ -149,7 +142,7 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
                 </>
             )}
 
-            {/* STEP 2 — CAMPAIGN */}
+            {/* STEP 2 - CAMPAIGN */}
             {step === 'campaign' && (
                 <>
                     <p className="booking-range">{startDate} → {endDate}</p>
@@ -172,7 +165,7 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
                 </>
             )}
 
-            {/* STEP 3 — REVIEW & PAY */}
+            {/* STEP 3 - REVIEW & PAY */}
             {step === 'review' && (
                 <>
                     <div className="booking-summary">
@@ -183,23 +176,10 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
                         <div className="booking-summary-row booking-summary-total"><span>Total</span><span>{formatBDT(total)}</span></div>
                     </div>
 
-                    {!payOpen ? (
-                        <button className="pay-advance-btn" onClick={() => setPayOpen(true)} disabled={loading}>
-                            Pay advance (mock)
-                        </button>
-                    ) : (
-                        <div className="pay-form">
-                            <select className="pay-method-select" value={method} onChange={(e) => setMethod(e.target.value)}>
-                                {METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
-                            </select>
-                            <input className="pay-ref-input" placeholder="Transaction ref" value={txnRef} onChange={(e) => setTxnRef(e.target.value)} />
-                            <button className="confirm-btn" onClick={handlePay} disabled={loading || !txnRef}>
-                                {loading ? 'Paying...' : 'Confirm'}
-                            </button>
-                            <button className="cancel-btn" onClick={() => setPayOpen(false)}>Cancel</button>
-                        </div>
-                    )}
-                    <p className="booking-note">🔒 Pay {advancePercentage}% now to submit for admin review, balance before installation.</p>
+                    <button className="pay-advance-btn" onClick={handleCheckout} disabled={loading}>
+                        {loading ? 'Redirecting…' : `Pay advance ${formatBDT(advance)}`}
+                    </button>
+                    <p className="booking-note">🔒 You pay securely on SSLCommerz (card, bKash, Nagad, Rocket). The {advancePercentage}% advance submits your request for admin review; the balance is due before installation.</p>
                 </>
             )}
 

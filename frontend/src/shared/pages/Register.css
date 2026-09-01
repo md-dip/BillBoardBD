@@ -1,8 +1,8 @@
 /* ============================================================
-   Register page (public, shown to logged-out visitors) — fully
+   Register page (public, shown to logged-out visitors) - fully
    independent: every class is prefixed .register-* and fully
    self-contained. Login.css duplicates the same auth-card look under
-   its own .login-* names on purpose — this app bundles all CSS into
+   its own .login-* names on purpose - this app bundles all CSS into
    one file with no per-page code-splitting, so two files defining the
    exact same bare selector collide, and whichever loads later wins.
    Prefixing every class per-page avoids that for good.
@@ -45,7 +45,7 @@
 
 .register-error-text { font-size: 13px; color: #dc2626; margin: 4px 0 0; }
 
-/* Layout-only grid holding the 2 role options — no color, safe to share */
+/* Layout-only grid holding the 2 role options - no color, safe to share */
 .register-role-toggle {
     display: grid;
     grid-template-columns: 1fr 1fr;

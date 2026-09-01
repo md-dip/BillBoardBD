@@ -63,7 +63,7 @@
     border-bottom-color: #0071e3;
 }
 
-/* Right-hand action group: Owner badge, name, logout — far right */
+/* Right-hand action group: Owner badge, name, logout - far right */
 .nav-actions {
     margin-left: auto;
     display: flex;
@@ -71,7 +71,7 @@
     gap: 12px;
 }
 
-/* "Owner" pill — links back to the owner dashboard (/owner) from any
+/* "Owner" pill - links back to the owner dashboard (/owner) from any
    shared/public page */
 .owner-badge-link {
     display: inline-flex;

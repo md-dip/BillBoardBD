@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import api from '../api/axios';
 
-// Create the context — a shared box any component can peek into.
+// Create the context - a shared box any component can peek into.
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {

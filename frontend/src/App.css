@@ -1,5 +1,5 @@
 /* ============================================================
-   App shell — sticky-footer layout for the client-chrome pages
+   App shell - sticky-footer layout for the client-chrome pages
    (navbar + routed page + shared Footer, see App.jsx).
 
    Without this, the shared Footer is just the last sibling in the
@@ -7,7 +7,7 @@
    the content and leaves a blank gap beneath it. Making the shell a
    full-height flex column and letting .app-main absorb the spare
    height pins the footer to the bottom of the viewport. On a tall
-   page nothing changes — .app-main simply grows past 100vh.
+   page nothing changes - .app-main simply grows past 100vh.
    ============================================================ */
 
 .app-shell {

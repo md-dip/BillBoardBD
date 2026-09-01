@@ -1,8 +1,8 @@
 /* ============================================================
-   Login page (public, shown to logged-out visitors) — fully
+   Login page (public, shown to logged-out visitors) - fully
    independent: every class is prefixed .login-* and fully
    self-contained. Register.css duplicates the same auth-card look
-   under its own .register-* names on purpose — this app bundles all
+   under its own .register-* names on purpose - this app bundles all
    CSS into one file with no per-page code-splitting, so two files
    defining the exact same bare selector collide, and whichever loads
    later wins. Prefixing every class per-page avoids that for good.

@@ -1,8 +1,8 @@
 /* ============================================================
-   How it works page (public, shown to logged-out visitors) — fully
+   How it works page (public, shown to logged-out visitors) - fully
    independent: every class is prefixed .how-it-works-* and fully
    self-contained. Note: client/pages/HowItWorks.jsx is a DIFFERENT,
-   logged-in-client-only page with its own independent CSS — this file
+   logged-in-client-only page with its own independent CSS - this file
    is only the shared/public version, shown when no client is logged in.
    ============================================================ */
 

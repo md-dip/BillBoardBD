@@ -3,7 +3,7 @@ import './Navbar.css';
 
 // The default navbar shown to anonymous (logged-out) visitors. Once someone
 // logs in, App.jsx swaps this out for that actor's own navbar instead (e.g.
-// client/components/Navbar.jsx for the client role) — this file stays purely
+// client/components/Navbar.jsx for the client role) - this file stays purely
 // the logged-out case, it doesn't need to know about any actor.
 export default function Navbar() {
     return (

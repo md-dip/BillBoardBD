@@ -7,12 +7,12 @@ every booking and settles payouts.
 
 ## Tech stack
 
-**Backend** — Laravel 13 (PHP 8.3+), Laravel Sanctum for bearer-token auth, PostgreSQL.
+**Backend** - Laravel 13 (PHP 8.3+), Laravel Sanctum for bearer-token auth, PostgreSQL.
 Exposes a REST API under `/api`.
 
-**Frontend** — React 19 + Vite SPA (`frontend/`), React Router 7, Axios, Leaflet /
+**Frontend** - React 19 + Vite SPA (`frontend/`), React Router 7, Axios, Leaflet /
 react-leaflet on OpenStreetMap for the map, Recharts for dashboard charts, lucide-react
-icons. Plain CSS co-located per component — no UI framework in the SPA.
+icons. Plain CSS co-located per component - no UI framework in the SPA.
 
 > The repo root is a stock Laravel app. The SPA in `frontend/` is a separate Vite project
 > that calls the API at `http://127.0.0.1:8000/api`.
@@ -74,6 +74,6 @@ npm run dev                  # SPA on http://localhost:5173
 
 ```
 app/  routes/  database/   Laravel backend (API, models, migrations, seeders)
-frontend/                  React SPA — shared / client / owner / admin areas
+frontend/                  React SPA - shared / client / owner / admin areas
 resources/  vite.config.js  stock Laravel/Vite scaffold, unused by the SPA
 ```

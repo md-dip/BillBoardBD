@@ -5,7 +5,7 @@ import NotificationBell from '../../shared/components/NotificationBell';
 import './Navbar.css';
 
 // The client actor's own navbar. App.jsx only renders this once someone is
-// logged in — the logged-out default lives separately in
+// logged in - the logged-out default lives separately in
 // shared/components/Navbar.jsx, so this file never has to branch on auth
 // state; it can just assume a client user exists.
 export default function Navbar() {

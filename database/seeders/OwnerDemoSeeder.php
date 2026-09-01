@@ -18,10 +18,10 @@ use Illuminate\Support\Facades\Storage;
  * on every part of the Owner Dashboard: a handful of billboards it owns, and
  * bookings against them across every stage of the 5-stage pipeline
  * (pending_admin_review / pending_owner_approval / confirmed / paid_in_full /
- * pending_proof_review / active / rejected) — 2-3 bookings per stage that the
+ * pending_proof_review / active / rejected) - 2-3 bookings per stage that the
  * owner's own "Booking Requests" page actually shows (it hides
  * pending_admin_review, since the owner never sees a request before admin
- * has forwarded it) — with the matching payment + proof-of-posting rows,
+ * has forwarded it) - with the matching payment + proof-of-posting rows,
  * computed the same way the live booking flow computes them.
  */
 class OwnerDemoSeeder extends Seeder
@@ -126,7 +126,7 @@ class OwnerDemoSeeder extends Seeder
             ],
 
             // ---- Extra rows below so every stage on the Owner's own
-            // "Booking Requests" page (which hides pending_admin_review —
+            // "Booking Requests" page (which hides pending_admin_review -
             // the owner never sees a request before admin has forwarded
             // it) has 2-3 bookings instead of just 0-1. Same 4 owner
             // billboards and the same demo client, non-overlapping dates
@@ -319,7 +319,7 @@ class OwnerDemoSeeder extends Seeder
             $ownerPayable = round($row['total_amount'] - $commission, 2);
             $balanceAmount = round($row['total_amount'] - $row['advance_amount'], 2);
 
-            // Every seeded booking here has already cleared the advance —
+            // Every seeded booking here has already cleared the advance -
             // that's the only way a booking reaches any of these stages.
             $advanceStatus = $row['status'] === 'rejected' ? 'refunded' : 'paid';
 
@@ -364,7 +364,7 @@ class OwnerDemoSeeder extends Seeder
 
             // "active" = owner uploaded proof AND admin already verified it.
             // "pending_proof_review" = owner uploaded proof but admin hasn't
-            // verified it yet — same photo, no verifier/verified_at.
+            // verified it yet - same photo, no verifier/verified_at.
             if (in_array($row['status'], ['active', 'pending_proof_review'], true) && $booking->proofOfPostings()->doesntExist()) {
                 $path = 'proof-of-posting/demo-'.$booking->id.'.png';
                 Storage::disk('public')->put($path, base64_decode(self::PLACEHOLDER_PNG_BASE64));
@@ -384,7 +384,7 @@ class OwnerDemoSeeder extends Seeder
         // ---- Payout history: 2 already-completed monthly payout runs,
         // each covering a REAL subset of the settled advance payments
         // just seeded above (summed from their actual owner_payable
-        // values, not made-up numbers) — matching the "payouts settle
+        // values, not made-up numbers) - matching the "payouts settle
         // on the 10th of each month" policy already shown as a note on
         // the Payouts page. Whatever's left unpaid after these two stays
         // as the current "Outstanding balance", same as real use.
@@ -410,7 +410,7 @@ class OwnerDemoSeeder extends Seeder
     /**
      * Creates one real Payout row covering exactly the given bookings'
      * advance payments (matched by brand_name, unique among this
-     * seeder's own rows) — the same math + payout_id linking
+     * seeder's own rows) - the same math + payout_id linking
      * PayoutService::payout() does for a live admin-triggered payout,
      * just scoped to a named subset so the demo shows 2 separate
      * historical runs instead of one lump sum covering everything.

@@ -91,7 +91,7 @@
   gap: 8px;
 }
 
-/* "Site" link — a complete, standalone button style (not built from
+/* "Site" link - a complete, standalone button style (not built from
    shared .btn pieces, so it can never collide with any page's buttons) */
 .owner-site-link {
   flex: 1;
@@ -112,7 +112,7 @@
 }
 .owner-site-link:hover { background: #f1f5f9; }
 
-/* Logout icon button — same look as Site, but square (icon-only) */
+/* Logout icon button - same look as Site, but square (icon-only) */
 .owner-logout-btn {
   display: inline-flex;
   align-items: center;

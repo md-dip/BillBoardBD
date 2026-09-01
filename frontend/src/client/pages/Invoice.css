@@ -1,8 +1,8 @@
 /* ============================================================
-   Client invoice page (/bookings/:bookingId/invoice) — the advance or
+   Client invoice page (/bookings/:bookingId/invoice) - the advance or
    final invoice a client can view and print. Fully self-contained:
    every class is prefixed .client-invoice-*. The admin has its own
-   separate copy at admin/pages/Invoice.css — the client version never
+   separate copy at admin/pages/Invoice.css - the client version never
    shows the platform-commission / payable-to-owner split.
    ============================================================ */
 
@@ -12,7 +12,7 @@
     padding: 24px 20px 60px;
 }
 
-/* Top bar with the back link + print button — hidden when printing. */
+/* Top bar with the back link + print button - hidden when printing. */
 .client-invoice-topbar {
     display: flex;
     align-items: center;

@@ -134,9 +134,9 @@ export default function Invoice() {
                                 )}
                                 {invoice.payments.map((p, i) => (
                                     <tr key={i}>
-                                        <td>{p.date || '—'}</td>
-                                        <td className="client-invoice-method">{p.method || '—'}</td>
-                                        <td>{p.transaction_ref || '—'}</td>
+                                        <td>{p.date || '-'}</td>
+                                        <td className="client-invoice-method">{p.method || '-'}</td>
+                                        <td>{p.transaction_ref || '-'}</td>
                                         <td className="client-invoice-num">{formatBDT(p.amount)}</td>
                                     </tr>
                                 ))}

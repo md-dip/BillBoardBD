@@ -46,7 +46,7 @@ class ProofOfPostingController extends Controller
             $admin->notify(new BookingStatusNotification(
                 $booking,
                 'Installation proof submitted',
-                "The owner uploaded proof of posting for \"{$booking->billboard?->title}\" — ready for verification.",
+                "The owner uploaded proof of posting for \"{$booking->billboard?->title}\" - ready for verification.",
             ));
         }
 

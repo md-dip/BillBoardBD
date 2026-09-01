@@ -9,11 +9,11 @@ use App\Models\Setting;
 /**
  * Builds and stores the two invoices a booking earns over its life:
  *
- *   'advance' — issued the moment the client pays the 30% advance.
- *   'final'   — issued once the booking is paid in full.
+ *   'advance' - issued the moment the client pays the 30% advance.
+ *   'final'   - issued once the booking is paid in full.
  *
  * Each invoice is an immutable snapshot. The platform commission is NOT a
- * constant anywhere — it is read from the `commission_rate` setting at pay
+ * constant anywhere - it is read from the `commission_rate` setting at pay
  * time (frozen onto the Payment rows by the booking flow), and this service
  * simply snapshots whatever was frozen. Change the rate in the admin panel
  * and every booking paid after that point invoices at the new rate.
@@ -22,7 +22,7 @@ class InvoiceService
 {
     /**
      * Issue the invoice for a milestone, or return the one already issued.
-     * Idempotent — safe to call again on a re-tried payment.
+     * Idempotent - safe to call again on a re-tried payment.
      */
     public function issue(Booking $booking, string $kind): Invoice
     {
@@ -32,14 +32,14 @@ class InvoiceService
 
         $commissionAmount = round((float) $booking->payments->sum('commission_amount'), 2);
         if ($commissionAmount <= 0) {
-            // Nothing frozen yet (shouldn't happen once the advance is paid) —
+            // Nothing frozen yet (shouldn't happen once the advance is paid) -
             // fall back to the live setting so the number is never zero.
             $rate = (float) Setting::get('commission_rate', 10);
             $commissionAmount = round($subtotal * $rate / 100, 2);
         }
         $commissionRate = $subtotal > 0 ? round($commissionAmount / $subtotal * 100, 2) : 0.0;
 
-        // Deterministic by milestone, not a live sum — an 'advance' invoice
+        // Deterministic by milestone, not a live sum - an 'advance' invoice
         // always states the advance and the balance still owed; a 'final' one
         // always states the whole amount with nothing left.
         if ($kind === 'final') {
@@ -67,7 +67,7 @@ class InvoiceService
 
     /**
      * The display payload for an invoice. $showOwnerSplit adds the platform
-     * commission / payable-to-owner lines — on for admin, off for the client.
+     * commission / payable-to-owner lines - on for admin, off for the client.
      *
      * @return array<string, mixed>
      */

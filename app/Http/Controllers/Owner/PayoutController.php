@@ -30,7 +30,7 @@ class PayoutController extends Controller
     }
 
     /**
-     * The owner sets up where their payouts should be sent — read by
+     * The owner sets up where their payouts should be sent - read by
      * admin (via the owner record already returned on the Admin Payouts
      * page) before they manually trigger a payout.
      */
@@ -44,7 +44,7 @@ class PayoutController extends Controller
             'payout_branch' => ['nullable', 'string', 'max:120'],
         ]);
 
-        // bKash/Nagad accounts have no bank name or branch — don't leave
+        // bKash/Nagad accounts have no bank name or branch - don't leave
         // stale values behind from a previous "bank" selection.
         if ($validated['payout_method'] !== 'bank') {
             $validated['payout_bank_name'] = null;

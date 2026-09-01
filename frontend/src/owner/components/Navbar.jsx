@@ -4,7 +4,7 @@ import { useAuth } from '../../shared/context/AuthContext';
 import './Navbar.css';
 
 // Shown on shared/public pages (Home, Find Billboards, How it works, ...)
-// when a logged-in OWNER browses there — this is NOT the owner dashboard's
+// when a logged-in OWNER browses there - this is NOT the owner dashboard's
 // own sidebar shell (that's OwnerShell, only rendered under /owner/*).
 // Just enough to show who's signed in and get back to the dashboard in
 // one click, instead of the client-only navbar's "My bookings" link.

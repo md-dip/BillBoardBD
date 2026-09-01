@@ -1,8 +1,8 @@
 /* ============================================================
-   AdminShell — the sidebar+header layout every admin page renders
+   AdminShell - the sidebar+header layout every admin page renders
    inside. Every class here is prefixed .admin-* AND fully owns its own
    declarations (including the Site/Logout buttons, which used to share
-   bare .btn/.btn-outline/.btn-sm/.btn-icon with every page — editing a
+   bare .btn/.btn-outline/.btn-sm/.btn-icon with every page - editing a
    page's button style could silently override THIS shell's buttons
    too, since identical selectors collide when everything ends up in
    one bundled CSS file with no code-splitting). Nothing here shares a
@@ -102,7 +102,7 @@
   gap: 8px;
 }
 
-/* "Site" link — a complete, standalone button style (not built from
+/* "Site" link - a complete, standalone button style (not built from
    shared .btn pieces, so it can never collide with any page's buttons) */
 .admin-site-link {
   flex: 1;
@@ -123,7 +123,7 @@
 }
 .admin-site-link:hover { background: #f1f5f9; }
 
-/* Logout icon button — same look as Site, but square (icon-only) */
+/* Logout icon button - same look as Site, but square (icon-only) */
 .admin-logout-btn {
   display: inline-flex;
   align-items: center;

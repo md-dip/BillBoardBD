@@ -12,7 +12,7 @@ use App\Notifications\BookingStatusNotification;
  * Stage 3 of the booking pipeline: the billboard owner's own acceptance,
  * reached once admin has forwarded the request. Accepting is what actually
  * creates the balance payment and starts the countdown to the final-payment
- * due date — mirrors BookingApprovalService's shape for the admin's stage 2.
+ * due date - mirrors BookingApprovalService's shape for the admin's stage 2.
  */
 class OwnerAcceptanceService
 {

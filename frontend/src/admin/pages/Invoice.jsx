@@ -138,9 +138,9 @@ export default function AdminInvoice() {
                             )}
                             {invoice.payments.map((p, i) => (
                                 <tr key={i}>
-                                    <td>{p.date || '—'}</td>
-                                    <td className="admin-invoice-method">{p.method || '—'}</td>
-                                    <td>{p.transaction_ref || '—'}</td>
+                                    <td>{p.date || '-'}</td>
+                                    <td className="admin-invoice-method">{p.method || '-'}</td>
+                                    <td>{p.transaction_ref || '-'}</td>
                                     <td className="admin-invoice-num">{formatBDT(p.amount)}</td>
                                 </tr>
                             ))}
@@ -158,7 +158,7 @@ export default function AdminInvoice() {
                     </table>
 
                     <div className="admin-invoice-footer-note">
-                        Internal copy — includes the platform commission and payable-to-owner split, which the client&apos;s
+                        Internal copy - includes the platform commission and payable-to-owner split, which the client&apos;s
                         invoice does not show.
                     </div>
                 </div>

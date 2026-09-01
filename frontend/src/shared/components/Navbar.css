@@ -1,5 +1,5 @@
 /* Default (logged-out) navbar. This duplicates the navbar shell rules also
-   found in client/components/Navbar.css — that's intentional: this file and
+   found in client/components/Navbar.css - that's intentional: this file and
    each actor's navbar are meant to be fully self-contained, not dependent on
    each other, even though the logo/nav-links look identical. */
 

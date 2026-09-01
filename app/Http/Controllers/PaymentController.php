@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PayPaymentRequest;
 use App\Models\Payment;
-use App\Models\User;
-use App\Notifications\BookingStatusNotification;
-use App\Services\InvoiceService;
+use App\Services\PaymentCompletionService;
 use Illuminate\Http\JsonResponse;
 
 class PaymentController extends Controller
 {
-    public function __construct(private readonly InvoiceService $invoices) {}
+    public function __construct(private readonly PaymentCompletionService $completion) {}
 
-    /** Mock bKash/Nagad/bank flow — no real payment gateway. */
+    /**
+     * Manual / offline payment record. The client UI now checks out through the
+     * real gateway (see PaymentGatewayController); this endpoint stays for
+     * tests and manual reconciliation and shares the same completion logic.
+     */
     public function pay(PayPaymentRequest $request, Payment $payment): JsonResponse
     {
         if ($payment->booking->user_id !== $request->user()->id) {
@@ -32,55 +34,10 @@ class PaymentController extends Controller
             ], 422);
         }
 
-        $payment->update([
+        $this->completion->markPaid($payment, [
             'method' => $request->validated('method'),
             'transaction_ref' => $request->validated('transaction_ref'),
-            'status' => 'paid',
-            'paid_at' => now(),
         ]);
-
-        // Paying the advance moves the booking into admin review (stage 1);
-        // paying the balance marks it paid in full (stage 4).
-        if ($payment->payment_type === 'advance') {
-            $payment->booking->update(['status' => 'pending_admin_review', 'expires_at' => null]);
-
-            $booking = $payment->booking->fresh(['billboard']);
-            $title = 'New booking request';
-            $body = "A new booking for \"{$booking->billboard?->title}\" is awaiting your review.";
-
-            foreach (User::query()->where('role', 'admin')->get() as $admin) {
-                $admin->notify(new BookingStatusNotification($booking, $title, $body));
-            }
-
-            // Advance paid → the advance invoice is generated now.
-            $invoice = $this->invoices->issue($booking, 'advance');
-            $request->user()->notify(new BookingStatusNotification(
-                $booking,
-                'Advance invoice ready',
-                "Invoice {$invoice->number} for your advance payment on \"{$booking->billboard?->title}\" is ready to view and download.",
-            ));
-        } elseif ($payment->payment_type === 'balance') {
-            $payment->booking->update(['status' => 'paid_in_full']);
-
-            $booking = $payment->booking->fresh(['billboard.owner']);
-            $title = 'Final payment received';
-            $body = "The final payment for \"{$booking->billboard?->title}\" has been paid in full. Please install by the start date.";
-
-            if ($owner = $booking->billboard?->owner) {
-                $owner->notify(new BookingStatusNotification($booking, $title, $body));
-            }
-            foreach (User::query()->where('role', 'admin')->get() as $admin) {
-                $admin->notify(new BookingStatusNotification($booking, 'Payment recorded', "Final payment recorded for \"{$booking->billboard?->title}\"."));
-            }
-
-            // Booking fully paid → the final invoice is generated now.
-            $invoice = $this->invoices->issue($booking, 'final');
-            $request->user()->notify(new BookingStatusNotification(
-                $booking,
-                'Final invoice ready',
-                "Invoice {$invoice->number} for \"{$booking->billboard?->title}\" is ready — your booking is now paid in full.",
-            ));
-        }
 
         return response()->json([
             'success' => true,

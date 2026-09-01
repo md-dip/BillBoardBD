@@ -21,7 +21,7 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// If any response comes back 401, the token is invalid/expired — clear it.
+// If any response comes back 401, the token is invalid/expired - clear it.
 api.interceptors.response.use(
     (response) => response,
     (error) => {

@@ -42,7 +42,7 @@ const icons = {
 };
 
 const features = [
-    { icon: icons.map, title: 'Interactive map search', desc: 'Locate billboards by neighborhood, radius, and type — the same way you search for a restaurant.' },
+    { icon: icons.map, title: 'Interactive map search', desc: 'Locate billboards by neighborhood, radius, and type - the same way you search for a restaurant.' },
     { icon: icons.zap, title: 'Instant availability', desc: 'Live conflict-checked calendars mean you never double-book a billboard for the same dates.' },
     { icon: icons.shield, title: 'Permit-verified', desc: 'Every listing tracks its City Corporation / RAJUK permit expiry, so your campaign stays legal.' },
     { icon: icons.trending, title: 'Owner analytics', desc: 'Billboard owners see occupancy rate and monthly revenue in a single dashboard.' },

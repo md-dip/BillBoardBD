@@ -37,7 +37,7 @@ export default function OwnerPayouts() {
         setIsEditing(false);
       } else {
         setSavedDetails(null);
-        setIsEditing(true); // nothing saved yet — go straight to the form
+        setIsEditing(true); // nothing saved yet - go straight to the form
       }
     });
   }

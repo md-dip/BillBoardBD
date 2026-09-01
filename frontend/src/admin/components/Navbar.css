@@ -63,7 +63,7 @@
     border-bottom-color: #0071e3;
 }
 
-/* Right-hand action group: Admin badge, name, logout — far right */
+/* Right-hand action group: Admin badge, name, logout - far right */
 .nav-actions {
     margin-left: auto;
     display: flex;
@@ -71,7 +71,7 @@
     gap: 12px;
 }
 
-/* "Admin" pill — links back to the admin dashboard (/admin) from any
+/* "Admin" pill - links back to the admin dashboard (/admin) from any
    shared/public page */
 .admin-badge-link {
     display: inline-flex;

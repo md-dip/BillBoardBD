@@ -1,9 +1,9 @@
 /* ============================================================
-   Global reset — imported exactly once, in main.jsx, for the whole
+   Global reset - imported exactly once, in main.jsx, for the whole
    app. This is the ONLY thing that belongs here: every page and
    component now owns its own co-located, independently-prefixed CSS
    file (see shared/pages/*.css, shared/components/*.css, and the
-   equivalent files under client/, owner/, admin/) — nothing else
+   equivalent files under client/, owner/, admin/) - nothing else
    should ever be added to this file again.
    ============================================================ */
 

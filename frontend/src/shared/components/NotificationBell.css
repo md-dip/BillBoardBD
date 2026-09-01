@@ -1,5 +1,5 @@
 /* ============================================================
-   NotificationBell — a genuinely shared widget, rendered as-is inside
+   NotificationBell - a genuinely shared widget, rendered as-is inside
    the client Navbar, AdminShell's header, and OwnerShell's header.
    Fully independent: every class is prefixed .notification-bell-*.
    Because this component imports its own CSS directly, none of its

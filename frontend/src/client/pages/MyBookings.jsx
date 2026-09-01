@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Image as ImageIcon } from 'lucide-react';
 import api from '../../shared/api/axios';
 import { formatBDT } from '../../shared/utils/formatPrice';
 import './MyBookings.css';
 
-const METHODS = ['bkash', 'nagad', 'bank'];
+// Shown as a banner when the browser returns from the SSLCommerz hosted page.
+const PAYMENT_BANNER = {
+    success: { kind: 'success', text: 'Payment received your booking has moved forward.' },
+    failed: { kind: 'error', text: 'Payment did not go through. Nothing was charged - you can try again below.' },
+    cancelled: { kind: 'info', text: 'Payment cancelled. Nothing was charged.' },
+};
 
 const STATUS_LABEL = {
     pending_payment: 'Payment due',
@@ -35,10 +40,11 @@ export default function Dashboard() {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedId, setExpandedId] = useState(null);
-    const [payingId, setPayingId] = useState(null);
-    const [method, setMethod] = useState('bkash');
-    const [txnRef, setTxnRef] = useState('');
+    const [checkoutId, setCheckoutId] = useState(null);
     const [payError, setPayError] = useState('');
+    const [payErrorId, setPayErrorId] = useState(null);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const banner = PAYMENT_BANNER[searchParams.get('payment')];
 
     function load() {
         setLoading(true);
@@ -49,16 +55,19 @@ export default function Dashboard() {
 
     useEffect(load, []);
 
-    async function handlePay(paymentId) {
+    async function handleCheckout(paymentId) {
         setPayError('');
-        if (!txnRef) { setPayError('Enter a transaction reference.'); return; }
+        setPayErrorId(null);
+        setCheckoutId(paymentId);
         try {
-            await api.post(`/payments/${paymentId}/pay`, { method, transaction_ref: txnRef });
-            setPayingId(null);
-            setTxnRef('');
-            load();
+            const res = await api.post(`/payments/${paymentId}/checkout`);
+            // Leave the SPA for the SSLCommerz hosted page; the browser returns
+            // to /dashboard?payment=<result> when payment finishes.
+            window.location.assign(res.data.data.gateway_url);
         } catch (err) {
-            setPayError(err.response?.data?.message || 'Payment failed.');
+            setPayError(err.response?.data?.message || 'Could not start checkout.');
+            setPayErrorId(paymentId);
+            setCheckoutId(null);
         }
     }
 
@@ -68,6 +77,20 @@ export default function Dashboard() {
                 <h1>My bookings</h1>
                 <Link to="/billboards" className="book-another-btn">Book another</Link>
             </div>
+
+            {banner && (
+                <div className={`payment-status-banner payment-status-banner-${banner.kind}`} role="status">
+                    <span>{banner.text}</span>
+                    <button
+                        type="button"
+                        className="payment-status-banner-dismiss"
+                        onClick={() => setSearchParams({}, { replace: true })}
+                        aria-label="Dismiss"
+                    >
+                        &times;
+                    </button>
+                </div>
+            )}
 
             {loading && <p className="subtitle">Loading your bookings...</p>}
 
@@ -81,7 +104,6 @@ export default function Dashboard() {
                 {bookings.map((b) => {
                     const expanded = expandedId === b.id;
                     const { text: paymentText, payable } = paymentSummary(b);
-                    const isPaying = payingId === b.id;
                     const refund = b.payments?.find((p) => p.payment_type === 'refund');
 
                     return (
@@ -107,18 +129,15 @@ export default function Dashboard() {
                                     {payable ? (
                                         <button
                                             type="button"
-                                            className="mybookings-pay-link"
-                                            onClick={() => {
-                                                setPayingId(isPaying ? null : b.id);
-                                                setPayError('');
-                                                setTxnRef('');
-                                            }}
+                                            className="pay-now-btn"
+                                            disabled={checkoutId === payable.id}
+                                            onClick={() => handleCheckout(payable.id)}
                                         >
                                             {paymentText}
                                             {b.status === 'confirmed' && b.final_payment_due_at
                                                 ? ` by ${b.final_payment_due_at.slice(0, 10)}`
                                                 : ''}
-                                            {' '}&middot; Pay now
+                                            {' '}&middot; {checkoutId === payable.id ? 'Redirecting…' : 'Pay now'}
                                         </button>
                                     ) : (
                                         <div className="mybookings-payment-text">{paymentText}</div>
@@ -145,30 +164,8 @@ export default function Dashboard() {
                                 </div>
                             </div>
 
-                            {isPaying && payable && (
-                                <div className="mybookings-pay-form">
-                                    <select className="pay-method-select" value={method} onChange={(e) => setMethod(e.target.value)}>
-                                        {METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
-                                    </select>
-                                    <input
-                                        className="pay-ref-input"
-                                        placeholder="Transaction ref"
-                                        value={txnRef}
-                                        onChange={(e) => setTxnRef(e.target.value)}
-                                    />
-                                    <button
-                                        type="button"
-                                        className="confirm-btn"
-                                        style={{ width: 'auto' }}
-                                        onClick={() => handlePay(payable.id)}
-                                    >
-                                        Confirm {formatBDT(payable.amount)}
-                                    </button>
-                                    <button type="button" className="cancel-btn" onClick={() => setPayingId(null)}>
-                                        Cancel
-                                    </button>
-                                    {payError && <p className="booking-error">{payError}</p>}
-                                </div>
+                            {payErrorId === payable?.id && payError && (
+                                <p className="booking-error mybookings-pay-error">{payError}</p>
                             )}
 
                             {expanded && (

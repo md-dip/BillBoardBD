@@ -1,9 +1,9 @@
 /* ============================================================
    Home page (public landing page, shown to logged-out visitors and to
-   any logged-in actor browsing the shared/public part of the site) —
+   any logged-in actor browsing the shared/public part of the site) -
    fully independent: every class is prefixed .home-* and fully
    self-contained, so nothing here can ever be silently overridden by
-   (or override) another page's identical-looking class — this app
+   (or override) another page's identical-looking class - this app
    bundles all CSS into one file with no per-page code-splitting, so
    two files defining the exact same bare selector collide, and
    whichever loads later wins. Prefixing every class per-page avoids

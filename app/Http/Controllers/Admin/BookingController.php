@@ -57,7 +57,7 @@ class BookingController extends Controller
     }
 
     /**
-     * The admin's copy of a booking's invoice — same document the client sees,
+     * The admin's copy of a booking's invoice - same document the client sees,
      * plus the platform commission and payable-to-owner breakdown.
      */
     public function invoice(Request $request, Booking $booking): JsonResponse

@@ -1,8 +1,8 @@
 /* ============================================================
-   FindBillboards page — the map + sidebar billboard search.
+   FindBillboards page - the map + sidebar billboard search.
    Everything this page's own markup needs lives here.
 
-   .billboard-marker-icon is duplicated here AND in BillboardDetail.css —
+   .billboard-marker-icon is duplicated here AND in BillboardDetail.css -
    both pages render pins via the shared getBillboardIcon() helper
    (shared/utils/markerIcons.js), so both need this tiny rule. Keep the
    two copies in sync if it ever changes.
@@ -186,7 +186,7 @@
     color: #d70015;
 }
 
-/* Whole card wrapped in a Link — kills default link styling, and lifts
+/* Whole card wrapped in a Link - kills default link styling, and lifts
    the card on hover; .selected highlights the card whose marker was
    clicked on the map */
 .board-card-link {
@@ -292,7 +292,7 @@
     text-decoration: underline;
 }
 
-/* Loading/error state text (also used by a couple of other simple pages —
+/* Loading/error state text (also used by a couple of other simple pages -
    kept minimal here since this page's own use is just "Loading...") */
 .status {
     padding: 32px;
@@ -304,7 +304,7 @@
 
 /* Dead code, kept rather than silently deleted: this page's local
    makeIcon()/'billboard-marker' divIcon is defined but never actually
-   called — markers are rendered via the shared getBillboardIcon()
+   called - markers are rendered via the shared getBillboardIcon()
    helper instead (class 'billboard-marker-icon', styled above). Moved
    here from the old global shared/styles/index.css during the shared/
    folder restructure, since this is the feature it actually belongs to. */

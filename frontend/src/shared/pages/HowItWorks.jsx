@@ -8,7 +8,7 @@ export default function HowItWorks() {
             <ol className="how-it-works-steps-list">
                 <li>Browse billboards on the map with location and price filters</li>
                 <li>Pick your dates and pay the advance to lock the slot</li>
-                <li>Submit your creative — the admin reviews and approves your campaign</li>
+                <li>Submit your creative - the admin reviews and approves your campaign</li>
             </ol>
         </div>
     );

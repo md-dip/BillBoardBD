@@ -1,8 +1,8 @@
 /* ============================================================
-   Admin Payouts page — fully independent: every class is prefixed
+   Admin Payouts page - fully independent: every class is prefixed
    .admin-payouts-* and fully self-contained, so nothing here can
    ever be silently overridden by (or override) another admin page's
-   identical-looking class — this app bundles all CSS into one file
+   identical-looking class - this app bundles all CSS into one file
    with no per-page code-splitting, so two files defining the exact
    same bare selector (e.g. .card, .btn) collide, and whichever loads
    later wins. Prefixing every class per-page is how that's avoided.
@@ -36,7 +36,7 @@
     overflow: hidden;
 }
 
-/* ---- "Outstanding balances" table — own complete table shell, independent of "Payout history" ---- */
+/* ---- "Outstanding balances" table - own complete table shell, independent of "Payout history" ---- */
 .admin-payouts-outstanding-table {
     width: 100%;
     border-collapse: collapse;
@@ -69,7 +69,7 @@
     color: #64748b;
 }
 
-/* ---- "Payout history" table — own complete table shell, independent of "Outstanding balances" ---- */
+/* ---- "Payout history" table - own complete table shell, independent of "Outstanding balances" ---- */
 .admin-payouts-history-table {
     width: 100%;
     border-collapse: collapse;

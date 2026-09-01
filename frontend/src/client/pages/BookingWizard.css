@@ -1,16 +1,14 @@
 /* ============================================================
-   BookingWizard — the sticky booking sidebar (dates -> campaign ->
+   BookingWizard - the sticky booking sidebar (dates -> campaign ->
    review & pay) shown on BillboardDetail. Everything this component's
    own markup needs lives here, across all 3 steps.
 
    Every button gets its own class named after what it actually says
-   (.hold-these-dates-btn, .continue-to-review-btn, .cancel-btn, etc.)
+   (.hold-these-dates-btn, .continue-to-review-btn, .pay-advance-btn, etc.)
    instead of one generic class shared across differently-labeled
-   buttons — so the class name always tells you which button it's for.
+   buttons - so the class name always tells you which button it's for.
 
-   - .confirm-btn / .cancel-btn / .booking-error / .pay-method-select /
-     .pay-ref-input are ALSO duplicated in client/pages/MyBookings.css
-     (its "pay now" inline form has its own Confirm/Cancel buttons)
+   - .booking-error is ALSO duplicated in client/pages/MyBookings.css
    - .auth-label / .auth-input are ALSO duplicated from
      shared/styles/index.css (Login/Register's form fields use the
      canonical copy there)
@@ -79,7 +77,7 @@
 }
 
 /* Field label used on every step (Start/End date, Brand name, Ad category,
-   Campaign description, Ad creative) — duplicated from shared/styles/index.css,
+   Campaign description, Ad creative) - duplicated from shared/styles/index.css,
    which still owns the canonical copy for Login/Register's own form fields.
    Keep both copies in sync if this ever changes. */
 .auth-label {
@@ -145,14 +143,12 @@
     margin: 10px 0;
 }
 
-/* Every solid "primary action" button in the wizard — one class per
+/* Every solid "primary action" button in the wizard - one class per
    button, named after what that button actually says, so the CSS class
-   always tells you which button it belongs to. .confirm-btn is also
-   duplicated in MyBookings.css for its own inline pay form. */
+   always tells you which button it belongs to. */
 .hold-these-dates-btn,
 .continue-to-review-btn,
 .pay-advance-btn,
-.confirm-btn,
 .go-to-my-bookings-btn {
     width: 100%;
     padding: 12px;
@@ -168,14 +164,12 @@
 .hold-these-dates-btn:hover,
 .continue-to-review-btn:hover,
 .pay-advance-btn:hover,
-.confirm-btn:hover,
 .go-to-my-bookings-btn:hover {
     background: #005bb5;
 }
 .hold-these-dates-btn:disabled,
 .continue-to-review-btn:disabled,
-.pay-advance-btn:disabled,
-.confirm-btn:disabled {
+.pay-advance-btn:disabled {
     background: #94a3b8;
     cursor: not-allowed;
 }
@@ -196,35 +190,6 @@
     margin-top: 10px;
 }
 
-/* Step 3: inline "pay advance" form (method select + ref input + confirm) */
-.pay-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-}
-/* Payment method dropdown + transaction reference input (also duplicated
-   in MyBookings.css) */
-.pay-method-select,
-.pay-ref-input {
-    padding: 8px 10px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 0.9rem;
-}
-.pay-ref-input { flex: 1; min-width: 120px; }
-/* Shrink the "Confirm" button to fit inline next to the inputs above */
-.pay-form .confirm-btn { width: auto; padding: 8px 16px; margin: 0; }
-/* Outlined "Cancel" button next to it (also duplicated in MyBookings.css) */
-.cancel-btn {
-    background: transparent;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    padding: 8px 14px;
-    cursor: pointer;
-    color: #475569;
-}
-
 /* Step "done": success checkmark + confirmation copy */
 .booking-success { text-align: center; padding: 12px 4px; }
 .booking-success-check {
@@ -240,6 +205,6 @@
 .booking-success p { color: #64748b; font-size: 0.9rem; margin: 0 0 16px; }
 .booking-success .go-to-my-bookings-btn { display: inline-block; text-decoration: none; text-align: center; }
 
-/* Step 2's campaign-description field is a <textarea>, not an <input> —
+/* Step 2's campaign-description field is a <textarea>, not an <input> -
    needs this one extra tweak on top of the .auth-input rule above */
 textarea.auth-input { resize: vertical; font-family: inherit; }

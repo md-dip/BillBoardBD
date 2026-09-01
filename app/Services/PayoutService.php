@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * Owner payouts are computed live from settled-but-not-yet-disbursed payments
  * (payout_id IS NULL, status = paid, on a booking that reached at least
- * paid_in_full) rather than pre-generated batches — admin triggers a payout
+ * paid_in_full) rather than pre-generated batches - admin triggers a payout
  * for a given owner manually, any time, from the Admin Payouts page.
  */
 class PayoutService
@@ -23,7 +23,7 @@ class PayoutService
     {
         // Only the 'advance' row is summed: its owner_payable already carries
         // the net amount for the ENTIRE booking (total - commission, frozen
-        // at BookingController::submitCampaign time) — the same convention
+        // at BookingController::submitCampaign time) - the same convention
         // Admin\ReportController::revenue() relies on. The 'balance' row's
         // owner_payable duplicates that same amount, so including it would
         // double-count every settled booking.

@@ -37,7 +37,7 @@ function AppRoutes() {
     const showClientChrome = !isAdmin && !isOwner;
 
     // On a shared/public page, an owner/admin gets their own navbar (a badge
-    // linking back to /owner or /admin) instead of the client-only one —
+    // linking back to /owner or /admin) instead of the client-only one -
     // only a logged-in client falls through to ClientNavbar.
     let navbar = <DefaultNavbar />;
     if (showClientChrome && user?.role === 'owner') navbar = <OwnerNavbar />;

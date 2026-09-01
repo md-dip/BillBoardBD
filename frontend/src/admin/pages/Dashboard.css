@@ -1,6 +1,6 @@
 .admin-dashboard-muted { color: #64748b; font-size: 14px; }
 
-/* Layout-only grid holding the 4 KPI cards — no color here, safe to share */
+/* Layout-only grid holding the 4 KPI cards - no color here, safe to share */
 .admin-dashboard-kpi-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -8,7 +8,7 @@
     margin-bottom: 24px;
 }
 
-/* Layout-only header row inside every KPI card (label + icon) — no color, safe to share */
+/* Layout-only header row inside every KPI card (label + icon) - no color, safe to share */
 .admin-dashboard-kpi-header {
     display: flex;
     align-items: center;
@@ -123,7 +123,7 @@
     font-size: 14px;
 }
 
-/* Layout-only grid holding the Inventory / Booking pipeline boxes — no color, safe to share */
+/* Layout-only grid holding the Inventory / Booking pipeline boxes - no color, safe to share */
 .admin-dashboard-two-col-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -152,7 +152,7 @@
     gap: 12px;
 }
 
-/* "Total billboards" mini-stat — its own complete class, independent of the other 3 */
+/* "Total billboards" mini-stat - its own complete class, independent of the other 3 */
 .admin-dashboard-inventory-mini-stat-total-billboards { background: #f8fafc; border-radius: 8px; padding: 12px; }
 .admin-dashboard-inventory-mini-stat-label-total-billboards { font-size: 12px; color: #64748b; }
 .admin-dashboard-inventory-mini-stat-value-total-billboards { font-size: 18px; font-weight: 600; color: #0f172a; margin-top: 2px; }
@@ -194,7 +194,7 @@
     gap: 12px;
 }
 
-/* "Pending review" mini-stat — its own complete class, independent of the other 6 */
+/* "Pending review" mini-stat - its own complete class, independent of the other 6 */
 .admin-dashboard-booking-pipeline-mini-stat-pending-review { background: #f8fafc; border-radius: 8px; padding: 12px; }
 .admin-dashboard-booking-pipeline-mini-stat-label-pending-review { font-size: 12px; color: #64748b; }
 .admin-dashboard-booking-pipeline-mini-stat-value-pending-review { font-size: 18px; font-weight: 600; color: #0f172a; margin-top: 2px; }

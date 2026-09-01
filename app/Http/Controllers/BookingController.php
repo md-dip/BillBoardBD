@@ -50,7 +50,7 @@ class BookingController extends Controller
             ], 409);
         }
 
-        // Money is computed server-side — never trusted from the browser.
+        // Money is computed server-side - never trusted from the browser.
         $amounts = $this->pricing->calculate($billboard, $startDate, $endDate);
         $holdMinutes = (int) Setting::get('hold_minutes', 15);
 
@@ -152,7 +152,7 @@ class BookingController extends Controller
     }
 
     /**
-     * The client's invoice for a booking — the final invoice once it exists,
+     * The client's invoice for a booking - the final invoice once it exists,
      * otherwise the advance one. Never exposes the platform commission split.
      */
     public function invoice(Request $request, Booking $booking): JsonResponse

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('number')->unique();               // INV-000042-A / INV-000042-F
             $table->string('kind');                           // 'advance' | 'final'
 
-            // Everything below is frozen at issue time — an invoice is a
+            // Everything below is frozen at issue time - an invoice is a
             // historical document, it must not shift if the admin later
             // changes the commission rate or a new payment lands.
             $table->decimal('subtotal', 12, 2);              // full booking total

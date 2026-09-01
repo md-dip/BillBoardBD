@@ -8,7 +8,7 @@ use App\Notifications\BookingStatusNotification;
 /**
  * Stage 2 of the booking pipeline: the admin's first review, reached once the
  * client has paid the advance. Approving here only forwards the request to
- * the billboard owner for their own acceptance (stage 3) — it does not create
+ * the billboard owner for their own acceptance (stage 3) - it does not create
  * the balance payment or touch the calendar; that happens once the owner
  * actually accepts.
  *
@@ -66,7 +66,7 @@ class BookingApprovalService
         ]);
 
         // The advance was paid up front, so a rejection auto-refunds it to the
-        // account it came from (mock — no real gateway call, matches how
+        // account it came from (mock - no real gateway call, matches how
         // "paying" is mocked elsewhere).
         $refund = $this->refunds->refundAdvance($booking);
 
@@ -80,7 +80,7 @@ class BookingApprovalService
 
         $booking->user->notify(new BookingStatusNotification(
             $booking,
-            $refund ? 'Booking rejected — advance refunded' : 'Booking rejected',
+            $refund ? 'Booking rejected - advance refunded' : 'Booking rejected',
             $body,
         ));
 

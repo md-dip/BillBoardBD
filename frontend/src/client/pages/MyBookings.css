@@ -1,5 +1,5 @@
 /* ============================================================
-   MyBookings page — the client's booking list + the invoice modal.
+   MyBookings page - the client's booking list + the invoice modal.
    ============================================================ */
 
 /* Generic page heading wrapper shared with a couple of other simple pages */
@@ -96,8 +96,8 @@
 .mybookings-amount { font-weight: 700; color: #1d1d1f; }
 .mybookings-payment-text { font-size: 0.8rem; color: #6e6e73; margin-top: 2px; }
 
-/* "Balance Due· Pay now" style clickable payment link */
-.mybookings-pay-link {
+/* "Balance due · Pay now" - a link-styled button that kicks off gateway checkout */
+.pay-now-btn {
     background: none;
     border: none;
     padding: 0;
@@ -107,6 +107,10 @@
     font-weight: 600;
     cursor: pointer;
     text-decoration: underline;
+}
+.pay-now-btn:disabled {
+    color: #94a3b8;
+    cursor: progress;
 }
 
 /* Status pill (Under Review / Confirmed / Paid In Full / Live / Rejected...) */
@@ -150,17 +154,8 @@
     padding: 6px 12px;
 }
 
-/* Inline "pay now" form that opens below a card */
-.mybookings-pay-form {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid #f1f5f9;
-}
-.mybookings-pay-form .confirm-btn { margin: 0; }
+/* Error line under a card when starting gateway checkout failed */
+.mybookings-pay-error { margin-top: 12px; }
 
 /* Expanded "View" panel: brand/category/campaign details + rejection reason */
 .mybookings-detail {
@@ -194,7 +189,7 @@
 }
 
 /* Green confirmation that the 30% advance was auto-refunded after an admin
-   rejection — shown just under .mybookings-rejection in the expanded card. */
+   rejection - shown just under .mybookings-rejection in the expanded card. */
 .mybookings-refund {
     margin-top: 8px;
     background: #ecfdf5;
@@ -211,7 +206,32 @@
     .mybookings-actions { width: 100%; }
 }
 
-/* ---- Reused pay-form controls (also defined for BookingWizard) ---- */
+/* Banner shown when the browser returns from the SSLCommerz hosted page
+   (/dashboard?payment=success|failed|cancelled) */
+.payment-status-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
+}
+.payment-status-banner-success { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+.payment-status-banner-error { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+.payment-status-banner-info { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+.payment-status-banner-dismiss {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+}
+.payment-status-banner-dismiss:hover { opacity: 1; }
 
 /* Red error text under a failed pay attempt */
 .booking-error {
@@ -220,40 +240,7 @@
     margin-top: 10px;
 }
 
-/* Solid blue button — named after what it says, so the class always
-   tells you which button it belongs to */
-.confirm-btn {
-    width: 100%;
-    padding: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #ffffff;
-    background: #0071e3;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.15s;
-}
-.confirm-btn:hover {
-    background: #005bb5;
-}
-.confirm-btn:disabled {
-    background: #94a3b8;
-    cursor: not-allowed;
-}
-
-/* Payment method dropdown + transaction reference input */
-.pay-method-select,
-.pay-ref-input {
-    padding: 8px 10px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 0.9rem;
-}
-.pay-ref-input { flex: 1; min-width: 120px; }
-
-/* Outlined secondary controls: Cancel / View / Invoice */
-.cancel-btn,
+/* Outlined secondary controls: View / Invoice */
 .view-btn,
 .invoice-btn {
     background: transparent;

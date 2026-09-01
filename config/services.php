@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'sslcommerz' => [
+        'store_id' => env('SSLC_STORE_ID'),
+        'store_passwd' => env('SSLC_STORE_PASSWD'),
+        'sandbox' => (bool) env('SSLC_SANDBOX', true),
+        // Where the customer's browser is bounced back to after the hosted
+        // checkout - the React SPA, not this API.
+        'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+    ],
+
 ];

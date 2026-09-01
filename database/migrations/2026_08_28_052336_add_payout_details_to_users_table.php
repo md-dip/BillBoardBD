@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Where an owner wants their payouts sent — set by the owner
+     * Where an owner wants their payouts sent - set by the owner
      * themselves on the Owner Payouts page, read by admin when they
      * manually trigger a payout so they know where to send the money.
      */
