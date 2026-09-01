@@ -9,7 +9,7 @@ use App\Models\Payout;
 use App\Models\ProofOfPosting;
 use App\Models\Setting;
 use App\Models\User;
-use App\Services\InvoiceService;
+use App\Services\Shared\InvoiceService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RejectBookingRequest;
+use App\Http\Requests\Shared\RejectBookingRequest;
 use App\Models\Booking;
 use App\Notifications\BookingStatusNotification;
 use Illuminate\Http\JsonResponse;

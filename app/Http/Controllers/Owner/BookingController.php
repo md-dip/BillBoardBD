@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RejectBookingRequest;
+use App\Http\Requests\Shared\RejectBookingRequest;
 use App\Models\Booking;
-use App\Services\OwnerAcceptanceService;
+use App\Services\Owner\OwnerAcceptanceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

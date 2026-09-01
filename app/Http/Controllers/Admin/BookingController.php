@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RejectBookingRequest;
+use App\Http\Requests\Shared\RejectBookingRequest;
 use App\Models\Booking;
-use App\Services\BookingApprovalService;
-use App\Services\InvoiceService;
+use App\Services\Admin\BookingApprovalService;
+use App\Services\Shared\InvoiceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

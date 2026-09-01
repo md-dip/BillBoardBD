@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdateSettingsRequest;
+use App\Http\Requests\Admin\UpdateSettingsRequest;
 use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 

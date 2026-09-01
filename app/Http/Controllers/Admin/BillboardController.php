@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreBillboardRequest;
-use App\Http\Requests\UpdateBillboardRequest;
+use App\Http\Requests\Shared\StoreBillboardRequest;
+use App\Http\Requests\Shared\UpdateBillboardRequest;
 use App\Models\Billboard;
 use Illuminate\Http\JsonResponse;
 

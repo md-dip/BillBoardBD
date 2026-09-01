@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreProofOfPostingRequest;
+use App\Http\Requests\Owner\StoreProofOfPostingRequest;
 use App\Models\Booking;
 use App\Models\User;
 use App\Notifications\BookingStatusNotification;

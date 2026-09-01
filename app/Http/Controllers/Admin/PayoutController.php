@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\PayoutService;
+use App\Services\Shared\PayoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

@@ -7,7 +7,7 @@ use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\User;
 use App\Notifications\BookingStatusNotification;
-use App\Services\InvoiceService;
+use App\Services\Shared\InvoiceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

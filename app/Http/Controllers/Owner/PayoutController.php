@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
-use App\Services\PayoutService;
+use App\Services\Shared\PayoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
