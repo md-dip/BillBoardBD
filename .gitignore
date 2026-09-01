@@ -28,3 +28,6 @@ Thumbs.db
 
 .claude/
 /Complete project/
+
+# Generated image-gen prompts (regenerate with tools/genprompts locally)
+/billboard-image-prompts.md
