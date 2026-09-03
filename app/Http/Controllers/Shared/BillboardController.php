@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Billboard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class BillboardController extends Controller
 {
     public function index()
     {
-        $billboards = Billboard::all();
+        // Only admin-approved listings are public.
+        $billboards = Billboard::query()->where('listing_status', 'approved')->get();
 
         return response()->json([
             'success' => true,
@@ -46,6 +48,7 @@ class BillboardController extends Controller
         ) AS b"))
             ->select('*')
             ->addBinding([$lat, $lng, $lat], 'select')
+            ->where('listing_status', 'approved')
             ->where('distance_km', '<=', $radius)
             ->orderBy('distance_km')
             ->get()
@@ -54,7 +57,7 @@ class BillboardController extends Controller
                 $b->photo_url = match (true) {
                     empty($b->photo) => null,
                     str_starts_with($b->photo, 'http'), str_starts_with($b->photo, '/') => $b->photo,
-                    default => '/'.ltrim($b->photo, '/'),
+                    default => Storage::disk('public')->url($b->photo),
                 };
 
                 return $b;
@@ -68,6 +71,15 @@ class BillboardController extends Controller
 
     public function show(Billboard $billboard)
     {
+        // A board that isn't approved yet must not be reachable by URL.
+        if ($billboard->listing_status !== 'approved') {
+            return response()->json([
+                'success' => false,
+                'data' => null,
+                'message' => 'Billboard not found.',
+            ], 404);
+        }
+
         return response()->json([
             'success' => true,
             'data' => $billboard,

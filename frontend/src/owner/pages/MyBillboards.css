@@ -201,6 +201,136 @@
     color: #64748b;
 }
 
+/* ---- Paid listing flow ---- */
+
+/* Banner shown when the browser returns from SSLCommerz (?listing=…) */
+.billboards-listing-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    border: 1px solid transparent;
+}
+.billboards-listing-banner-success { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
+.billboards-listing-banner-error { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+.billboards-listing-banner-info { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+.billboards-listing-banner-dismiss {
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+}
+.billboards-listing-banner-dismiss:hover { opacity: 1; }
+
+/* New-listing form: permit expiry + the two file inputs share the label look */
+.billboards-permit-expiry-label,
+.billboards-photo-label,
+.billboards-permit-document-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 6px;
+}
+.billboards-photo-input,
+.billboards-permit-document-input {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #0f172a;
+    background: #ffffff;
+}
+.billboards-photo-input:focus,
+.billboards-permit-document-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.billboards-file-hint { font-weight: 400; color: #94a3b8; }
+
+.billboards-listing-fee-notice {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+/* Per-status listing badge - each a full standalone rule, no shared base */
+.billboards-listing-badge-pending-payment {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #fef3c7;
+    color: #92400e;
+}
+.billboards-listing-badge-pending-review {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #dbeafe;
+    color: #1e40af;
+}
+.billboards-listing-badge-approved {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #dcfce7;
+    color: #166534;
+}
+.billboards-listing-badge-rejected {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #fee2e2;
+    color: #991b1b;
+}
+.billboards-listing-reject-reason {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 4px;
+    max-width: 240px;
+}
+
+.billboards-pay-listing-fee-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: #16a34a;
+    color: #ffffff;
+    transition: background 0.15s;
+}
+.billboards-pay-listing-fee-btn:hover { background: #15803d; }
+.billboards-pay-listing-fee-btn:disabled { opacity: 0.6; cursor: default; }
+
 /* Stack the add/edit form's field grids on narrow screens */
 @media (max-width: 768px) {
     .billboards-form-grid-2, .billboards-form-grid-3 { grid-template-columns: 1fr; }

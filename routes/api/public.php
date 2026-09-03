@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Client\PaymentGatewayController;
+use App\Http\Controllers\Owner\ListingPaymentController;
 use App\Http\Controllers\Shared\AuthController;
 use App\Http\Controllers\Shared\BillboardController;
 use App\Http\Controllers\Shared\SettingController;
@@ -23,3 +24,9 @@ Route::post('/payments/sslcommerz/success', [PaymentGatewayController::class, 's
 Route::post('/payments/sslcommerz/fail', [PaymentGatewayController::class, 'fail']);
 Route::post('/payments/sslcommerz/cancel', [PaymentGatewayController::class, 'cancel']);
 Route::post('/payments/sslcommerz/ipn', [PaymentGatewayController::class, 'ipn']);
+
+// Owner board-listing-fee SSLCommerz callbacks - same rationale as above.
+Route::post('/listing-payments/sslcommerz/success', [ListingPaymentController::class, 'success']);
+Route::post('/listing-payments/sslcommerz/fail', [ListingPaymentController::class, 'fail']);
+Route::post('/listing-payments/sslcommerz/cancel', [ListingPaymentController::class, 'cancel']);
+Route::post('/listing-payments/sslcommerz/ipn', [ListingPaymentController::class, 'ipn']);

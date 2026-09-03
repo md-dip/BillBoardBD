@@ -208,6 +208,7 @@
 }
 .dashboard-my-billboards-item-title { font-weight: 500; color: #0f172a; }
 .dashboard-my-billboards-item-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+.dashboard-my-billboards-listing-tag { color: #b45309; font-weight: 500; }
 
 /* Right-aligned price + status pill column */
 .dashboard-my-billboards-price { text-align: right; }

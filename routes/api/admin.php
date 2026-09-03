@@ -16,6 +16,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     // Billboard CRUD (index/store/update/destroy - no show, admin edits from the list)
     Route::apiResource('billboards', AdminBillboardController::class)->except(['show']);
 
+    // Owner-submitted board listing review
+    Route::patch('/billboards/{billboard}/approve', [AdminBillboardController::class, 'approve']);
+    Route::patch('/billboards/{billboard}/reject', [AdminBillboardController::class, 'reject']);
+
     // Bookings review + approval workflow
     Route::get('/bookings', [AdminBookingController::class, 'index']);
     Route::get('/bookings/{booking}/invoice', [AdminBookingController::class, 'invoice']);

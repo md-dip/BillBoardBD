@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Billboard;
 use App\Models\Booking;
+use App\Models\ListingPayment;
 use App\Models\Payment;
 use App\Models\Payout;
 use App\Models\ProofOfPosting;
@@ -405,6 +406,86 @@ class OwnerDemoSeeder extends Seeder
             method: 'bank',
             reference: 'PAYOUT-2026-07',
         );
+
+        $this->seedListingSubmissions($owner);
+    }
+
+    /**
+     * Two owner-submitted boards for the paid listing flow, so the admin
+     * "Listing requests" tab and the owner's own table aren't empty in the
+     * demo: one still awaiting review (fee paid), one already rejected (fee
+     * refunded). Same 1x1 PNG placeholder used for the proof-of-posting demo
+     * stands in for the photo + permit document.
+     */
+    private function seedListingSubmissions(User $owner): void
+    {
+        $rows = [
+            [
+                'title' => 'Mohakhali Flyover Approach Unipole',
+                'address' => 'Mohakhali Flyover, Dhaka',
+                'latitude' => 23.7782,
+                'longitude' => 90.4041,
+                'listing_status' => 'pending_review',
+                'payment_status' => 'paid',
+            ],
+            [
+                'title' => 'Jatrabari Mor Freestanding Board',
+                'address' => 'Jatrabari Mor, Dhaka',
+                'latitude' => 23.7104,
+                'longitude' => 90.4360,
+                'listing_status' => 'rejected',
+                'payment_status' => 'refunded',
+                'listing_rejection_reason' => 'Permit document is expired - upload a current one and re-list.',
+            ],
+        ];
+
+        foreach ($rows as $row) {
+            if (Billboard::query()->where('title', $row['title'])->exists()) {
+                continue;
+            }
+
+            $photoPath = 'board-photos/demo-'.md5($row['title']).'.png';
+            $permitPath = 'permit-documents/demo-'.md5($row['title']).'.png';
+            Storage::disk('public')->put($photoPath, base64_decode(self::PLACEHOLDER_PNG_BASE64));
+            Storage::disk('public')->put($permitPath, base64_decode(self::PLACEHOLDER_PNG_BASE64));
+
+            $billboard = Billboard::query()->create([
+                'owner_id' => $owner->id,
+                'title' => $row['title'],
+                'description' => 'Owner-submitted board pending the paid listing flow.',
+                'latitude' => $row['latitude'],
+                'longitude' => $row['longitude'],
+                'address' => $row['address'],
+                'size' => '20ft x 10ft',
+                'type' => 'unipole',
+                'pricing_mode' => 'monthly',
+                'daily_rate' => 0,
+                'monthly_rate' => 150000,
+                'rating' => 0,
+                'status' => 'available',
+                'photo' => $photoPath,
+                'permit_document' => $permitPath,
+                'permit_expiry_date' => '2027-06-30',
+                'listing_status' => $row['listing_status'],
+                'listing_rejection_reason' => $row['listing_rejection_reason'] ?? null,
+                'submitted_at' => now()->subDays(3),
+                'reviewed_at' => $row['listing_status'] === 'rejected' ? now()->subDay() : null,
+            ]);
+
+            ListingPayment::query()->create([
+                'billboard_id' => $billboard->id,
+                'owner_id' => $owner->id,
+                'amount' => (float) Setting::get('listing_fee', 5000),
+                'status' => $row['payment_status'],
+                'method' => 'bkash',
+                'transaction_ref' => $row['payment_status'] === 'refunded'
+                    ? 'RFND-LIST-'.$billboard->id.'-20260902120000'
+                    : 'LIST-'.$billboard->id.'-DEMO',
+                'gateway' => 'sslcommerz',
+                'paid_at' => now()->subDays(3),
+                'refunded_at' => $row['payment_status'] === 'refunded' ? now()->subDay() : null,
+            ]);
+        }
     }
 
     /**

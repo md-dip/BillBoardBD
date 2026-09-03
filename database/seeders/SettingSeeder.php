@@ -13,5 +13,6 @@ class SettingSeeder extends Seeder
         Setting::query()->updateOrCreate(['key' => 'advance_percentage'], ['value' => '30']);
         Setting::query()->updateOrCreate(['key' => 'hold_minutes'], ['value' => '15']);
         Setting::query()->updateOrCreate(['key' => 'final_payment_days'], ['value' => '7']);
+        Setting::query()->updateOrCreate(['key' => 'listing_fee'], ['value' => '5000']);
     }
 }

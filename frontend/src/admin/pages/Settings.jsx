@@ -4,7 +4,7 @@ import AdminShell from '../components/AdminShell';
 import './Settings.css';
 
 export default function AdminSettings() {
-  const [form, setForm] = useState({ commission_rate: '', advance_percentage: '', final_payment_days: '' });
+  const [form, setForm] = useState({ commission_rate: '', advance_percentage: '', final_payment_days: '', listing_fee: '' });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
 
@@ -74,6 +74,21 @@ export default function AdminSettings() {
                 />
                 <p className="admin-settings-final-payment-days-help-text">
                   How many days a client has to pay the remaining 70% after the owner accepts a booking.
+                </p>
+              </div>
+              <div className="admin-settings-form-row">
+                <label className="admin-settings-listing-fee-label" htmlFor="listing-fee">Board listing fee (BDT)</label>
+                <input
+                  id="listing-fee"
+                  className="admin-settings-listing-fee-input"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={form.listing_fee}
+                  onChange={(e) => setForm({ ...form, listing_fee: e.target.value })}
+                />
+                <p className="admin-settings-listing-fee-help-text">
+                  One-time fee an owner pays to list a new board for review.
                 </p>
               </div>
               {message && (

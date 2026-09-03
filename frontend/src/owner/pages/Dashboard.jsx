@@ -61,7 +61,17 @@ function MyBillboardsBox({ billboards, onManage }) {
             >
               <div>
                 <div className="dashboard-my-billboards-item-title">{b.title}</div>
-                <div className="dashboard-my-billboards-item-sub">{b.address}</div>
+                <div className="dashboard-my-billboards-item-sub">
+                  {b.address}
+                  {b.listing_status && b.listing_status !== 'approved' && (
+                    <span className="dashboard-my-billboards-listing-tag">
+                      {' · '}
+                      {b.listing_status === 'pending_payment' ? 'payment due'
+                        : b.listing_status === 'pending_review' ? 'under review'
+                          : 'rejected'}
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="dashboard-my-billboards-price">
                 <div className="dashboard-my-billboards-price-amount">

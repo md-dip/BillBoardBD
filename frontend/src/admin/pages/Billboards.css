@@ -312,7 +312,195 @@
 }
 .admin-billboards-delete-btn:hover { background: #b91c1c; }
 
+/* ============================================================
+   Listing-review sub-tab ("All billboards" | "Listing requests")
+   ============================================================ */
+
+.admin-billboards-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 16px;
+}
+.admin-billboards-tab-all,
+.admin-billboards-tab-requests {
+    padding: 8px 14px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+}
+.admin-billboards-tab-all:hover,
+.admin-billboards-tab-requests:hover { color: #0f172a; }
+.admin-billboards-tab-active { color: #2563eb; border-bottom-color: #2563eb; }
+
+/* ---- "Listing" status pill in the All-billboards table ---- */
+.admin-billboards-listing-badge-pending-payment {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 500; background: #fef3c7; color: #92400e;
+}
+.admin-billboards-listing-badge-pending-review {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 500; background: #dbeafe; color: #1e40af;
+}
+.admin-billboards-listing-badge-approved {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 500; background: #dcfce7; color: #166534;
+}
+.admin-billboards-listing-badge-rejected {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 500; background: #fee2e2; color: #991b1b;
+}
+
+/* ---- Requests tab ---- */
+.admin-billboards-requests-hint { margin-bottom: 16px; }
+.admin-billboards-requests-empty { padding: 32px; text-align: center; color: #64748b; }
+
+.admin-billboards-request-list { display: flex; flex-direction: column; gap: 12px; }
+.admin-billboards-request-card {
+    display: flex;
+    gap: 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+    align-items: flex-start;
+}
+.admin-billboards-request-photo {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+    background: #f1f5f9;
+}
+.admin-billboards-request-photo-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #94a3b8;
+}
+.admin-billboards-request-body { flex: 1; min-width: 0; }
+.admin-billboards-request-title { font-weight: 600; color: #0f172a; }
+.admin-billboards-request-sub { font-size: 13px; color: #64748b; margin-top: 2px; }
+.admin-billboards-request-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    font-size: 12px;
+    color: #475569;
+    margin-top: 8px;
+}
+.admin-billboards-permit-doc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #2563eb;
+    text-decoration: none;
+}
+.admin-billboards-permit-doc-link:hover { text-decoration: underline; }
+
+.admin-billboards-request-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+    width: 200px;
+}
+.admin-billboards-approve-listing-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: #16a34a;
+    color: #ffffff;
+    transition: background 0.15s;
+}
+.admin-billboards-approve-listing-btn:hover { background: #15803d; }
+.admin-billboards-approve-listing-btn:disabled { opacity: 0.6; cursor: default; }
+.admin-billboards-reject-listing-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #ffffff;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    transition: background 0.15s;
+}
+.admin-billboards-reject-listing-btn:hover { background: #fef2f2; }
+
+.admin-billboards-reject-box { display: flex; flex-direction: column; gap: 8px; }
+.admin-billboards-reject-reason-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #0f172a;
+    background: #ffffff;
+}
+.admin-billboards-reject-reason-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.admin-billboards-reject-box-actions { display: flex; gap: 8px; }
+.admin-billboards-confirm-reject-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: #dc2626;
+    color: #ffffff;
+    transition: background 0.15s;
+}
+.admin-billboards-confirm-reject-btn:hover { background: #b91c1c; }
+.admin-billboards-confirm-reject-btn:disabled { opacity: 0.6; cursor: default; }
+.admin-billboards-cancel-reject-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    transition: background 0.15s;
+}
+.admin-billboards-cancel-reject-btn:hover { background: #f1f5f9; }
+
 /* Stack the form's field grids on narrow screens */
 @media (max-width: 768px) {
     .admin-billboards-form-grid-2, .admin-billboards-form-grid-3 { grid-template-columns: 1fr; }
+    .admin-billboards-request-card { flex-direction: column; }
+    .admin-billboards-request-actions { width: 100%; }
 }

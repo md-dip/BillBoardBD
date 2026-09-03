@@ -27,7 +27,7 @@ export default function AdminPermits() {
   }
 
   const withDays = billboards
-    .filter((b) => b.permit_expiry_date)
+    .filter((b) => b.permit_expiry_date && (b.listing_status ?? 'approved') === 'approved')
     .map((b) => ({ ...b, daysLeft: daysUntil(b.permit_expiry_date) }))
     .sort((a, b) => a.daysLeft - b.daysLeft);
 

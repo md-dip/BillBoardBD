@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Billboard extends Model
 {
@@ -15,16 +16,19 @@ class Billboard extends Model
     protected $fillable = [
         'owner_id', 'title', 'description', 'latitude', 'longitude', 'address', 'size', 'type',
         'daily_rate', 'monthly_rate', 'pricing_mode', 'photo', 'rating', 'status',
-        'permit_expiry_date',
+        'permit_expiry_date', 'listing_status', 'permit_document', 'listing_rejection_reason',
+        'submitted_at', 'reviewed_at', 'reviewed_by',
     ];
 
-    protected $appends = ['photo_url'];
+    protected $appends = ['photo_url', 'permit_document_url'];
 
     /**
-     * Image URL for the frontend. Photos live at frontend/public/billboards/<id>.jpg
-     * (committed, served by the SPA itself), so `photo` is already a usable
-     * root-relative URL like "/billboards/1.jpg". Absolute URLs pass through; a
-     * legacy bare path gets a leading slash. Null when there is no photo.
+     * Image URL for the frontend. Seeded photos live at
+     * frontend/public/billboards/<id>.jpg and are stored as a root-relative
+     * "/billboards/1.jpg" (or an absolute URL) - those pass through untouched.
+     * Owner-uploaded photos are stored as a bare public-disk path
+     * ("board-photos/xxx.jpg") and get resolved through the storage disk.
+     * Null when there is no photo.
      */
     protected function photoUrl(): Attribute
     {
@@ -36,8 +40,16 @@ class Billboard extends Model
                 return $this->photo;
             }
 
-            return '/'.ltrim($this->photo, '/');
+            return Storage::disk('public')->url($this->photo);
         });
+    }
+
+    /** Owner-uploaded permit document (PDF/image) on the public disk. */
+    protected function permitDocumentUrl(): Attribute
+    {
+        return Attribute::get(fn () => $this->permit_document
+            ? Storage::disk('public')->url($this->permit_document)
+            : null);
     }
 
     protected function casts(): array
@@ -49,6 +61,8 @@ class Billboard extends Model
             'monthly_rate' => 'decimal:2',
             'rating' => 'decimal:1',
             'permit_expiry_date' => 'date',
+            'submitted_at' => 'datetime',
+            'reviewed_at' => 'datetime',
         ];
     }
 
@@ -57,9 +71,19 @@ class Billboard extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
+    }
+
+    public function listingPayments(): HasMany
+    {
+        return $this->hasMany(ListingPayment::class);
     }
 
     public function activeBookings(): HasMany

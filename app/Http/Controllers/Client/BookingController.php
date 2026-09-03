@@ -20,13 +20,14 @@ class BookingController extends Controller
     public function __construct(
         private readonly BookingPricingService $pricing,
         private readonly InvoiceService $invoices,
-    ) {
-    }
+    ) {}
 
     /** Step 1: pick dates, lock the slot for hold_minutes while the user fills in the rest. */
     public function hold(HoldBookingRequest $request): JsonResponse
     {
-        $billboard = Billboard::query()->findOrFail($request->validated('billboard_id'));
+        $billboard = Billboard::query()
+            ->where('listing_status', 'approved')
+            ->findOrFail($request->validated('billboard_id'));
         $startDate = $request->validated('start_date');
         $endDate = $request->validated('end_date');
 

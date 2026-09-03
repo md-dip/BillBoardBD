@@ -17,11 +17,13 @@ const BOXES = ['inventory', 'booking-pipeline'];
 // tree (mini-stat / label / value), so editing one stat's color in the CSS
 // never touches the others or the "Booking pipeline" box next to it.
 function InventoryBox({ billboards }) {
+  const live = billboards.filter((b) => (b.listing_status ?? 'approved') === 'approved');
   const stats = [
-    { slug: 'total-billboards', label: 'Total billboards', value: billboards.length },
-    { slug: 'available', label: 'Available', value: billboards.filter((b) => b.status === 'available').length },
-    { slug: 'booked', label: 'Booked', value: billboards.filter((b) => b.status === 'booked').length },
-    { slug: 'hidden', label: 'Hidden', value: billboards.filter((b) => b.status === 'hidden').length },
+    { slug: 'total-billboards', label: 'Total billboards', value: live.length },
+    { slug: 'available', label: 'Available', value: live.filter((b) => b.status === 'available').length },
+    { slug: 'booked', label: 'Booked', value: live.filter((b) => b.status === 'booked').length },
+    { slug: 'hidden', label: 'Hidden', value: live.filter((b) => b.status === 'hidden').length },
+    { slug: 'pending-listings', label: 'Pending review', value: billboards.filter((b) => b.listing_status === 'pending_review').length },
   ];
 
   return (

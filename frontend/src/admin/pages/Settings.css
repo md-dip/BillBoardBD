@@ -103,6 +103,36 @@
     margin-top: 4px;
 }
 
+/* ---- "Board listing fee" field - own complete label/input pair + help text ---- */
+.admin-settings-listing-fee-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 6px;
+}
+.admin-settings-listing-fee-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #0f172a;
+    background: #ffffff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-settings-listing-fee-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.admin-settings-listing-fee-help-text {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 4px;
+}
+
 /* Save-result message text */
 .admin-settings-success-text { color: #15803d; font-size: 14px; margin-bottom: 12px; }
 .admin-settings-error-text { color: #dc2626; font-size: 14px; margin-bottom: 12px; }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Owner\BillboardController as OwnerBillboardController;
 use App\Http\Controllers\Owner\BookingController as OwnerBookingController;
+use App\Http\Controllers\Owner\ListingPaymentController as OwnerListingPaymentController;
 use App\Http\Controllers\Owner\PayoutController as OwnerPayoutController;
 use App\Http\Controllers\Owner\ProofOfPostingController as OwnerProofOfPostingController;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner')->group(function () {
     // Billboard CRUD, scoped to the logged-in owner's own listings
     Route::apiResource('billboards', OwnerBillboardController::class)->except(['show']);
+
+    // One-time board listing fee - SSLCommerz checkout (callbacks are public, see api/public.php)
+    Route::post('/listing-payments/{listingPayment}/checkout', [OwnerListingPaymentController::class, 'checkout']);
 
     // Booking requests for the owner's billboards + approval workflow
     Route::get('/bookings', [OwnerBookingController::class, 'index']);

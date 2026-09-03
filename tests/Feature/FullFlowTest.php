@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Billboard;
 use App\Models\Booking;
+use App\Models\ListingPayment;
 use App\Models\Payment;
 use App\Models\User;
+use App\Notifications\BillboardListingNotification;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\SettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -89,6 +91,55 @@ class FullFlowTest extends TestCase
 
             return Http::response([]);
         });
+    }
+
+    /** Fake SSLCommerz for the owner listing-fee flow (resolves a ListingPayment). */
+    private function fakeSslcommerzForListing(): void
+    {
+        Http::fake(function (ClientRequest $req) {
+            if (str_contains($req->url(), '/gwprocess/')) {
+                return Http::response([
+                    'status' => 'SUCCESS',
+                    'GatewayPageURL' => 'https://sandbox.sslcommerz.com/EasyCheckOut/test-list',
+                    'sessionkey' => 'sess_'.uniqid(),
+                ]);
+            }
+            if (str_contains($req->url(), '/validator/')) {
+                $p = ListingPayment::whereNotNull('gateway_tran_id')->where('status', '!=', 'paid')->latest('id')->first();
+
+                return Http::response([
+                    'status' => 'VALID',
+                    'tran_id' => $p?->gateway_tran_id,
+                    'val_id' => $req->data()['val_id'] ?? 'val_x',
+                    'currency' => 'BDT',
+                    'amount' => number_format((float) ($p?->amount ?? 0), 2, '.', ''),
+                    'card_type' => 'BKASH-Bkash',
+                    'bank_tran_id' => 'BNK'.uniqid(),
+                ]);
+            }
+
+            return Http::response([]);
+        });
+    }
+
+    /** Owner checks the listing fee out through the gateway; drive the success callback. */
+    private function payListingFeeViaGateway(int $listingPaymentId): void
+    {
+        Sanctum::actingAs($this->owner);
+
+        $res = $this->postJson("/api/owner/listing-payments/{$listingPaymentId}/checkout")->assertOk();
+        $this->assertNotEmpty($res->json('data.gateway_url'), 'listing checkout returned no gateway_url');
+
+        $tranId = ListingPayment::find($listingPaymentId)->gateway_tran_id;
+        $this->assertNotNull($tranId, 'listing checkout did not persist gateway_tran_id');
+
+        $this->post('/api/listing-payments/sslcommerz/success', [
+            'tran_id' => $tranId,
+            'val_id' => 'val_'.$listingPaymentId,
+            'value_a' => (string) $listingPaymentId,
+        ])->assertRedirect('http://localhost:5173/owner/billboards?listing=success');
+
+        $this->assertSame('paid', ListingPayment::find($listingPaymentId)->status);
     }
 
     /** Client checks a payment out through the gateway; drive the success callback. */
@@ -175,13 +226,86 @@ class FullFlowTest extends TestCase
             'title' => 'New Owner Board', 'address' => 'Rd 5, Dhaka',
             'latitude' => 23.8, 'longitude' => 90.41, 'size' => '10ft x 8ft',
             'type' => 'neon', 'daily_rate' => 3000, 'pricing_mode' => 'daily',
-            'permit_expiry_date' => '2027-01-01',
+            'permit_expiry_date' => now()->addYear()->toDateString(),
+            'photo' => UploadedFile::fake()->image('board.jpg', 800, 600),
+            'permit_document' => UploadedFile::fake()->create('permit.pdf', 120, 'application/pdf'),
         ];
 
-        $id = $this->postJson('/api/owner/billboards', $payload)->assertCreated()->json('data.id');
-        $this->putJson("/api/owner/billboards/{$id}", ['daily_rate' => 3500] + $payload)->assertOk();
+        // Listing a board now creates it as pending_payment with a pending fee.
+        $created = $this->post('/api/owner/billboards', $payload)->assertCreated()->json('data');
+        $id = $created['billboard']['id'];
+        $this->assertSame('pending_payment', $created['billboard']['listing_status']);
+        $this->assertDatabaseHas('listing_payments', [
+            'id' => $created['listing_payment']['id'], 'billboard_id' => $id, 'status' => 'pending', 'amount' => '5000.00',
+        ]);
+        // It must not be publicly visible yet.
+        $this->getJson('/api/billboards')->assertOk()->assertJsonMissing(['id' => $id]);
+        $this->getJson("/api/billboards/{$id}")->assertNotFound();
+
+        $this->putJson("/api/owner/billboards/{$id}", ['daily_rate' => 3500])->assertOk();
         $this->deleteJson("/api/owner/billboards/{$id}")->assertOk();
         $this->assertDatabaseMissing('billboards', ['id' => $id]);
+    }
+
+    public function test_owner_listing_fee_flow_approve_makes_board_public(): void
+    {
+        $this->fakeSslcommerzForListing();
+
+        Sanctum::actingAs($this->owner);
+        $created = $this->post('/api/owner/billboards', [
+            'title' => 'Paid Listing Board', 'address' => 'Rd 9, Dhaka',
+            'latitude' => 23.81, 'longitude' => 90.42, 'size' => '20ft x 10ft',
+            'type' => 'unipole', 'daily_rate' => 4000, 'pricing_mode' => 'daily',
+            'permit_expiry_date' => now()->addYear()->toDateString(),
+            'photo' => UploadedFile::fake()->image('b.jpg'),
+            'permit_document' => UploadedFile::fake()->create('p.pdf', 90, 'application/pdf'),
+        ])->assertCreated()->json('data');
+
+        $billboardId = $created['billboard']['id'];
+        $this->payListingFeeViaGateway($created['listing_payment']['id']);
+
+        // Fee paid -> board is now awaiting admin review + admins were notified.
+        $this->assertSame('pending_review', Billboard::find($billboardId)->listing_status);
+        $this->assertDatabaseHas('notifications', [
+            'notifiable_id' => $this->admin->id, 'type' => BillboardListingNotification::class,
+        ]);
+
+        // Admin approves -> board goes live.
+        Sanctum::actingAs($this->admin);
+        $this->patchJson("/api/admin/billboards/{$billboardId}/approve")->assertOk();
+        $this->assertSame('approved', Billboard::find($billboardId)->listing_status);
+
+        $this->getJson('/api/billboards')->assertOk()->assertJsonFragment(['id' => $billboardId]);
+        $this->getJson("/api/billboards/{$billboardId}")->assertOk();
+    }
+
+    public function test_rejected_listing_refunds_the_fee(): void
+    {
+        $this->fakeSslcommerzForListing();
+
+        Sanctum::actingAs($this->owner);
+        $created = $this->post('/api/owner/billboards', [
+            'title' => 'Doomed Board', 'address' => 'Rd 11, Dhaka',
+            'latitude' => 23.82, 'longitude' => 90.43, 'size' => '20ft x 10ft',
+            'type' => 'unipole', 'daily_rate' => 4000, 'pricing_mode' => 'daily',
+            'permit_expiry_date' => now()->addYear()->toDateString(),
+            'photo' => UploadedFile::fake()->image('b.jpg'),
+            'permit_document' => UploadedFile::fake()->create('p.pdf', 90, 'application/pdf'),
+        ])->assertCreated()->json('data');
+
+        $billboardId = $created['billboard']['id'];
+        $feeId = $created['listing_payment']['id'];
+        $this->payListingFeeViaGateway($feeId);
+
+        Sanctum::actingAs($this->admin);
+        $this->patchJson("/api/admin/billboards/{$billboardId}/reject", [
+            'rejection_reason' => 'Permit document is not legible.',
+        ])->assertOk();
+
+        $this->assertSame('rejected', Billboard::find($billboardId)->listing_status);
+        $this->assertSame('refunded', ListingPayment::find($feeId)->status);
+        $this->assertNotNull(ListingPayment::find($feeId)->refunded_at);
+        $this->getJson('/api/billboards')->assertOk()->assertJsonMissing(['id' => $billboardId]);
     }
 
     public function test_full_booking_lifecycle_with_gateway_and_invoices(): void
