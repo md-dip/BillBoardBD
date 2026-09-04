@@ -16,13 +16,19 @@ class BillboardController extends Controller
 
     public function index(Request $request): JsonResponse
     {
+        // paginate() keeps the response shape (data.data) the frontend expects,
+        // with the page size well above any one owner's inventory - same call
+        // as AdminBillboardController. Nothing in the app renders pagination
+        // controls, so a smaller page silently hides boards: the owner's My
+        // Billboards table and the dashboard's "My billboards" count both read
+        // this endpoint and would report only the first page.
         return response()->json([
             'success' => true,
             'data' => Billboard::query()
                 ->where('owner_id', $request->user()->id)
                 ->with('listingPayments')
                 ->orderBy('id')
-                ->paginate(20),
+                ->paginate(1000),
             'message' => null,
         ]);
     }

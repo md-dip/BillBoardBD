@@ -84,6 +84,27 @@ class UnassignedBillboardsOwnerTest extends TestCase
         $this->assertEqualsCanonicalizing(['Orphan One', 'Orphan Two'], $titles->all());
     }
 
+    public function test_an_owner_gets_every_board_back_not_just_the_first_page(): void
+    {
+        // 25 boards - more than the old page size of 20. Nothing in the app
+        // renders pagination controls, so a short page does not mean "page 2
+        // exists", it means those boards are invisible and the dashboard's
+        // count is wrong.
+        for ($i = 1; $i <= 25; $i++) {
+            $this->billboard('Orphan '.$i, null);
+        }
+
+        $this->seed(UserSeeder::class);
+        $this->seed(UnassignedBillboardsOwnerSeeder::class);
+
+        Sanctum::actingAs(User::query()->where('email', UnassignedBillboardsOwnerSeeder::OWNER_EMAIL)->firstOrFail());
+
+        $page = $this->getJson('/api/owner/billboards')->assertOk()->json('data');
+
+        $this->assertSame(25, $page['total']);
+        $this->assertCount(25, $page['data'], 'every board must come back in one page');
+    }
+
     private function billboard(string $title, ?int $ownerId): Billboard
     {
         return Billboard::create([
