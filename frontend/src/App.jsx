@@ -31,6 +31,7 @@ import OwnerMyBillboards from './owner/pages/MyBillboards';
 import OwnerBookingRequests from './owner/pages/BookingRequests';
 import OwnerPayouts from './owner/pages/Payouts';
 import OwnerPayoutReceipt from './owner/pages/PayoutReceipt';
+import OwnerHowItWorks from './owner/pages/HowItWorks';
 
 function AppRoutes() {
     const { pathname } = useLocation();
@@ -54,7 +55,16 @@ function AppRoutes() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/billboards" element={<FindBillboards />} />
-                    <Route path="/how-it-works" element={user?.role === 'client' ? <ClientHowItWorks /> : <HowItWorks />} />
+                    {/* One URL, three pages: each logged-in actor gets the guide written
+                        for their own job, and a logged-out visitor gets the generic one. */}
+                    <Route
+                        path="/how-it-works"
+                        element={
+                            user?.role === 'client' ? <ClientHowItWorks />
+                                : user?.role === 'owner' ? <OwnerHowItWorks />
+                                    : <HowItWorks />
+                        }
+                    />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/billboards/:id" element={<BillboardDetail />} />

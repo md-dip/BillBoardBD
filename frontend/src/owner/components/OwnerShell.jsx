@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
+  BookOpen,
   CalendarCheck,
   Home,
   LayoutDashboard,
@@ -16,6 +17,10 @@ const NAV_ITEMS = [
   { to: '/owner/billboards', label: 'My Billboards', icon: Megaphone },
   { to: '/owner/bookings', label: 'Booking Requests', icon: CalendarCheck },
   { to: '/owner/payouts', label: 'Payouts', icon: Wallet },
+  // The owner guide lives on the shared /how-it-works URL (App.jsx serves the
+  // owner version of that page to owners), so this one link leaves the portal
+  // and is never the "active" item - the top navbar's Owner badge comes back.
+  { to: '/how-it-works', label: 'How it works', icon: BookOpen },
 ];
 
 export default function OwnerShell({ children, title }) {

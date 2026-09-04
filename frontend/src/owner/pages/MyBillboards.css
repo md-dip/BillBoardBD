@@ -200,6 +200,14 @@
     text-align: center;
     color: #64748b;
 }
+/* "read the guide" link inside that empty row - sends a brand-new owner to
+   the owner-only /how-it-works page before they open the form */
+.billboards-read-the-guide-link {
+    color: #2563eb;
+    font-weight: 500;
+    text-decoration: none;
+}
+.billboards-read-the-guide-link:hover { text-decoration: underline; }
 
 /* ---- Paid listing flow ---- */
 
@@ -257,6 +265,22 @@
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 .billboards-file-hint { font-weight: 400; color: #94a3b8; }
+
+/* Plain-words note under the Latitude/Longitude pair, with a link through to
+   the full explanation on the owner guide */
+.billboards-coordinates-hint {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #64748b;
+    margin: -8px 0 16px;
+}
+.billboards-coordinates-hint-link {
+    color: #2563eb;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.billboards-coordinates-hint-link:hover { text-decoration: underline; }
 
 .billboards-listing-fee-notice {
     background: #eff6ff;

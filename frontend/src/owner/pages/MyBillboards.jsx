@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import api from '../../shared/api/axios';
 import OwnerShell from '../components/OwnerShell';
@@ -206,6 +207,13 @@ export default function OwnerMyBillboards() {
                 </div>
               </div>
 
+              {/* These two boxes are where owners get stuck, so point at the
+                  plain-language explanation in the owner guide. */}
+              <p className="billboards-coordinates-hint">
+                The two numbers that mark exactly where your board stands - press and hold the spot in Google Maps to
+                read them off. <Link to="/how-it-works" className="billboards-coordinates-hint-link">Show me how</Link>
+              </p>
+
               <div className="billboards-form-grid billboards-form-grid-2">
                 <div>
                   <label className="billboards-form-label">Type</label>
@@ -351,7 +359,9 @@ export default function OwnerMyBillboards() {
               {billboards.length === 0 && (
                 <tr>
                   <td colSpan={7} className="billboards-table-empty">
-                    You haven&apos;t listed any billboards yet. Click &quot;List new billboard&quot; to add one.
+                    You haven&apos;t listed any billboards yet. Click &quot;List new billboard&quot; to add one, or{' '}
+                    <Link to="/how-it-works" className="billboards-read-the-guide-link">read the guide</Link> to see
+                    what you&apos;ll need first.
                   </td>
                 </tr>
               )}
