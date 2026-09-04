@@ -31,3 +31,6 @@ Thumbs.db
 
 # Generated image-gen prompts (regenerate with tools/genprompts locally)
 /billboard-image-prompts.md
+
+# Local design/analysis docs (activity diagrams etc. - not shipped with the app)
+/docs/

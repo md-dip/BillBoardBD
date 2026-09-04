@@ -7,15 +7,21 @@ use App\Models\Payment;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\BookingStatusNotification;
+use App\Services\Shared\RefundService;
 
 /**
  * Stage 3 of the booking pipeline: the billboard owner's own acceptance,
  * reached once admin has forwarded the request. Accepting is what actually
  * creates the balance payment and starts the countdown to the final-payment
  * due date - mirrors BookingApprovalService's shape for the admin's stage 2.
+ *
+ * Declining here is terminal and, exactly like an admin rejection, auto-refunds
+ * the advance the client already paid to their source account (see RefundService).
  */
 class OwnerAcceptanceService
 {
+    public function __construct(private readonly RefundService $refunds) {}
+
     /**
      * @return array{ok: bool, status: int, message: string, booking?: Booking}
      */
@@ -82,27 +88,40 @@ class OwnerAcceptanceService
             'rejection_reason' => $reason,
         ]);
 
-        $booking->payments()
-            ->where('payment_type', 'advance')
-            ->where('status', 'paid')
-            ->update(['status' => 'refunded', 'refunded_at' => now()]);
+        // The client paid the advance up front, so an owner decline auto-refunds
+        // it to the account it came from - identical mechanism to an admin
+        // rejection (mock, no real gateway call).
+        $refund = $this->refunds->refundAdvance($booking);
 
-        $booking = $booking->fresh(['billboard', 'user']);
+        $booking = $booking->fresh(['billboard', 'user', 'payments']);
+
+        $clientBody = "The owner declined your booking for \"{$booking->billboard?->title}\". Reason: {$reason}";
+        $adminBody = "\"{$booking->billboard?->title}\" was declined by its owner. Reason: {$reason}";
+        if ($refund) {
+            $amount = '৳'.number_format((float) $refund->amount);
+            $clientBody .= " Your advance of {$amount} has been refunded to your {$refund->method} account (ref {$refund->transaction_ref}).";
+            $adminBody .= " The client's advance of {$amount} has been refunded to their {$refund->method} account (ref {$refund->transaction_ref}).";
+        }
 
         $booking->user->notify(new BookingStatusNotification(
             $booking,
-            'Booking declined',
-            "The owner declined your booking for \"{$booking->billboard?->title}\". Reason: {$reason}",
+            $refund ? 'Booking declined - advance refunded' : 'Booking declined',
+            $clientBody,
         ));
 
         foreach (User::query()->where('role', 'admin')->get() as $admin) {
             $admin->notify(new BookingStatusNotification(
                 $booking,
-                'Booking declined by owner',
-                "\"{$booking->billboard?->title}\" was declined by its owner. Reason: {$reason}",
+                $refund ? 'Booking declined by owner - advance refunded' : 'Booking declined by owner',
+                $adminBody,
             ));
         }
 
-        return ['ok' => true, 'status' => 200, 'message' => 'Booking rejected', 'booking' => $booking];
+        return [
+            'ok' => true,
+            'status' => 200,
+            'message' => $refund ? 'Booking rejected and advance refunded' : 'Booking rejected',
+            'booking' => $booking,
+        ];
     }
 }

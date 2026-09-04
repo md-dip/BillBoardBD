@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Admin;
+namespace App\Services\Shared;
 
 use App\Models\Booking;
 use App\Models\Payment;

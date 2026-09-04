@@ -413,6 +413,55 @@ class FullFlowTest extends TestCase
         $this->assertDatabaseHas('payments', ['booking_id' => $bookingId, 'payment_type' => 'refund']);
     }
 
+    public function test_owner_declined_booking_refunds_the_advance(): void
+    {
+        $this->fakeSslcommerz();
+
+        // client hold -> campaign -> pay advance via gateway
+        Sanctum::actingAs($this->client);
+        $bookingId = $this->postJson('/api/bookings/hold', [
+            'billboard_id' => $this->billboard->id,
+            'start_date' => now()->addDays(30)->toDateString(),
+            'end_date' => now()->addDays(35)->toDateString(),
+        ])->assertCreated()->json('data.id');
+
+        $this->post("/api/bookings/{$bookingId}/campaign", [
+            'brand_name' => 'Delta', 'ad_category' => 'Retail',
+            'campaign_description' => 'Owner-decline refund scenario campaign.',
+            'creative' => UploadedFile::fake()->image('d.png'),
+        ])->assertOk();
+
+        $advance = Payment::where('booking_id', $bookingId)->where('payment_type', 'advance')->firstOrFail();
+        $this->payViaGateway($advance->id);
+
+        // admin approve -> forwards to the owner's tab
+        Sanctum::actingAs($this->admin);
+        $this->patchJson("/api/admin/bookings/{$bookingId}/approve")->assertOk();
+        $this->assertSame('pending_owner_approval', Booking::find($bookingId)->status);
+
+        // owner rejects with a reason
+        Sanctum::actingAs($this->owner);
+        $this->patchJson("/api/owner/bookings/{$bookingId}/reject", [
+            'rejection_reason' => 'The site is already committed to another campaign.',
+        ])->assertOk();
+
+        // booking terminal, advance flipped to refunded with a timestamp
+        $this->assertSame('rejected', Booking::find($bookingId)->status);
+        $refundedAdvance = Payment::find($advance->id);
+        $this->assertSame('refunded', $refundedAdvance->status);
+        $this->assertNotNull($refundedAdvance->refunded_at);
+
+        // dedicated audit 'refund' payment row exists (full parity with admin reject)
+        $this->assertDatabaseHas('payments', ['booking_id' => $bookingId, 'payment_type' => 'refund']);
+
+        // the client's notification wording mentions the refund
+        $bodies = $this->client->notifications()->get()->pluck('data.body');
+        $this->assertTrue(
+            $bodies->contains(fn ($b) => str_contains((string) $b, 'refunded')),
+            'client should get a BookingStatusNotification mentioning the refund',
+        );
+    }
+
     public function test_gateway_callback_rejects_a_tampered_amount(): void
     {
         Http::fake(function (ClientRequest $req) {

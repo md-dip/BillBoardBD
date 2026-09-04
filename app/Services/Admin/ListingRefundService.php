@@ -8,7 +8,7 @@ use App\Models\ListingPayment;
 /**
  * Mock refund gateway for the board listing fee. When admin rejects a board the
  * owner already paid for, that fee goes straight back to the account it came
- * from. No real gateway call - mirrors Admin\RefundService and how "paying" is
+ * from. No real gateway call - mirrors Shared\RefundService and how "paying" is
  * mocked across the rest of the app.
  */
 class ListingRefundService
