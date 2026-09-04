@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import homePathFor from '../utils/homePathFor';
 import usePageTitle from '../hooks/usePageTitle';
 import './Register.css';
 
@@ -40,13 +41,10 @@ export default function Register() {
         setSubmitting(true);
         try {
             const user = await register(form);
-            // After registration, redirect based on role - a brand new client
-            // goes back to whatever they were trying to book, if anything.
-            if (user.role === 'owner') {
-                navigate('/owner');
-            } else {
-                navigate(from || '/billboards');
-            }
+            // Same rule as logging in: an owner starts on their dashboard, a
+            // new client goes back to whatever they were trying to book.
+            const resumeFrom = user.role === 'client' && from;
+            navigate(resumeFrom || homePathFor(user.role), { replace: true });
         } catch (err) {
             // Laravel returns { errors: { email: ['already taken'], ... } } for 422 validation
             if (err.response?.data?.errors) {

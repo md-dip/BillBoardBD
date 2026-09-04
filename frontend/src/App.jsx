@@ -58,8 +58,8 @@ function AppRoutes() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/billboards/:id" element={<BillboardDetail />} />
-                    <Route path="/dashboard" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
-                    <Route path="/bookings/:bookingId/invoice" element={<ProtectedRoute><ClientInvoice /></ProtectedRoute>} />
+                    <Route path="/dashboard" element={<ProtectedRoute requireRole="client"><MyBookings /></ProtectedRoute>} />
+                    <Route path="/bookings/:bookingId/invoice" element={<ProtectedRoute requireRole="client"><ClientInvoice /></ProtectedRoute>} />
 
                     <Route path="/admin" element={<ProtectedRoute requireRole="admin"><AdminDashboard /></ProtectedRoute>} />
                     <Route path="/admin/billboards" element={<ProtectedRoute requireRole="admin"><AdminBillboards /></ProtectedRoute>} />

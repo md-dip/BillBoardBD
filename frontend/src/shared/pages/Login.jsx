@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import homePathFor from '../utils/homePathFor';
 import usePageTitle from '../hooks/usePageTitle';
 import './Login.css';
 
@@ -37,17 +38,14 @@ export default function Login() {
         setSubmitting(true);
         try {
             const user = await login(email, password);
-            // Back to the page that needed the login, if there was one;
-            // otherwise the role's own landing page.
-            if (from) {
-                navigate(from, { replace: true });
-            } else if (user.role === 'admin') {
-                navigate('/admin');
-            } else if (user.role === 'owner') {
-                navigate('/owner');
-            } else {
-                navigate('/billboards');
-            }
+            // An admin or an owner ALWAYS lands on their own dashboard. `from`
+            // is deliberately ignored for them: after an account switch in the
+            // same tab it points at the previous actor's page (a client's My
+            // Bookings, say), which is exactly how you end up logged in as an
+            // owner while looking at client screens. Only a client is returned
+            // to what they were doing, so the booking flow can resume.
+            const resumeFrom = user.role === 'client' && from;
+            navigate(resumeFrom || homePathFor(user.role), { replace: true });
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed');
         } finally {
