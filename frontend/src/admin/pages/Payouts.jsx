@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Payouts.css';
 
 const METHODS = ['bkash', 'nagad', 'bank'];
@@ -23,6 +24,8 @@ function payoutSummary(owner) {
 }
 
 export default function AdminPayouts() {
+    usePageTitle('Admin Payouts');
+
   const [outstanding, setOutstanding] = useState([]);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);

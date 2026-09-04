@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import usePageTitle from '../hooks/usePageTitle';
 import './Register.css';
 
 export default function Register() {
+    usePageTitle('Register');
+
     const { register } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();

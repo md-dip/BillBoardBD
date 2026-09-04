@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react';
 import api from '../../shared/api/axios';
 import OwnerShell from '../components/OwnerShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './MyBillboards.css';
 
 const TYPES = ['unipole', 'multipole', 'gantry', 'rooftop', 'freestanding', 'static', 'backlit', 'frontlit', 'led', 'neon', 'wall'];
@@ -49,6 +50,8 @@ function errorMessage(err, fallback) {
 }
 
 export default function OwnerMyBillboards() {
+    usePageTitle('My Billboards');
+
   const [billboards, setBillboards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);

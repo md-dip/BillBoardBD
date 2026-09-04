@@ -1,6 +1,9 @@
+import usePageTitle from '../hooks/usePageTitle';
 import './HowItWorks.css';
 
 export default function HowItWorks() {
+    usePageTitle('How it works');
+
     return (
         <div className="how-it-works-page">
             <h1 className="how-it-works-title">How it works</h1>

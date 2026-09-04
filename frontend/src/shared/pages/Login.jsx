@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import usePageTitle from '../hooks/usePageTitle';
 import './Login.css';
 
 const DEMO_ACCOUNTS = [
@@ -10,6 +11,8 @@ const DEMO_ACCOUNTS = [
 ];
 
 export default function Login() {
+    usePageTitle('Log in');
+
     const { login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();

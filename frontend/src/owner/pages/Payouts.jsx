@@ -4,6 +4,7 @@ import { Wallet, Pencil } from 'lucide-react';
 import api from '../../shared/api/axios';
 import OwnerShell from '../components/OwnerShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Payouts.css';
 
 const BLANK_DETAILS = {
@@ -17,6 +18,8 @@ const BLANK_DETAILS = {
 const METHOD_LABEL = { bkash: 'bKash', nagad: 'Nagad', bank: 'Bank transfer' };
 
 export default function OwnerPayouts() {
+    usePageTitle('My Payouts');
+
   const [outstanding, setOutstanding] = useState(0);
   const [history, setHistory] = useState([]);
   // savedDetails: what's actually on the server right now (null = never set up).

@@ -3,6 +3,7 @@ import { Check, ChevronDown, ChevronUp, Upload, X } from 'lucide-react';
 import api from '../../shared/api/axios';
 import OwnerShell from '../components/OwnerShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './BookingRequests.css';
 
 const STATUSES = ['pending_owner_approval', 'confirmed', 'paid_in_full', 'pending_proof_review', 'active', 'rejected'];
@@ -17,6 +18,8 @@ const STATUS_LABEL = {
 };
 
 export default function OwnerBookingRequests() {
+    usePageTitle('Booking Requests');
+
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending_owner_approval');

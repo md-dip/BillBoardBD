@@ -4,12 +4,16 @@ import { ArrowLeft, Printer } from 'lucide-react';
 import api from '../../shared/api/axios';
 import OwnerShell from '../components/OwnerShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './PayoutReceipt.css';
 
 const METHOD_LABEL = { bkash: 'bKash', nagad: 'Nagad', bank: 'Bank transfer' };
 
 export default function OwnerPayoutReceipt() {
     const { payoutId } = useParams();
+
+    usePageTitle(`Payout Receipt #${payoutId}`);
+
     const [receipt, setReceipt] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');

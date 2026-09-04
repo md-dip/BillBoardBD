@@ -5,6 +5,7 @@ import L from 'leaflet';
 import api from '../../shared/api/axios';
 import BookingWizard from './BookingWizard';
 import { getBillboardIcon } from '../../shared/utils/markerIcons';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './BillboardDetail.css';
 
 // A marker drawn with HTML/SVG instead of Leaflet's default PNG. This avoids
@@ -39,6 +40,8 @@ export default function BillboardDetail() {
     const [billboard, setBillboard] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    usePageTitle(billboard?.title || 'Billboard');
 
     // Booking rules from the DB, so the wizard shows the real advance % / hold time.
     const [settings, setSettings] = useState({ advance_percentage: 30, hold_minutes: 15 });

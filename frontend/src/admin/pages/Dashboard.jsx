@@ -4,6 +4,7 @@ import { CalendarCheck, DollarSign, Megaphone, ShieldAlert, TrendingUp } from 'l
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Dashboard.css';
 
 function daysUntil(dateStr) {
@@ -79,6 +80,8 @@ function BookingPipelineBox({ bookings }) {
 }
 
 export default function AdminDashboard() {
+    usePageTitle('Admin Dashboard');
+
   const [billboards, setBillboards] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [revenue, setRevenue] = useState(null);

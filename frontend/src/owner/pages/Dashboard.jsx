@@ -4,6 +4,7 @@ import { CalendarCheck, Clock, DollarSign, Megaphone } from 'lucide-react';
 import api from '../../shared/api/axios';
 import OwnerShell from '../components/OwnerShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Dashboard.css';
 
 
@@ -101,6 +102,8 @@ function MyBillboardsBox({ billboards, onManage }) {
 }
 
 export default function OwnerDashboard() {
+    usePageTitle('Owner Dashboard');
+
   const navigate = useNavigate();
   const [billboards, setBillboards] = useState([]);
   const [bookings, setBookings] = useState([]);

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Image as ImageIcon } from 'lucide-react';
 import api from '../../shared/api/axios';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './MyBookings.css';
 
 // Shown as a banner when the browser returns from the SSLCommerz hosted page.
@@ -37,6 +38,8 @@ function paymentSummary(booking) {
 }
 
 export default function Dashboard() {
+    usePageTitle('My Bookings');
+
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedId, setExpandedId] = useState(null);

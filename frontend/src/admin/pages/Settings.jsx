@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Settings.css';
 
 export default function AdminSettings() {
+    usePageTitle('Admin Settings');
+
   const [form, setForm] = useState({ commission_rate: '', advance_percentage: '', final_payment_days: '', listing_fee: '' });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);

@@ -3,12 +3,16 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Printer } from 'lucide-react';
 import api from '../../shared/api/axios';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Invoice.css';
 
 const KIND_LABEL = { advance: 'Advance invoice', final: 'Final invoice' };
 
 export default function Invoice() {
     const { bookingId } = useParams();
+
+    usePageTitle(`Invoice #${bookingId}`);
+
     const [invoice, setInvoice] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');

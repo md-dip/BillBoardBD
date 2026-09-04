@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import usePageTitle from '../hooks/usePageTitle';
 import './Home.css';
 
 // Small inline-SVG icons (stroke uses currentColor, so the icon box colour controls them).
@@ -51,6 +52,8 @@ const features = [
 ];
 
 export default function Home() {
+    usePageTitle();
+
     return (
         <div className="home-page">
             {/* Hero */}

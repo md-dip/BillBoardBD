@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import usePageTitle from '../hooks/usePageTitle';
 import './NotFound.css';
 
 // Catch-all page for any URL that matches no route at all (see the "*" route
@@ -7,6 +8,8 @@ import './NotFound.css';
 // land here - a mistyped /admin/... or /owner/... URL falls through to this
 // same page - so "Go home" points at whichever home the visitor actually has.
 export default function NotFound() {
+    usePageTitle('Page not found');
+
     const { user } = useAuth();
 
     let homePath = '/';

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import api from '../../shared/api/axios';
 import { getBillboardIcon } from '../../shared/utils/markerIcons';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './FindBillboards.css';
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -95,6 +96,8 @@ function formatPrice(b) {
 const RADII = [5, 10, 20];
 
 export default function FindBillboards() {
+    usePageTitle('Find Billboards');
+
     const [billboards, setBillboards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

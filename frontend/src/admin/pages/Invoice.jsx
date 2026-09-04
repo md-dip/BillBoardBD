@@ -4,12 +4,16 @@ import { ArrowLeft, Printer } from 'lucide-react';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Invoice.css';
 
 const KIND_LABEL = { advance: 'Advance invoice', final: 'Final invoice' };
 
 export default function AdminInvoice() {
     const { bookingId } = useParams();
+
+    usePageTitle(`Admin Invoice #${bookingId}`);
+
     const [invoice, setInvoice] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');

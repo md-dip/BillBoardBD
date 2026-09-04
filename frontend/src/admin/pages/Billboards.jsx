@@ -3,6 +3,7 @@ import { Check, FileText, Plus, X } from 'lucide-react';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Billboards.css';
 
 const TYPES = ['unipole', 'multipole', 'gantry', 'rooftop', 'freestanding', 'static', 'backlit', 'frontlit', 'led', 'neon', 'wall'];
@@ -37,6 +38,8 @@ function permitWarning(dateStr) {
 }
 
 export default function AdminBillboards() {
+    usePageTitle('Admin Billboards');
+
   const [billboards, setBillboards] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);

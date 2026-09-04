@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Search, Clock, Megaphone, ShieldCheck, UserCheck, CreditCard, Camera } from 'lucide-react';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './HowItWorks.css';
 
 // The client-only "How it works" page - shows the REAL 7-step booking
@@ -45,6 +46,8 @@ const STEPS = [
 ];
 
 export default function HowItWorks() {
+    usePageTitle('How it works');
+
     return (
         <div className="hiw-page">
             <h1>How it works</h1>

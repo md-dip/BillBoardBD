@@ -3,6 +3,7 @@ import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer,
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Reports.css';
 
 const COLORS = ['#2563eb', '#93c5fd', '#15803d', '#b45309', '#dc2626', '#9333ea', '#0891b2', '#ea580c', '#65a30d', '#db2777', '#4f46e5'];
@@ -10,6 +11,8 @@ const COLORS = ['#2563eb', '#93c5fd', '#15803d', '#b45309', '#dc2626', '#9333ea'
 const KPIS = ['total-revenue', 'platform-commission', 'payable-to-owners'];
 
 export default function AdminReports() {
+    usePageTitle('Admin Reports');
+
   const [revenue, setRevenue] = useState(null);
   const [occupancy, setOccupancy] = useState([]);
   const [billboards, setBillboards] = useState([]);

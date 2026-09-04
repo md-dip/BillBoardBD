@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AlertTriangle, ShieldAlert, ShieldCheck } from 'lucide-react';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Permits.css';
 
 function daysUntil(dateStr) {
@@ -9,6 +10,8 @@ function daysUntil(dateStr) {
 }
 
 export default function AdminPermits() {
+    usePageTitle('Admin Permits');
+
   const [billboards, setBillboards] = useState([]);
   const [loading, setLoading] = useState(true);
 

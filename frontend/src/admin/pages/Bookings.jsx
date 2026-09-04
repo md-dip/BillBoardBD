@@ -4,6 +4,7 @@ import { Check, ChevronDown, ChevronUp, FileText, X } from 'lucide-react';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
+import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Bookings.css';
 
 const STATUSES = [
@@ -29,6 +30,8 @@ const STATUS_LABEL = {
 };
 
 export default function AdminBookings() {
+    usePageTitle('Admin Bookings');
+
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending_admin_review');
