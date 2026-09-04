@@ -14,6 +14,14 @@ use Illuminate\Support\Facades\DB;
  * (payout_id IS NULL, status = paid, on a booking that reached at least
  * paid_in_full) rather than pre-generated batches - admin triggers a payout
  * for a given owner manually, any time, from the Admin Payouts page.
+ *
+ * Being paid in full is not enough to be payable. The owner still owes the
+ * platform proof that the campaign actually went up on the board, and admin
+ * still has to accept that proof - until then the money is collected but not
+ * earned, and paying it out would mean paying for a posting nobody has
+ * confirmed. So the booking's own revenue can show on the owner dashboard
+ * while its payout balance stays at zero, and the balance only moves when
+ * admin verifies the proof of posting.
  */
 class PayoutService
 {
@@ -34,6 +42,14 @@ class PayoutService
             ->whereHas(
                 'booking',
                 fn ($q) => $q->whereIn('status', self::SETTLED_STATUSES)
+                    // The proof-of-installation gate. Keyed off the proof row
+                    // rather than the booking status so it states the actual
+                    // rule: the owner uploaded it (OwnerProofOfPostingController
+                    // -> status 'pending') AND admin accepted it
+                    // (AdminProofOfPostingController -> 'verified'). A proof
+                    // admin rejects goes back to 'rejected' and the booking to
+                    // paid_in_full, which drops out of here again.
+                    ->whereHas('proofOfPostings', fn ($q3) => $q3->where('status', 'verified'))
                     ->whereHas('billboard', fn ($q2) => $q2->where('owner_id', $ownerId))
             );
     }
