@@ -110,7 +110,9 @@ export default function AdminDashboard() {
 
   const stats = useMemo(() => ({
     revenue: revenue?.totals?.gross ?? 0,
-    commission: revenue?.totals?.commission ?? 0,
+    // Everything the platform keeps: booking commission + the one-time
+    // board listing fees owners pay, which have no owner split at all.
+    commission: revenue?.totals?.platform_income ?? 0,
     pending: bookings.filter((b) => b.status === 'pending_admin_review').length,
     expiring: billboards.filter((b) => b.permit_expiry_date && daysUntil(b.permit_expiry_date) < 90).length,
   }), [bookings, billboards, revenue]);
@@ -121,7 +123,7 @@ export default function AdminDashboard() {
     for (const r of revenue.rows) {
       const entry = map.get(r.month) ?? { month: r.month, revenue: 0, commission: 0 };
       entry.revenue += Number(r.gross);
-      entry.commission += Number(r.commission);
+      entry.commission += Number(r.commission) + Number(r.listing_fees);
       map.set(r.month, entry);
     }
     return [...map.values()].sort((a, b) => a.month.localeCompare(b.month));

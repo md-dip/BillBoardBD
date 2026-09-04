@@ -213,12 +213,10 @@ class FullFlowTest extends TestCase
         foreach ([
             '/api/admin/billboards', '/api/admin/bookings', '/api/admin/settings',
             '/api/admin/payouts', '/api/admin/ping',
+            '/api/admin/reports/revenue', '/api/admin/reports/occupancy',
         ] as $url) {
             $this->assertSame(200, $this->getJson($url)->status(), "GET $url (admin)");
         }
-        // NOTE: /api/admin/reports/{revenue,occupancy} use Postgres-only SQL
-        // (to_char) - green on the real DB, not runnable on sqlite; covered by
-        // the manual/API smoke instead.
     }
 
     public function test_owner_billboard_crud(): void

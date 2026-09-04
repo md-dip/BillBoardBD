@@ -65,7 +65,7 @@ export default function AdminReports() {
 
   const kpiValues = {
     'total-revenue': { label: 'Total revenue (paid)', value: formatBDT(revenue?.totals?.gross ?? 0) },
-    'platform-commission': { label: 'Platform commission', value: formatBDT(revenue?.totals?.commission ?? 0) },
+    'platform-commission': { label: 'Platform commission', value: formatBDT(revenue?.totals?.platform_income ?? 0) },
     'payable-to-owners': { label: 'Payable to owners', value: formatBDT(revenue?.totals?.owner_payable ?? 0) },
   };
 
