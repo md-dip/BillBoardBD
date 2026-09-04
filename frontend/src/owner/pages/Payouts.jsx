@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Wallet, Pencil } from 'lucide-react';
 import api from '../../shared/api/axios';
 import OwnerShell from '../components/OwnerShell';
@@ -105,6 +106,7 @@ export default function OwnerPayouts() {
               <th>Method</th>
               <th>Reference</th>
               <th>Paid at</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -114,11 +116,14 @@ export default function OwnerPayouts() {
                 <td className="payouts-method-cell">{p.method || 'N/A'}</td>
                 <td>{p.reference || 'N/A'}</td>
                 <td>{p.paid_at ? p.paid_at.slice(0, 10) : 'N/A'}</td>
+                <td className="payouts-receipt-cell">
+                  <Link to={`/owner/payouts/${p.id}/receipt`} className="payouts-receipt-link">Receipt</Link>
+                </td>
               </tr>
             ))}
             {history.length === 0 && (
               <tr>
-                <td colSpan={4} className="payouts-table-empty">
+                <td colSpan={5} className="payouts-table-empty">
                   You haven&apos;t received any payouts yet.
                 </td>
               </tr>

@@ -6,8 +6,10 @@ use App\Models\Billboard;
 use App\Models\Booking;
 use App\Models\ListingPayment;
 use App\Models\Payment;
+use App\Models\Payout;
 use App\Models\User;
 use App\Notifications\BillboardListingNotification;
+use App\Notifications\PayoutNotification;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\SettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -379,8 +381,60 @@ class FullFlowTest extends TestCase
         $this->patchJson("/api/admin/bookings/{$bookingId}/proof/verify")->assertOk();
         $this->assertSame('active', Booking::find($bookingId)->status);
 
-        // 10. owner payout
-        $this->postJson("/api/admin/payouts/{$this->owner->id}")->assertSuccessful();
+        // 10. owner payout - the owner first records where the money should go
+        Sanctum::actingAs($this->owner);
+        $this->putJson('/api/owner/payout-details', [
+            'payout_method' => 'bkash',
+            'payout_account_name' => 'Owner Bkash',
+            'payout_account_number' => '01711000000',
+        ])->assertOk();
+
+        Sanctum::actingAs($this->admin);
+        $payoutId = $this->postJson("/api/admin/payouts/{$this->owner->id}")
+            ->assertSuccessful()
+            ->json('data.id');
+
+        // the payout account is frozen onto the payout row as a snapshot -
+        // it must equal what the owner submitted, not be re-read from the
+        // (editable) users row later.
+        $this->assertDatabaseHas('payouts', ['owner_id' => $this->owner->id]);
+        $snapshot = Payout::find($payoutId)->payout_details;
+        $this->assertIsArray($snapshot);
+        $this->assertSame('bkash', $snapshot['payout_method']);
+        $this->assertSame('Owner Bkash', $snapshot['payout_account_name']);
+        $this->assertSame('01711000000', $snapshot['payout_account_number']);
+        $this->assertDatabaseHas('notifications', [
+            'notifiable_id' => $this->owner->id, 'type' => PayoutNotification::class,
+        ]);
+        $this->assertNotNull(Payment::where('booking_id', $bookingId)->where('payment_type', 'advance')->first()->payout_id);
+
+        // 11. owner pulls the payout receipt
+        Sanctum::actingAs($this->owner);
+        $receipt = $this->getJson("/api/owner/payouts/{$payoutId}/receipt")->assertOk()->json('data');
+        $this->assertStringStartsWith('PO-', $receipt['number']);
+        $this->assertSame('01711000000', $receipt['owner']['details']['payout_account_number']);
+        $this->assertNotEmpty($receipt['line_items']);
+        $this->assertEqualsWithDelta(
+            (float) Payout::find($payoutId)->amount,
+            (float) $receipt['totals']['amount'],
+            0.01,
+        );
+        $this->assertTrue($receipt['totals']['amount_matches_lines']);
+
+        // admin sees the same receipt
+        Sanctum::actingAs($this->admin);
+        $this->getJson("/api/admin/payouts/{$payoutId}/receipt")->assertOk()
+            ->assertJsonPath('data.number', $receipt['number']);
+
+        // a second owner cannot read the first owner's receipt
+        $otherOwner = User::create([
+            'name' => 'Other Owner', 'email' => 'owner2@test.com',
+            'password' => Hash::make('password'), 'role' => 'owner',
+        ]);
+        Sanctum::actingAs($otherOwner);
+        $this->getJson("/api/owner/payouts/{$payoutId}/receipt")
+            ->assertForbidden()
+            ->assertJsonPath('success', false);
     }
 
     public function test_rejected_booking_refunds_the_advance(): void

@@ -70,6 +70,12 @@ class PayoutService
                 'method' => $data['method'] ?? null,
                 'reference' => $data['reference'] ?? null,
                 'note' => $data['note'] ?? null,
+                // Freeze where the money was sent. Owners can edit their payout
+                // details any time, so the receipt must render from this snapshot,
+                // never the live users row. Null when the owner never filled any
+                // of it in, so the receipt shows a "not recorded" notice rather
+                // than a grid of blanks.
+                'payout_details' => $this->payoutDetailsSnapshot($owner),
                 'paid_by' => auth()->id(),
                 'paid_at' => now(),
             ]);
@@ -92,5 +98,21 @@ class PayoutService
             ->when($owner, fn ($q) => $q->where('owner_id', $owner->id))
             ->latest()
             ->get();
+    }
+
+    /**
+     * The owner's payout account, frozen for the receipt - or null when they
+     * never entered any of it.
+     *
+     * @return array<string, string|null>|null
+     */
+    private function payoutDetailsSnapshot(User $owner): ?array
+    {
+        $details = $owner->only([
+            'payout_method', 'payout_account_name', 'payout_account_number',
+            'payout_bank_name', 'payout_branch',
+        ]);
+
+        return collect($details)->contains(fn ($v) => filled($v)) ? $details : null;
     }
 }

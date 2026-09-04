@@ -25,5 +25,6 @@ Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner')->group(functi
 
     // Payouts (read-only history/outstanding) + the owner's own payout details
     Route::get('/payouts', [OwnerPayoutController::class, 'index']);
+    Route::get('/payouts/{payout}/receipt', [OwnerPayoutController::class, 'receipt']);
     Route::put('/payout-details', [OwnerPayoutController::class, 'updateDetails']);
 });

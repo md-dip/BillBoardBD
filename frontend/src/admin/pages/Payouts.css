@@ -99,12 +99,54 @@
     color: #64748b;
 }
 
-/* Inline "Pay out" form (method select + reference input + Confirm + Cancel) */
+/* Owner payout-account details, shown in the "Send payout to" column so
+   the admin can see where the money is going before recording it. */
+.admin-payouts-details { font-size: 13px; color: #334155; }
+.admin-payouts-details-line { margin-bottom: 2px; }
+.admin-payouts-details-line:last-child { margin-bottom: 0; }
+.admin-payouts-details-label {
+    display: inline-block;
+    min-width: 92px;
+    color: #94a3b8;
+    font-size: 12px;
+}
+/* Amber warning when the owner never filled in payout details */
+.admin-payouts-details-warning {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    background: #fef9c3;
+    border: 1px solid #fde68a;
+    color: #854d0e;
+}
+
+/* Inline "Pay out" form (a "Send to:" summary above, then the controls row) */
 .admin-payouts-inline-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+.admin-payouts-inline-form-controls {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 8px;
+}
+/* "Send to: <account>" confirmation line shown while the form is open */
+.admin-payouts-send-to {
+    font-size: 12px;
+    color: #475569;
+    text-align: right;
+    max-width: 320px;
+}
+.admin-payouts-send-to strong { color: #0f172a; font-weight: 600; }
+.admin-payouts-send-to-warning {
+    font-size: 12px;
+    color: #854d0e;
+    text-align: right;
+    max-width: 320px;
 }
 .admin-payouts-method-select {
     width: 110px;
@@ -186,3 +228,21 @@
     transition: background 0.15s;
 }
 .admin-payouts-cancel-btn:hover { background: #f1f5f9; }
+
+/* Trailing "Receipt" cell in the history table - a router <Link> styled
+   as an outlined pill, opens the printable payout receipt for that row. */
+.admin-payouts-receipt-cell { white-space: nowrap; }
+.admin-payouts-receipt-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    color: #475569;
+    background: #ffffff;
+    transition: background 0.15s;
+}
+.admin-payouts-receipt-link:hover { background: #f1f5f9; }

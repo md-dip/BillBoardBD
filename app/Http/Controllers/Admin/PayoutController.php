@@ -3,22 +3,39 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Payout;
 use App\Models\User;
+use App\Services\Shared\PayoutReceiptService;
 use App\Services\Shared\PayoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PayoutController extends Controller
 {
-    public function __construct(private readonly PayoutService $payouts) {}
+    public function __construct(
+        private readonly PayoutService $payouts,
+        private readonly PayoutReceiptService $receipts,
+    ) {}
 
     public function index(): JsonResponse
     {
         return response()->json([
             'success' => true,
             'data' => [
+                // Map to an explicit owner payload rather than dumping the whole
+                // User model - the admin needs the payout account to know where
+                // to send the money, so surface exactly those fields, nothing more.
                 'outstanding' => $this->payouts->outstandingByOwner()->map(fn (array $row) => [
-                    'owner' => $row['owner'],
+                    'owner' => [
+                        'id' => $row['owner']->id,
+                        'name' => $row['owner']->name,
+                        'email' => $row['owner']->email,
+                        'payout_method' => $row['owner']->payout_method,
+                        'payout_account_name' => $row['owner']->payout_account_name,
+                        'payout_account_number' => $row['owner']->payout_account_number,
+                        'payout_bank_name' => $row['owner']->payout_bank_name,
+                        'payout_branch' => $row['owner']->payout_branch,
+                    ],
                     'amount' => $row['amount'],
                 ]),
                 'history' => $this->payouts->history(),
@@ -59,5 +76,18 @@ class PayoutController extends Controller
             'data' => $payout,
             'message' => 'Payout recorded',
         ], 201);
+    }
+
+    /**
+     * The printable receipt for a recorded payout - the admin sees the full
+     * statement (same payload the owner gets).
+     */
+    public function receipt(Payout $payout): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $this->receipts->payload($payout),
+            'message' => null,
+        ]);
     }
 }

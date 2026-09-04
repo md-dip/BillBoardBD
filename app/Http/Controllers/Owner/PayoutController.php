@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Payout;
+use App\Services\Shared\PayoutReceiptService;
 use App\Services\Shared\PayoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PayoutController extends Controller
 {
-    public function __construct(private readonly PayoutService $payouts) {}
+    public function __construct(
+        private readonly PayoutService $payouts,
+        private readonly PayoutReceiptService $receipts,
+    ) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -25,6 +30,28 @@ class PayoutController extends Controller
                     'payout_bank_name', 'payout_branch',
                 ]),
             ],
+            'message' => null,
+        ]);
+    }
+
+    /**
+     * The printable receipt for a single recorded payout. Rendered from the
+     * snapshot frozen onto the payout, so it never shifts when the owner later
+     * edits their payout details.
+     */
+    public function receipt(Request $request, Payout $payout): JsonResponse
+    {
+        if ($payout->owner_id !== $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'data' => null,
+                'message' => 'This payout receipt is not yours.',
+            ], 403);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $this->receipts->payload($payout),
             'message' => null,
         ]);
     }

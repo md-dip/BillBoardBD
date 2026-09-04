@@ -41,5 +41,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
     // Owner payouts
     Route::get('/payouts', [AdminPayoutController::class, 'index']);
+    Route::get('/payouts/{payout}/receipt', [AdminPayoutController::class, 'receipt']);
     Route::post('/payouts/{owner}', [AdminPayoutController::class, 'store']);
 });

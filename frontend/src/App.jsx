@@ -24,10 +24,12 @@ import AdminPermits from './admin/pages/Permits';
 import AdminReports from './admin/pages/Reports';
 import AdminSettings from './admin/pages/Settings';
 import AdminPayouts from './admin/pages/Payouts';
+import AdminPayoutReceipt from './admin/pages/PayoutReceipt';
 import OwnerDashboard from './owner/pages/Dashboard';
 import OwnerMyBillboards from './owner/pages/MyBillboards';
 import OwnerBookingRequests from './owner/pages/BookingRequests';
 import OwnerPayouts from './owner/pages/Payouts';
+import OwnerPayoutReceipt from './owner/pages/PayoutReceipt';
 
 function AppRoutes() {
     const { pathname } = useLocation();
@@ -66,11 +68,13 @@ function AppRoutes() {
                     <Route path="/admin/reports" element={<ProtectedRoute requireRole="admin"><AdminReports /></ProtectedRoute>} />
                     <Route path="/admin/settings" element={<ProtectedRoute requireRole="admin"><AdminSettings /></ProtectedRoute>} />
                     <Route path="/admin/payouts" element={<ProtectedRoute requireRole="admin"><AdminPayouts /></ProtectedRoute>} />
+                    <Route path="/admin/payouts/:payoutId/receipt" element={<ProtectedRoute requireRole="admin"><AdminPayoutReceipt /></ProtectedRoute>} />
 
                     <Route path="/owner" element={<ProtectedRoute requireRole="owner"><OwnerDashboard /></ProtectedRoute>} />
                     <Route path="/owner/billboards" element={<ProtectedRoute requireRole="owner"><OwnerMyBillboards /></ProtectedRoute>} />
                     <Route path="/owner/bookings" element={<ProtectedRoute requireRole="owner"><OwnerBookingRequests /></ProtectedRoute>} />
                     <Route path="/owner/payouts" element={<ProtectedRoute requireRole="owner"><OwnerPayouts /></ProtectedRoute>} />
+                    <Route path="/owner/payouts/:payoutId/receipt" element={<ProtectedRoute requireRole="owner"><OwnerPayoutReceipt /></ProtectedRoute>} />
                 </Routes>
             </div>
             {showClientChrome && <Footer />}

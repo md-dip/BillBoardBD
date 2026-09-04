@@ -92,6 +92,24 @@
 .payouts-amount-cell { font-weight: 600; }
 .payouts-method-cell { text-transform: capitalize; }
 
+/* Trailing "Receipt" cell - a router <Link> styled as an outlined pill,
+   opens the printable payout receipt for that history row. */
+.payouts-receipt-cell { text-align: right; white-space: nowrap; }
+.payouts-receipt-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    color: #475569;
+    background: #ffffff;
+    transition: background 0.15s;
+}
+.payouts-receipt-link:hover { background: #f1f5f9; }
+
 /* "You haven't received any payouts yet" empty-table row (also
    duplicated in MyBillboards.css and BookingRequests.css, each under
    its own page-prefixed name) */

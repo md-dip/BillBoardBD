@@ -1,0 +1,233 @@
+/* ============================================================
+   Owner payout receipt page (/owner/payouts/:payoutId/receipt) - the
+   statement an owner can view and print after a payout has been
+   recorded for them. Rendered from the snapshot frozen on the payout,
+   so it never shifts when the owner later edits their payout details.
+   Fully self-contained: every class is prefixed .owner-payout-receipt-*.
+   The admin has its own separate copy at admin/pages/PayoutReceipt.css.
+   ============================================================ */
+
+.owner-payout-receipt-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+}
+
+/* Top bar with the back link + print button - hidden when printing. */
+.owner-payout-receipt-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+.owner-payout-receipt-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.owner-payout-receipt-back-link:hover { text-decoration: underline; }
+.owner-payout-receipt-print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.88rem;
+    color: #334155;
+    cursor: pointer;
+}
+.owner-payout-receipt-print-btn:hover { background: #f8fafc; }
+
+.owner-payout-receipt-status { color: #64748b; padding: 40px 0; text-align: center; }
+
+.owner-payout-receipt-empty {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 40px 24px;
+    text-align: center;
+    color: #475569;
+}
+.owner-payout-receipt-empty-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.owner-payout-receipt-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.owner-payout-receipt-heading-title { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
+
+/* ---- The printable document card ---- */
+.owner-payout-receipt-doc {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 32px;
+}
+
+.owner-payout-receipt-doc-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #eef2f7;
+}
+.owner-payout-receipt-brand-name { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+.owner-payout-receipt-brand-accent { color: #2563eb; }
+.owner-payout-receipt-brand-line { font-size: 0.8rem; color: #64748b; line-height: 1.6; }
+.owner-payout-receipt-meta { text-align: right; }
+.owner-payout-receipt-meta-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+.owner-payout-receipt-number { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 2px 0 6px; }
+.owner-payout-receipt-meta-line { font-size: 0.8rem; color: #64748b; line-height: 1.6; }
+
+.owner-payout-receipt-parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 22px 0;
+    border-bottom: 1px solid #eef2f7;
+}
+.owner-payout-receipt-party-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 6px;
+}
+.owner-payout-receipt-party-name { font-weight: 600; color: #0f172a; font-size: 0.95rem; }
+.owner-payout-receipt-party-line { font-size: 0.82rem; color: #64748b; line-height: 1.6; }
+
+.owner-payout-receipt-section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin: 22px 0 8px;
+}
+
+/* Payout-account snapshot: label/value pairs in a 2-col grid. */
+.owner-payout-receipt-account-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 24px;
+    padding: 4px 0 6px;
+}
+.owner-payout-receipt-account-cell { display: flex; flex-direction: column; gap: 2px; }
+.owner-payout-receipt-account-label {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.owner-payout-receipt-account-value { font-size: 0.9rem; font-weight: 500; color: #0f172a; }
+.owner-payout-receipt-account-missing {
+    margin: 4px 0 6px;
+    background: #fef9c3;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.82rem;
+    color: #854d0e;
+}
+
+.owner-payout-receipt-lines {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+}
+.owner-payout-receipt-lines th {
+    text-align: left;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    padding: 8px 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.owner-payout-receipt-lines td {
+    padding: 10px 8px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+}
+.owner-payout-receipt-lines tfoot td {
+    border-bottom: none;
+    font-weight: 600;
+    color: #0f172a;
+    padding-top: 10px;
+}
+.owner-payout-receipt-num { text-align: right; }
+.owner-payout-receipt-line-title { font-weight: 600; color: #0f172a; }
+.owner-payout-receipt-line-sub { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; }
+
+.owner-payout-receipt-split-row td { color: #b91c1c; font-weight: 500; }
+.owner-payout-receipt-total-row td {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.owner-payout-receipt-note {
+    margin-top: 18px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.82rem;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.owner-payout-receipt-footer-note {
+    margin-top: 26px;
+    padding-top: 18px;
+    border-top: 1px solid #eef2f7;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #94a3b8;
+}
+
+@media (max-width: 640px) {
+    .owner-payout-receipt-doc { padding: 20px; }
+    .owner-payout-receipt-doc-head { flex-direction: column; }
+    .owner-payout-receipt-meta { text-align: left; }
+    .owner-payout-receipt-parties { grid-template-columns: 1fr; }
+    .owner-payout-receipt-account-grid { grid-template-columns: 1fr; }
+}
+
+/* Print: show only the document, drop the page chrome (navbar/footer/topbar). */
+@media print {
+    body * { visibility: hidden; }
+    .owner-payout-receipt-doc, .owner-payout-receipt-doc * { visibility: visible; }
+    .owner-payout-receipt-doc {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+    }
+    .owner-payout-receipt-page { padding: 0; max-width: none; }
+}

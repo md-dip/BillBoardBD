@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
-    'owner_id', 'amount', 'method', 'reference', 'note', 'paid_by', 'paid_at',
+    'owner_id', 'amount', 'method', 'reference', 'note', 'payout_details', 'paid_by', 'paid_at',
 ])]
 class Payout extends Model
 {
@@ -16,6 +16,7 @@ class Payout extends Model
     {
         return [
             'amount' => 'decimal:2',
+            'payout_details' => 'array',
             'paid_at' => 'datetime',
         ];
     }
