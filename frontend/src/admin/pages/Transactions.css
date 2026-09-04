@@ -196,3 +196,52 @@
 @media (max-width: 900px) {
     .admin-transactions-summary-grid { grid-template-columns: 1fr; }
 }
+
+/* ---- Pager under the ledger. Buttons are named after their own labels,
+   so "Previous" and "Next" each own their complete rule. ---- */
+.admin-transactions-pager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+.admin-transactions-pager-status { font-size: 12px; color: #64748b; }
+
+/* "Previous" button */
+.admin-transactions-previous-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+.admin-transactions-previous-btn:hover:not(:disabled) { border-color: #2563eb; color: #2563eb; }
+.admin-transactions-previous-btn:disabled { color: #cbd5e1; cursor: not-allowed; background: #f1f5f9; }
+
+/* "Next" button */
+.admin-transactions-next-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+.admin-transactions-next-btn:hover:not(:disabled) { border-color: #2563eb; color: #2563eb; }
+.admin-transactions-next-btn:disabled { color: #cbd5e1; cursor: not-allowed; background: #f1f5f9; }

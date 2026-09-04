@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
 import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Transactions.css';
+
+// One screenful of ledger. The whole list is already in memory (the totals are
+// summed from it), so paging is instant and the summary cards keep covering
+// every transaction rather than just the page on show.
+const PER_PAGE = 30;
 
 // Every kind of money that can enter the platform. The slug doubles as the CSS
 // suffix, so each badge owns its own complete rule in Transactions.css.
@@ -33,6 +38,7 @@ export default function AdminTransactions({ view = 'revenue' }) {
     const [transactions, setTransactions] = useState([]);
     const [totals, setTotals] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         api.get('/admin/reports/transactions')
@@ -55,6 +61,18 @@ export default function AdminTransactions({ view = 'revenue' }) {
     }
 
     const bookingMoney = (totals?.gross ?? 0) - (totals?.listing_fees ?? 0);
+
+    const pageCount = Math.max(1, Math.ceil(transactions.length / PER_PAGE));
+    const firstOnPage = transactions.length === 0 ? 0 : (page - 1) * PER_PAGE + 1;
+    const lastOnPage = Math.min(page * PER_PAGE, transactions.length);
+    const visible = transactions.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+
+    // Turning a page puts you at the bottom of the previous one, so go back up
+    // to the first row rather than making the admin scroll for it.
+    function goToPage(next) {
+        setPage(next);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     // Headline first, then what it is made of.
     const summary = isCommission
@@ -112,7 +130,7 @@ export default function AdminTransactions({ view = 'revenue' }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {transactions.map((tx) => {
+                            {visible.map((tx) => {
                                 const type = TYPES[tx.type] ?? { label: tx.type, slug: 'booking-advance' };
 
                                 return (
@@ -145,7 +163,7 @@ export default function AdminTransactions({ view = 'revenue' }) {
 
                             {transactions.length === 0 && (
                                 <tr>
-                                    <td className="admin-transactions-empty-cell" colSpan={isCommission ? 6 : 6}>
+                                    <td className="admin-transactions-empty-cell" colSpan={isCommission ? 7 : 6}>
                                         Nothing has been earned yet. A booking advance shows up here once admin and the
                                         owner have both approved it, and a listing fee once the board is approved.
                                     </td>
@@ -153,6 +171,32 @@ export default function AdminTransactions({ view = 'revenue' }) {
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                <div className="admin-transactions-pager">
+                    <button
+                        type="button"
+                        className="admin-transactions-previous-btn"
+                        onClick={() => goToPage(page - 1)}
+                        disabled={page <= 1}
+                    >
+                        <ChevronLeft size={14} /> Previous
+                    </button>
+
+                    <span className="admin-transactions-pager-status">
+                        {transactions.length === 0
+                            ? 'Nothing to show'
+                            : `Showing ${firstOnPage}-${lastOnPage} of ${transactions.length} - page ${page} of ${pageCount}`}
+                    </span>
+
+                    <button
+                        type="button"
+                        className="admin-transactions-next-btn"
+                        onClick={() => goToPage(page + 1)}
+                        disabled={page >= pageCount}
+                    >
+                        Next <ChevronRight size={14} />
+                    </button>
                 </div>
             </div>
         </AdminShell>
