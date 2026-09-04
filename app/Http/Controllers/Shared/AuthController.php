@@ -21,6 +21,7 @@ class AuthController extends Controller
     private const DEMO_EMAILS = [
         'client@test.com',
         'owner@test.com',
+        'owner2@test.com',
         'admin@test.com',
     ];
 

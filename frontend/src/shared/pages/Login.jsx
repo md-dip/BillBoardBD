@@ -8,6 +8,7 @@ import './Login.css';
 const DEMO_ACCOUNTS = [
     { label: 'Client', email: 'client@test.com' },
     { label: 'Owner', email: 'owner@test.com' },
+    { label: 'Owner 2', email: 'owner2@test.com' },
     { label: 'Admin', email: 'admin@test.com' },
 ];
 

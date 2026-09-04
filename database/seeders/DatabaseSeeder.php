@@ -11,7 +11,8 @@ class DatabaseSeeder extends Seeder
 
     /**
      * Order matters: settings first (the booking math reads them), then
-     * billboards and users.
+     * billboards and users. UnassignedBillboardsOwnerSeeder goes last - it
+     * sweeps up every board the seeders before it did not claim.
      */
     public function run(): void
     {
@@ -21,6 +22,7 @@ class DatabaseSeeder extends Seeder
             BillboardPhotoSeeder::class,
             UserSeeder::class,
             OwnerDemoSeeder::class,
+            UnassignedBillboardsOwnerSeeder::class,
         ]);
     }
 }

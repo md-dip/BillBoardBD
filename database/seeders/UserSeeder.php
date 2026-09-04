@@ -38,5 +38,18 @@ class UserSeeder extends Seeder
                 'phone'    => '01911000000',
             ]
         );
+
+        // The second owner exists so no billboard in the catalogue is left
+        // unowned - UnassignedBillboardsOwnerSeeder hands it every board none
+        // of the others claim.
+        User::query()->updateOrCreate(
+            ['email' => 'owner2@test.com'],
+            [
+                'name'     => 'Dhaka Outdoor Network',
+                'password' => 'password',
+                'role'     => 'owner',
+                'phone'    => '01911000002',
+            ]
+        );
     }
 }
