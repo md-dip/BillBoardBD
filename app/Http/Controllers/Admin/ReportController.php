@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Billboard;
 use App\Models\Booking;
+use App\Services\Shared\RevenueRecognitionService;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
@@ -12,14 +13,6 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
-    /**
-     * Booking statuses where BOTH approvals are in - admin has reviewed it and
-     * the owner has accepted - so the advance can no longer be rejected and
-     * auto-refunded. Anything earlier (pending_admin_review,
-     * pending_owner_approval) is money the platform may still have to return.
-     */
-    private const EARNED_BOOKING_STATUSES = ['confirmed', 'paid_in_full', 'pending_proof_review', 'active'];
-
     /**
      * Platform money, per billboard per month.
      *
@@ -68,7 +61,7 @@ class ReportController extends Controller
             ->where('payments.status', 'paid')
             ->where(function ($query) {
                 $query->where('payments.payment_type', 'balance')
-                    ->orWhereIn('bookings.status', self::EARNED_BOOKING_STATUSES);
+                    ->orWhereIn('bookings.status', RevenueRecognitionService::EARNED_BOOKING_STATUSES);
             })
             ->select(
                 'billboards.id as billboard_id',

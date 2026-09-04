@@ -128,9 +128,12 @@ export default function OwnerDashboard() {
 
   const pending = bookings.filter((b) => b.status === 'pending_owner_approval');
   const inProgress = bookings.filter((b) => ['confirmed', 'paid_in_full', 'pending_proof_review', 'active'].includes(b.status));
-  const revenue = bookings
-    .filter((b) => ['confirmed', 'paid_in_full', 'pending_proof_review', 'active'].includes(b.status))
-    .reduce((s, b) => s + Number(b.total_amount), 0);
+  // Cash actually collected, not the contract value. collected_amount comes
+  // from the API (OwnerBookingController -> SharedRevenueRecognitionService):
+  // 0 while a booking still awaits admin or owner approval, the advance once
+  // both are in, the full amount once the balance is paid. Summing it here
+  // keeps this tile on the exact same rule as the admin revenue report.
+  const revenue = bookings.reduce((s, b) => s + Number(b.collected_amount ?? 0), 0);
 
   const kpis = [
     { slug: 'my-billboards', label: 'My billboards', value: billboards.length, icon: Megaphone },

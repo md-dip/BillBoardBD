@@ -6,12 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Shared\RejectBookingRequest;
 use App\Models\Booking;
 use App\Services\Owner\OwnerAcceptanceService;
+use App\Services\Shared\RevenueRecognitionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    public function __construct(private readonly OwnerAcceptanceService $acceptance) {}
+    public function __construct(
+        private readonly OwnerAcceptanceService $acceptance,
+        private readonly RevenueRecognitionService $revenue,
+    ) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -24,9 +28,18 @@ class BookingController extends Controller
             $query->where('status', $status);
         }
 
+        // collected_amount is what this booking has actually earned the owner a
+        // share of so far: nothing while it still awaits approval, the advance
+        // once both approvals are in, then the full amount after the balance is
+        // paid. Computed here rather than in the dashboard so the owner's
+        // Revenue tile and the admin's report cannot disagree.
+        $bookings = $query->latest()->get()->each(function (Booking $booking) {
+            $booking->collected_amount = $this->revenue->collectedOn($booking);
+        });
+
         return response()->json([
             'success' => true,
-            'data' => $query->latest()->get(),
+            'data' => $bookings,
             'message' => null,
         ]);
     }
