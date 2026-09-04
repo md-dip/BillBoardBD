@@ -12,6 +12,7 @@ import Home from './shared/pages/Home';
 import HowItWorks from './shared/pages/HowItWorks';
 import Login from './shared/pages/Login';
 import Register from './shared/pages/Register';
+import NotFound from './shared/pages/NotFound';
 import ProtectedRoute from './shared/components/ProtectedRoute';
 import DefaultNavbar from './shared/components/Navbar';
 import { useAuth } from './shared/context/AuthContext';
@@ -75,6 +76,9 @@ function AppRoutes() {
                     <Route path="/owner/bookings" element={<ProtectedRoute requireRole="owner"><OwnerBookingRequests /></ProtectedRoute>} />
                     <Route path="/owner/payouts" element={<ProtectedRoute requireRole="owner"><OwnerPayouts /></ProtectedRoute>} />
                     <Route path="/owner/payouts/:payoutId/receipt" element={<ProtectedRoute requireRole="owner"><OwnerPayoutReceipt /></ProtectedRoute>} />
+
+                    {/* Catch-all: any URL that matched none of the routes above. Must stay last. */}
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>
             {showClientChrome && <Footer />}
