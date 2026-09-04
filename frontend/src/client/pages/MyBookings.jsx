@@ -112,8 +112,15 @@ export default function Dashboard() {
                     return (
                         <div className="mybookings-card" key={b.id}>
                             <div className="mybookings-row">
-                                {b.billboard?.photo ? (
-                                    <img className="mybookings-thumb" src={b.billboard.photo} alt="" />
+                                {/* photo_url, never the raw photo column: a seeded board stores
+                                    a root-relative "/billboards/12.jpg" that happens to resolve
+                                    from the SPA's own public folder, but an owner-listed board
+                                    stores a bare disk path ("board-photos/xxx.jpg") that only
+                                    resolves through the storage disk. The accessor handles both
+                                    (see Billboard::photoUrl), which is why the map and the detail
+                                    page never had this problem. */}
+                                {b.billboard?.photo_url ? (
+                                    <img className="mybookings-thumb" src={b.billboard.photo_url} alt="" />
                                 ) : (
                                     <div className="mybookings-thumb mybookings-thumb-empty">
                                         <ImageIcon size={20} />
