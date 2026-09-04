@@ -9,146 +9,46 @@ use App\Services\Shared\RevenueRecognitionService;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
     /**
-     * Platform money, per billboard per month.
+     * Platform money, per billboard per month - the numbers behind the admin
+     * dashboard's KPI tiles and its revenue-by-month chart.
      *
-     * Two income streams feed this, and they are NOT the same kind of money:
-     *
-     *   - booking payments: `gross` is the cash actually collected from the
-     *     client, most of which is owed to the board owner - only `commission`
-     *     is the platform's cut, pro-rated against that collected cash at the
-     *     booking's frozen rate. Money that could still be refunded is left
-     *     out until it cannot be (see EARNED_BOOKING_STATUSES).
-     *   - board listing fees: the one-time fee an owner pays to list a board
-     *     (Owner\ListingPaymentController). There is no owner split at all -
-     *     the whole amount is platform income - but only once admin approves
-     *     the board, since rejecting it refunds the fee. It gets its own
-     *     column rather than being mixed into `commission`, and
-     *     `platform_income` adds the two together for the admin dashboard's
-     *     headline figure.
-     *
-     * Rows are bucketed in PHP rather than with SQL date functions so this
-     * works on both the pgsql app DB and the sqlite test DB.
+     * Aggregated from ledger(), the same transaction list the drill-down pages
+     * render, so a tile and the list behind it can never disagree.
      */
     public function revenue(): JsonResponse
     {
-        // Booking money is recognised per PAYMENT, as it stops being refundable:
-        //
-        //   advance - the client pays it to SUBMIT the request. Admin reviews,
-        //             then the owner does, and either one rejecting refunds it
-        //             in full (Shared\RefundService). So it is not income
-        //             while the booking sits in pending_admin_review or
-        //             pending_owner_approval - only once it reaches 'confirmed'
-        //             (both approvals in) or beyond.
-        //   balance - only ever payable after the booking is confirmed, and
-        //             there is no rejection left that could send it back, so it
-        //             counts the moment it is paid.
-        //
-        // Neither commission nor owner_payable can be read off the row. Both
-        // columns are frozen against the WHOLE booking on the advance row (the
-        // balance row carries commission 0), so a client who has only paid the
-        // advance would book the platform its full cut of money nobody has
-        // collected yet - and if that client never pays the balance, that cut
-        // never arrives. Both are pro-rated below against the cash in hand
-        // instead, at the booking's own frozen rate.
-        $bookingPayments = DB::table('payments')
-            ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
-            ->join('billboards', 'billboards.id', '=', 'bookings.billboard_id')
-            ->where('payments.status', 'paid')
-            ->where(function ($query) {
-                $query->where('payments.payment_type', 'balance')
-                    ->orWhereIn('bookings.status', RevenueRecognitionService::EARNED_BOOKING_STATUSES);
-            })
-            ->select(
-                'billboards.id as billboard_id',
-                'billboards.title as billboard_title',
-                DB::raw('COALESCE(payments.paid_at, payments.created_at) as earned_at'),
-                'payments.amount as gross',
-                'payments.booking_id as booking_id',
-                'bookings.total_amount as booking_total',
-            )
-            ->get();
-
-        // Each booking's commission RATE, taken from the amount frozen onto it
-        // at pay time rather than from Setting::get('commission_rate') - the
-        // admin can change that setting later, and an old booking must keep the
-        // rate it was sold at. Summing every row is safe because only the
-        // advance row carries any commission.
-        $frozenCommission = DB::table('payments')
-            ->groupBy('booking_id')
-            ->selectRaw('booking_id, SUM(commission_amount) as commission')
-            ->pluck('commission', 'booking_id');
-
-        // A listing fee is only income once ADMIN HAS APPROVED the board.
-        // Paying it just puts the board in the review queue: admin can still
-        // reject, and rejecting refunds the fee in full (Admin\ListingRefundService),
-        // so a fee sitting on a pending_review board is money the platform may
-        // yet have to give back - counting it books revenue that does not exist.
-        // Requiring the board to be approved as well as the fee paid also means
-        // a refund that somehow failed to run can never leak into the totals.
-        //
-        // It is earned at approval, not at payment, so the month bucket follows
-        // reviewed_at - otherwise approving today would silently rewrite an
-        // earlier month. Boards approved before that column existed fall back.
-        $listingFees = DB::table('listing_payments')
-            ->join('billboards', 'billboards.id', '=', 'listing_payments.billboard_id')
-            ->where('listing_payments.status', 'paid')
-            ->where('billboards.listing_status', 'approved')
-            ->select(
-                'billboards.id as billboard_id',
-                'billboards.title as billboard_title',
-                DB::raw('COALESCE(billboards.reviewed_at, listing_payments.paid_at, listing_payments.created_at) as earned_at'),
-                'listing_payments.amount as listing_fees',
-            )
-            ->get();
-
         $buckets = [];
 
-        $bucketKey = function ($billboardId, $title, $earnedAt) use (&$buckets): string {
-            $month = Carbon::parse($earnedAt)->format('Y-m');
-            $key = $billboardId.'|'.$month;
+        foreach ($this->ledger() as $entry) {
+            $key = $entry['billboard_id'].'|'.$entry['month'];
 
             $buckets[$key] ??= [
-                'billboard_id' => (int) $billboardId,
-                'billboard_title' => $title,
-                'month' => $month,
+                'billboard_id' => $entry['billboard_id'],
+                'billboard_title' => $entry['billboard_title'],
+                'month' => $entry['month'],
                 'gross' => 0.0,
                 'commission' => 0.0,
                 'owner_payable' => 0.0,
                 'listing_fees' => 0.0,
             ];
 
-            return $key;
-        };
+            $buckets[$key]['gross'] += $entry['amount'];
+            $buckets[$key]['owner_payable'] += $entry['owner_payable'];
 
-        foreach ($bookingPayments as $payment) {
-            $collected = (float) $payment->gross;
-            $bookingTotal = (float) $payment->booking_total;
-
-            // Commission follows the cash: 10% (or whatever rate the booking
-            // was frozen at) of what has actually been collected, not of the
-            // contract. Advance 3,000 of a 10,000 booking at 10% earns 300 now;
-            // the remaining 700 lands with the balance payment, and only if it
-            // is ever paid. Whatever is left of the payment is the owner's.
-            $rate = $bookingTotal > 0
-                ? (float) ($frozenCommission[$payment->booking_id] ?? 0) / $bookingTotal
-                : 0.0;
-            $commission = round($collected * $rate, 2);
-
-            $key = $bucketKey($payment->billboard_id, $payment->billboard_title, $payment->earned_at);
-
-            $buckets[$key]['gross'] += $collected;
-            $buckets[$key]['commission'] += $commission;
-            $buckets[$key]['owner_payable'] += $collected - $commission;
-        }
-
-        foreach ($listingFees as $fee) {
-            $key = $bucketKey($fee->billboard_id, $fee->billboard_title, $fee->earned_at);
-            $buckets[$key]['listing_fees'] += (float) $fee->listing_fees;
+            // A listing fee is 100% platform money, so it is reported in its own
+            // column rather than mixed into booking commission - the two are
+            // added back together as platform_income below.
+            if ($entry['type'] === 'listing_fee') {
+                $buckets[$key]['listing_fees'] += $entry['platform_cut'];
+            } else {
+                $buckets[$key]['commission'] += $entry['platform_cut'];
+            }
         }
 
         $rows = collect($buckets)
@@ -176,6 +76,179 @@ class ReportController extends Controller
             'data' => ['rows' => $rows, 'totals' => $totals],
             'message' => null,
         ]);
+    }
+
+    /**
+     * Every single transaction behind those tiles, newest first - what the
+     * admin gets after clicking "Total revenue" or "Platform commission".
+     *
+     * One row per payment that has actually entered the platform: a booking
+     * advance, a booking balance, or a board listing fee. Each carries the
+     * platform's cut and the rate it was taken at, so the commission view can
+     * show WHY a row contributed what it did - 10% (or whatever that booking
+     * was sold at) of a booking payment, or a listing fee kept whole.
+     */
+    public function transactions(): JsonResponse
+    {
+        $transactions = $this->ledger()->sortByDesc('earned_at')->values();
+
+        $bookingCut = round((float) $transactions->where('type', '!=', 'listing_fee')->sum('platform_cut'), 2);
+        $listingCut = round((float) $transactions->where('type', 'listing_fee')->sum('platform_cut'), 2);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'transactions' => $transactions,
+                'totals' => [
+                    'count' => $transactions->count(),
+                    'gross' => round((float) $transactions->sum('amount'), 2),
+                    'commission' => $bookingCut,
+                    'listing_fees' => $listingCut,
+                    'platform_income' => round($bookingCut + $listingCut, 2),
+                    'owner_payable' => round((float) $transactions->sum('owner_payable'), 2),
+                ],
+            ],
+            'message' => null,
+        ]);
+    }
+
+    /**
+     * Every payment the platform has actually earned, normalised into one
+     * shape. This is the single definition of "money that entered the system",
+     * and both revenue() and transactions() are built from it.
+     *
+     * What is in, and what is deliberately not:
+     *
+     *   booking advance - the client pays it to submit the request, and admin
+     *                     OR the owner rejecting refunds it in full, so it only
+     *                     counts once the booking clears BOTH approvals (see
+     *                     Shared\RevenueRecognitionService).
+     *   booking balance - only payable after that point, with no rejection
+     *                     left, so it counts the moment it is paid.
+     *   listing fee     - only once admin approves the board; rejecting the
+     *                     board refunds the owner.
+     *
+     * The platform's cut is pro-rated against the cash in hand at the rate
+     * frozen onto the booking, never re-derived from today's setting, and a
+     * listing fee is kept whole because there is no owner split on it.
+     *
+     * Month bucketing and the rate maths happen in PHP rather than in SQL date
+     * functions, so this runs on both the pgsql app DB and the sqlite test DB.
+     *
+     * @return Collection<int, array<string, mixed>>
+     */
+    private function ledger(): Collection
+    {
+        $bookingPayments = DB::table('payments')
+            ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
+            ->join('billboards', 'billboards.id', '=', 'bookings.billboard_id')
+            ->leftJoin('users as clients', 'clients.id', '=', 'bookings.user_id')
+            ->where('payments.status', 'paid')
+            ->where(function ($query) {
+                $query->where('payments.payment_type', 'balance')
+                    ->orWhereIn('bookings.status', RevenueRecognitionService::EARNED_BOOKING_STATUSES);
+            })
+            ->select(
+                'payments.id as payment_id',
+                'payments.payment_type',
+                'payments.amount',
+                'payments.method',
+                'payments.transaction_ref',
+                DB::raw('COALESCE(payments.paid_at, payments.created_at) as earned_at'),
+                'bookings.id as booking_id',
+                'bookings.total_amount as booking_total',
+                'bookings.brand_name',
+                'billboards.id as billboard_id',
+                'billboards.title as billboard_title',
+                'clients.name as payer_name',
+            )
+            ->get();
+
+        // Each booking's frozen commission, used only to recover the RATE it was
+        // sold at - the admin can change commission_rate later and an old
+        // booking must keep its own. Only the advance row carries any, so
+        // summing every row of the booking is safe.
+        $frozenCommission = DB::table('payments')
+            ->groupBy('booking_id')
+            ->selectRaw('booking_id, SUM(commission_amount) as commission')
+            ->pluck('commission', 'booking_id');
+
+        $listingFees = DB::table('listing_payments')
+            ->join('billboards', 'billboards.id', '=', 'listing_payments.billboard_id')
+            ->leftJoin('users as owners', 'owners.id', '=', 'listing_payments.owner_id')
+            ->where('listing_payments.status', 'paid')
+            ->where('billboards.listing_status', 'approved')
+            ->select(
+                'listing_payments.id as listing_payment_id',
+                'listing_payments.amount',
+                'listing_payments.method',
+                'listing_payments.transaction_ref',
+                // Earned at approval, not at payment, so approving today never
+                // rewrites a month the admin already read. Boards approved
+                // before reviewed_at existed fall back to the payment date.
+                DB::raw('COALESCE(billboards.reviewed_at, listing_payments.paid_at, listing_payments.created_at) as earned_at'),
+                'billboards.id as billboard_id',
+                'billboards.title as billboard_title',
+                'owners.name as payer_name',
+            )
+            ->get();
+
+        $ledger = collect();
+
+        foreach ($bookingPayments as $payment) {
+            $collected = (float) $payment->amount;
+            $bookingTotal = (float) $payment->booking_total;
+
+            $rate = $bookingTotal > 0
+                ? (float) ($frozenCommission[$payment->booking_id] ?? 0) / $bookingTotal
+                : 0.0;
+            $cut = round($collected * $rate, 2);
+
+            $ledger->push([
+                'id' => 'payment-'.$payment->payment_id,
+                'type' => $payment->payment_type === 'balance' ? 'booking_balance' : 'booking_advance',
+                'earned_at' => (string) $payment->earned_at,
+                'month' => Carbon::parse($payment->earned_at)->format('Y-m'),
+                'billboard_id' => (int) $payment->billboard_id,
+                'billboard_title' => $payment->billboard_title,
+                'booking_id' => (int) $payment->booking_id,
+                'brand_name' => $payment->brand_name,
+                'payer_name' => $payment->payer_name,
+                'payer_role' => 'client',
+                'method' => $payment->method,
+                'transaction_ref' => $payment->transaction_ref,
+                'amount' => round($collected, 2),
+                'commission_rate' => round($rate * 100, 2),
+                'platform_cut' => $cut,
+                'owner_payable' => round($collected - $cut, 2),
+            ]);
+        }
+
+        foreach ($listingFees as $fee) {
+            $amount = round((float) $fee->amount, 2);
+
+            $ledger->push([
+                'id' => 'listing-'.$fee->listing_payment_id,
+                'type' => 'listing_fee',
+                'earned_at' => (string) $fee->earned_at,
+                'month' => Carbon::parse($fee->earned_at)->format('Y-m'),
+                'billboard_id' => (int) $fee->billboard_id,
+                'billboard_title' => $fee->billboard_title,
+                'booking_id' => null,
+                'brand_name' => null,
+                'payer_name' => $fee->payer_name,
+                'payer_role' => 'owner',
+                'method' => $fee->method,
+                'transaction_ref' => $fee->transaction_ref,
+                'amount' => $amount,
+                // No owner split on a listing fee - the platform keeps it all.
+                'commission_rate' => 100.0,
+                'platform_cut' => $amount,
+                'owner_payable' => 0.0,
+            ]);
+        }
+
+        return $ledger;
     }
 
     public function occupancy(): JsonResponse

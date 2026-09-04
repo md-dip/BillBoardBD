@@ -3,9 +3,16 @@
 /* Layout-only grid holding the 4 KPI cards - no color here, safe to share */
 .admin-dashboard-kpi-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    /* minmax(0, 1fr), not a bare 1fr: a bare track is minmax(auto, 1fr), which
+       lets a long value (the revenue total) widen its own column and squeeze
+       the others. Zero minimum keeps all four exactly equal. */
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
     margin-bottom: 24px;
+    /* Equal HEIGHT: the two drill-down cards carry an extra "View
+       transactions" line, so every card fills the row instead of hugging its
+       own content (each card sets height: 100% below). */
+    align-items: stretch;
 }
 
 /* Layout-only header row inside every KPI card (label + icon) - no color, safe to share */
@@ -22,6 +29,8 @@
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: 16px;
+    height: 100%;
+    box-sizing: border-box;
 }
 .admin-dashboard-kpi-label-revenue { font-size: 13px; color: #64748b; }
 .admin-dashboard-kpi-icon-revenue {
@@ -42,6 +51,8 @@
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: 16px;
+    height: 100%;
+    box-sizing: border-box;
 }
 .admin-dashboard-kpi-label-commission { font-size: 13px; color: #64748b; }
 .admin-dashboard-kpi-icon-commission {
@@ -62,6 +73,8 @@
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: 16px;
+    height: 100%;
+    box-sizing: border-box;
 }
 .admin-dashboard-kpi-label-pending-bookings { font-size: 13px; color: #64748b; }
 .admin-dashboard-kpi-icon-pending-bookings {
@@ -82,6 +95,8 @@
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: 16px;
+    height: 100%;
+    box-sizing: border-box;
 }
 .admin-dashboard-kpi-label-permits-expiring { font-size: 13px; color: #64748b; }
 .admin-dashboard-kpi-icon-permits-expiring {
@@ -236,9 +251,57 @@
 
 /* Stack everything on narrow screens */
 @media (max-width: 900px) {
-    .admin-dashboard-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .admin-dashboard-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .admin-dashboard-two-col-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
-    .admin-dashboard-kpi-grid { grid-template-columns: 1fr; }
+    .admin-dashboard-kpi-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ============================================================
+   Drill-down affordance on the two money tiles. The link is only a
+   wrapper - it carries no card styling of its own, so the card inside
+   keeps the exact look every other tile has. Each tile gets its own
+   complete rule rather than a shared one, same as the cards above.
+   ============================================================ */
+
+/* "Total revenue" tile -> /admin/revenue */
+.admin-dashboard-kpi-link-revenue {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+.admin-dashboard-kpi-link-revenue .admin-dashboard-kpi-card-revenue {
+    height: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-dashboard-kpi-link-revenue:hover .admin-dashboard-kpi-card-revenue {
+    border-color: #bfdbfe;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
+}
+
+/* "Platform commission" tile -> /admin/commission */
+.admin-dashboard-kpi-link-commission {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+.admin-dashboard-kpi-link-commission .admin-dashboard-kpi-card-commission {
+    height: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-dashboard-kpi-link-commission:hover .admin-dashboard-kpi-card-commission {
+    border-color: #bfdbfe;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
+}
+
+/* "View transactions" line at the foot of a drill-down tile */
+.admin-dashboard-kpi-drill-down-hint {
+    display: block;
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #2563eb;
 }

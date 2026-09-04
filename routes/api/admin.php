@@ -37,6 +37,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
     // Reports (revenue + occupancy)
     Route::get('/reports/revenue', [AdminReportController::class, 'revenue']);
+    Route::get('/reports/transactions', [AdminReportController::class, 'transactions']);
     Route::get('/reports/occupancy', [AdminReportController::class, 'occupancy']);
 
     // Owner payouts

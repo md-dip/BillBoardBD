@@ -249,10 +249,12 @@ class AdminRevenueReportTest extends TestCase
         $row = collect($this->rows())->firstWhere('billboard_id', $fresh->id);
 
         // Nothing booked on it yet, so it is in the report purely for the fee -
-        // the month bucket the dashboard chart reads has to include it.
+        // the month bucket the dashboard chart reads has to include it. The fee
+        // counts in gross too: gross is every taka that entered the platform,
+        // which is exactly what the Total revenue drill-down lists.
         $this->assertNotNull($row, 'a board with only a listing fee must still appear');
         $this->assertSame(5000.0, (float) $row['listing_fees']);
-        $this->assertSame(0.0, (float) $row['gross']);
+        $this->assertSame(5000.0, (float) $row['gross']);
     }
 
     // ----------------------------------------------------------------- totals
@@ -269,6 +271,85 @@ class AdminRevenueReportTest extends TestCase
         $this->assertSame(300.0, (float) $totals['commission']);
         $this->assertSame(5000.0, (float) $totals['listing_fees']);
         $this->assertSame(5300.0, (float) $totals['platform_income']);
+    }
+
+    // ------------------------------------------------------------ drill-down
+
+    public function test_the_drill_down_lists_every_transaction_that_entered_the_system(): void
+    {
+        $booking = $this->bookingWithPaidAdvance('confirmed');
+        Sanctum::actingAs($this->admin);
+        $this->postJson("/api/admin/bookings/{$booking->id}/balance-payment", ['method' => 'bank'])->assertCreated();
+
+        $this->billboard->update(['reviewed_at' => now()]);
+        $this->payListingFee($this->billboard);
+
+        $rows = collect($this->transactions()['transactions']);
+
+        $this->assertSame(3, $rows->count());
+        $this->assertEqualsCanonicalizing(
+            ['booking_advance', 'booking_balance', 'listing_fee'],
+            $rows->pluck('type')->all()
+        );
+    }
+
+    public function test_each_row_shows_the_rate_its_cut_was_taken_at(): void
+    {
+        $this->bookingWithPaidAdvance('confirmed');
+        $this->billboard->update(['reviewed_at' => now()]);
+        $this->payListingFee($this->billboard);
+
+        $rows = collect($this->transactions()['transactions'])->keyBy('type');
+
+        // 10% of the 3,000 advance.
+        $this->assertSame(10.0, (float) $rows['booking_advance']['commission_rate']);
+        $this->assertSame(300.0, (float) $rows['booking_advance']['platform_cut']);
+        $this->assertSame(2700.0, (float) $rows['booking_advance']['owner_payable']);
+
+        // A listing fee has no owner split - the platform keeps all of it.
+        $this->assertSame(100.0, (float) $rows['listing_fee']['commission_rate']);
+        $this->assertSame(5000.0, (float) $rows['listing_fee']['platform_cut']);
+        $this->assertSame(0.0, (float) $rows['listing_fee']['owner_payable']);
+    }
+
+    public function test_the_drill_down_totals_match_the_tiles_exactly(): void
+    {
+        $this->bookingWithPaidAdvance('confirmed');
+        $this->bookingWithPaidAdvance('pending_admin_review');   // not earned yet
+        $this->billboard->update(['reviewed_at' => now()]);
+        $this->payListingFee($this->billboard);
+
+        $tiles = $this->totals();
+        $drillDown = $this->transactions()['totals'];
+
+        // The list is what the tile is made of - if these ever diverge, the
+        // admin is reading two different truths on the same screen.
+        foreach (['gross', 'commission', 'listing_fees', 'platform_income', 'owner_payable'] as $figure) {
+            $this->assertSame(
+                (float) $tiles[$figure],
+                (float) $drillDown[$figure],
+                "drill-down {$figure} must equal the dashboard tile"
+            );
+        }
+    }
+
+    public function test_money_that_is_not_earned_yet_never_appears_in_the_list(): void
+    {
+        // Advance paid but the booking still awaits admin; fee paid but the
+        // board still awaits review. Neither is the platform's money yet.
+        $this->bookingWithPaidAdvance('pending_admin_review');
+
+        $pendingBoard = Billboard::create([
+            'owner_id' => $this->owner->id, 'title' => 'Awaiting Review', 'address' => 'Dhaka',
+            'latitude' => 23.9, 'longitude' => 90.5, 'size' => '20ft x 10ft', 'type' => 'unipole',
+            'daily_rate' => 4500, 'pricing_mode' => 'daily', 'listing_status' => 'pending_review',
+        ]);
+        $this->payListingFee($pendingBoard);
+
+        $data = $this->transactions();
+
+        $this->assertSame(0, $data['totals']['count']);
+        $this->assertSame([], $data['transactions']);
     }
 
     // ---------------------------------------------------------------- helpers
@@ -300,6 +381,13 @@ class AdminRevenueReportTest extends TestCase
             'billboard_id' => $billboard->id, 'owner_id' => $this->owner->id,
             'amount' => 5000, 'status' => 'paid', 'paid_at' => $paidAt ?? now(),
         ]);
+    }
+
+    private function transactions(): array
+    {
+        Sanctum::actingAs($this->admin);
+
+        return $this->getJson('/api/admin/reports/transactions')->assertOk()->json('data');
     }
 
     private function totals(): array

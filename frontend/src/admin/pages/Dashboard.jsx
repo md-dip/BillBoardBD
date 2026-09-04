@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CalendarCheck, DollarSign, Megaphone, ShieldAlert, TrendingUp } from 'lucide-react';
 import api from '../../shared/api/axios';
@@ -138,8 +139,10 @@ export default function AdminDashboard() {
   }
 
   const kpiValues = {
-    revenue: { label: 'Total revenue', value: formatBDT(stats.revenue), icon: DollarSign },
-    commission: { label: 'Platform commission', value: formatBDT(stats.commission), icon: TrendingUp },
+    // The two money tiles drill down into the transactions behind them
+    // (admin/pages/Transactions.jsx); the other two are plain figures.
+    revenue: { label: 'Total revenue', value: formatBDT(stats.revenue), icon: DollarSign, to: '/admin/revenue' },
+    commission: { label: 'Platform commission', value: formatBDT(stats.commission), icon: TrendingUp, to: '/admin/commission' },
     'pending-bookings': { label: 'Pending bookings', value: String(stats.pending), icon: CalendarCheck },
     'permits-expiring': { label: 'Permits expiring <90d', value: String(stats.expiring), icon: ShieldAlert },
   };
@@ -150,8 +153,11 @@ export default function AdminDashboard() {
         {KPIS.map((slug) => {
           const k = kpiValues[slug];
           const Icon = k.icon;
-          return (
-            <div className={`admin-dashboard-kpi-card-${slug}`} key={slug}>
+
+          // Same card either way - a tile that drills down is just wrapped in
+          // a link, so its own card styling is untouched.
+          const cardBody = (
+            <>
               <div className="admin-dashboard-kpi-header">
                 <span className={`admin-dashboard-kpi-label-${slug}`}>{k.label}</span>
                 <span className={`admin-dashboard-kpi-icon-${slug}`}>
@@ -159,8 +165,18 @@ export default function AdminDashboard() {
                 </span>
               </div>
               <div className={`admin-dashboard-kpi-value-${slug}`}>{k.value}</div>
-            </div>
+              {k.to && <span className="admin-dashboard-kpi-drill-down-hint">View transactions</span>}
+            </>
           );
+
+          const card = <div className={`admin-dashboard-kpi-card-${slug}`}>{cardBody}</div>;
+
+          // A drill-down tile is the card inside a link; a plain tile is the
+          // card itself. Either way the grid item stretches to the row height,
+          // so all four boxes stay the same size.
+          return k.to
+            ? <Link to={k.to} className={`admin-dashboard-kpi-link-${slug}`} key={slug}>{card}</Link>
+            : <div className={`admin-dashboard-kpi-card-${slug}`} key={slug}>{cardBody}</div>;
         })}
       </div>
 

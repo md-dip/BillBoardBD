@@ -1,0 +1,198 @@
+/* ============================================================
+   Admin transaction drill-down (Total revenue / Platform commission)
+   - fully independent: every class is prefixed .admin-transactions-*
+   and fully self-contained, so nothing here can be silently
+   overridden by (or override) another admin page's identical-looking
+   class - this app bundles all CSS into one file with no per-page
+   code-splitting, so two files defining the same bare selector
+   collide and whichever loads later wins.
+   ============================================================ */
+
+.admin-transactions-muted { color: #64748b; font-size: 14px; }
+
+/* "Back to dashboard" link above the page content */
+.admin-transactions-back-to-dashboard-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2563eb;
+    text-decoration: none;
+    margin-bottom: 12px;
+}
+.admin-transactions-back-to-dashboard-link:hover { text-decoration: underline; }
+
+.admin-transactions-intro {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #64748b;
+    max-width: 780px;
+    margin: 0 0 20px;
+}
+
+/* ---- Summary cards. Each card owns its complete rule (card/label/value)
+   rather than sharing a base class, so restyling one can never move the
+   others. ---- */
+.admin-transactions-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+/* ---- "Total revenue" headline card (revenue view) ---- */
+.admin-transactions-summary-card-total-revenue {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 16px;
+}
+.admin-transactions-summary-label-total-revenue { font-size: 13px; color: #1e40af; margin-bottom: 6px; }
+.admin-transactions-summary-value-total-revenue { font-size: 24px; font-weight: 700; color: #0f172a; }
+
+/* ---- "Platform commission" headline card (commission view) ---- */
+.admin-transactions-summary-card-platform-income {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 16px;
+}
+.admin-transactions-summary-label-platform-income { font-size: 13px; color: #1e40af; margin-bottom: 6px; }
+.admin-transactions-summary-value-platform-income { font-size: 24px; font-weight: 700; color: #0f172a; }
+
+/* ---- "From booking payments" breakdown card ---- */
+.admin-transactions-summary-card-booking-money {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+}
+.admin-transactions-summary-label-booking-money { font-size: 13px; color: #64748b; margin-bottom: 6px; }
+.admin-transactions-summary-value-booking-money { font-size: 24px; font-weight: 700; color: #0f172a; }
+
+/* ---- "From booking commission" breakdown card ---- */
+.admin-transactions-summary-card-booking-commission {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+}
+.admin-transactions-summary-label-booking-commission { font-size: 13px; color: #64748b; margin-bottom: 6px; }
+.admin-transactions-summary-value-booking-commission { font-size: 24px; font-weight: 700; color: #0f172a; }
+
+/* ---- "From board listing fees" breakdown card ---- */
+.admin-transactions-summary-card-listing-income {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+}
+.admin-transactions-summary-label-listing-income { font-size: 13px; color: #64748b; margin-bottom: 6px; }
+.admin-transactions-summary-value-listing-income { font-size: 24px; font-weight: 700; color: #0f172a; }
+
+/* ---- The ledger table ---- */
+.admin-transactions-table-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.admin-transactions-table-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+.admin-transactions-table-title { font-size: 14px; font-weight: 700; color: #0f172a; margin: 0; }
+
+/* A wide table must scroll inside its own box, never the page body. */
+.admin-transactions-table-scroll { overflow-x: auto; }
+
+.admin-transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.admin-transactions-table th {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+.admin-transactions-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #0f172a;
+    vertical-align: top;
+}
+.admin-transactions-table tr:last-child td { border-bottom: none; }
+
+.admin-transactions-date-heading { width: 110px; }
+.admin-transactions-amount-heading,
+.admin-transactions-rate-heading,
+.admin-transactions-cut-heading { text-align: right; }
+
+.admin-transactions-date-cell { color: #64748b; white-space: nowrap; }
+.admin-transactions-billboard-cell { font-weight: 600; }
+
+.admin-transactions-paid-by-cell { color: #0f172a; }
+.admin-transactions-payer-role {
+    display: block;
+    font-size: 11px;
+    text-transform: capitalize;
+    color: #94a3b8;
+}
+
+.admin-transactions-reference-cell { color: #64748b; white-space: nowrap; }
+.admin-transactions-brand { display: block; font-size: 11px; color: #94a3b8; }
+
+.admin-transactions-amount-cell { text-align: right; font-weight: 600; white-space: nowrap; }
+.admin-transactions-rate-cell { text-align: right; color: #64748b; white-space: nowrap; }
+.admin-transactions-cut-cell { text-align: right; font-weight: 700; color: #15803d; white-space: nowrap; }
+
+.admin-transactions-empty-cell {
+    padding: 28px 16px;
+    text-align: center;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+/* ---- Type badges. One complete rule per kind of money, so recolouring
+   one can never bleed into the others. ---- */
+.admin-transactions-type-badge-booking-advance {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #1e40af;
+    background: #dbeafe;
+}
+.admin-transactions-type-badge-final-payment {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #166534;
+    background: #dcfce7;
+}
+.admin-transactions-type-badge-listing-fee {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #92400e;
+    background: #fef3c7;
+}
+
+@media (max-width: 900px) {
+    .admin-transactions-summary-grid { grid-template-columns: 1fr; }
+}

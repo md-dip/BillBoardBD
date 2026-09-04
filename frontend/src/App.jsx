@@ -26,6 +26,7 @@ import AdminReports from './admin/pages/Reports';
 import AdminSettings from './admin/pages/Settings';
 import AdminPayouts from './admin/pages/Payouts';
 import AdminPayoutReceipt from './admin/pages/PayoutReceipt';
+import AdminTransactions from './admin/pages/Transactions';
 import OwnerDashboard from './owner/pages/Dashboard';
 import OwnerMyBillboards from './owner/pages/MyBillboards';
 import OwnerBookingRequests from './owner/pages/BookingRequests';
@@ -75,6 +76,10 @@ function AppRoutes() {
                     <Route path="/admin/billboards" element={<ProtectedRoute requireRole="admin"><AdminBillboards /></ProtectedRoute>} />
                     <Route path="/admin/bookings" element={<ProtectedRoute requireRole="admin"><AdminBookings /></ProtectedRoute>} />
                     <Route path="/admin/bookings/:bookingId/invoice" element={<ProtectedRoute requireRole="admin"><AdminInvoice /></ProtectedRoute>} />
+                    {/* The two drill-downs behind the dashboard's money tiles - same
+                        transaction list, different figures on show. */}
+                    <Route path="/admin/revenue" element={<ProtectedRoute requireRole="admin"><AdminTransactions view="revenue" /></ProtectedRoute>} />
+                    <Route path="/admin/commission" element={<ProtectedRoute requireRole="admin"><AdminTransactions view="commission" /></ProtectedRoute>} />
                     <Route path="/admin/permits" element={<ProtectedRoute requireRole="admin"><AdminPermits /></ProtectedRoute>} />
                     <Route path="/admin/reports" element={<ProtectedRoute requireRole="admin"><AdminReports /></ProtectedRoute>} />
                     <Route path="/admin/settings" element={<ProtectedRoute requireRole="admin"><AdminSettings /></ProtectedRoute>} />
