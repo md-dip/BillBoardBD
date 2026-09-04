@@ -16,11 +16,14 @@ use Tests\TestCase;
  * Cover for /api/admin/reports/revenue - the numbers behind the admin
  * dashboard's KPI tiles and its revenue-by-month chart.
  *
- * The two cases that were wrong: an owner's one-time board listing fee is
- * platform income in full (no owner split), but it lives in `listing_payments`,
- * which the report never looked at - so a paid fee showed up nowhere. And once
- * it was counted, it counted from the moment the owner paid, even though admin
- * can still reject the board and refund that money.
+ * The rule this whole file is about: money only counts once it can no longer
+ * be refunded. A client's advance is refundable until BOTH admin and the owner
+ * have approved the booking; an owner's board listing fee is refundable until
+ * admin approves the board. The balance payment and an approved fee are final,
+ * so they count as soon as they land.
+ *
+ * And commission follows the cash: the platform's cut is pro-rated against
+ * what the client has actually paid, never against the whole contract.
  */
 class AdminRevenueReportTest extends TestCase
 {
@@ -30,6 +33,8 @@ class AdminRevenueReportTest extends TestCase
 
     private User $owner;
 
+    private User $client;
+
     private Billboard $billboard;
 
     protected function setUp(): void
@@ -38,73 +43,197 @@ class AdminRevenueReportTest extends TestCase
 
         $this->admin = User::create(['name' => 'Admin', 'email' => 'admin@test.com', 'password' => Hash::make('password'), 'role' => 'admin']);
         $this->owner = User::create(['name' => 'Owner', 'email' => 'owner@test.com', 'password' => Hash::make('password'), 'role' => 'owner']);
-        $client = User::create(['name' => 'Client', 'email' => 'client@test.com', 'password' => Hash::make('password'), 'role' => 'client']);
+        $this->client = User::create(['name' => 'Client', 'email' => 'client@test.com', 'password' => Hash::make('password'), 'role' => 'client']);
 
         $this->billboard = Billboard::create([
             'owner_id' => $this->owner->id, 'title' => 'Test Board', 'address' => 'Dhaka',
             'latitude' => 23.8, 'longitude' => 90.4, 'size' => '10ft x 8ft', 'type' => 'neon',
             'daily_rate' => 1000, 'pricing_mode' => 'daily', 'listing_status' => 'approved',
         ]);
-
-        // A paid booking: 10,000 gross, 10% commission.
-        $booking = Booking::create([
-            'billboard_id' => $this->billboard->id, 'user_id' => $client->id,
-            'start_date' => now()->toDateString(), 'end_date' => now()->addDays(9)->toDateString(),
-            'total_amount' => 10000, 'advance_amount' => 3000, 'status' => 'confirmed',
-        ]);
-
-        Payment::create([
-            'booking_id' => $booking->id, 'payment_type' => 'advance', 'amount' => 3000,
-            'status' => 'paid', 'commission_amount' => 1000, 'owner_payable' => 9000,
-        ]);
     }
 
-    private function report(): array
+    // ---------------------------------------------------------------- bookings
+
+    public function test_an_advance_awaiting_admin_review_is_not_income_yet(): void
     {
+        $this->bookingWithPaidAdvance('pending_admin_review');
+
+        $totals = $this->totals();
+
+        $this->assertSame(0.0, (float) $totals['gross']);
+        $this->assertSame(0.0, (float) $totals['commission']);
+        $this->assertSame(0.0, (float) $totals['platform_income']);
+    }
+
+    public function test_an_advance_is_still_not_income_while_the_owner_has_yet_to_accept(): void
+    {
+        $booking = $this->bookingWithPaidAdvance('pending_admin_review');
+
         Sanctum::actingAs($this->admin);
+        $this->patchJson("/api/admin/bookings/{$booking->id}/approve")->assertOk();
+        $this->assertSame('pending_owner_approval', $booking->fresh()->status);
 
-        return $this->getJson('/api/admin/reports/revenue')->assertOk()->json('data');
+        // The owner can still reject, which refunds the client.
+        $this->assertSame(0.0, (float) $this->totals()['gross']);
     }
 
-    public function test_booking_money_is_reported_as_before(): void
+    public function test_the_advance_becomes_income_once_both_approvals_are_in(): void
     {
-        $totals = $this->report()['totals'];
+        $booking = $this->bookingWithPaidAdvance('pending_admin_review');
 
+        Sanctum::actingAs($this->admin);
+        $this->patchJson("/api/admin/bookings/{$booking->id}/approve")->assertOk();
+
+        Sanctum::actingAs($this->owner);
+        $this->patchJson("/api/owner/bookings/{$booking->id}/approve")->assertOk();
+        $this->assertSame('confirmed', $booking->fresh()->status);
+
+        $totals = $this->totals();
+
+        // Only the cash collected so far - the 3,000 advance - and only the
+        // commission on THAT: 10% of 3,000, not 10% of the 10,000 contract.
+        $this->assertSame(3000.0, (float) $totals['gross']);
+        $this->assertSame(300.0, (float) $totals['commission']);
+        $this->assertSame(2700.0, (float) $totals['owner_payable']);
+        $this->assertSame(300.0, (float) $totals['platform_income']);
+    }
+
+    public function test_the_balance_payment_counts_as_soon_as_it_is_paid(): void
+    {
+        $booking = $this->bookingWithPaidAdvance('confirmed');
+
+        Sanctum::actingAs($this->admin);
+        $this->postJson("/api/admin/bookings/{$booking->id}/balance-payment", ['method' => 'bank'])->assertCreated();
+
+        $totals = $this->totals();
+
+        // Nothing is rejectable at this point, so the 7,000 balance lands
+        // straight away, bringing the remaining 700 of commission with it.
         $this->assertSame(10000.0, (float) $totals['gross']);
         $this->assertSame(1000.0, (float) $totals['commission']);
         $this->assertSame(9000.0, (float) $totals['owner_payable']);
-        $this->assertSame(0.0, (float) $totals['listing_fees']);
-        $this->assertSame(1000.0, (float) $totals['platform_income']);
     }
 
-    public function test_a_paid_listing_fee_counts_as_platform_income(): void
+    public function test_an_admin_rejection_refunds_the_advance_and_it_stays_out(): void
     {
-        ListingPayment::create([
-            'billboard_id' => $this->billboard->id, 'owner_id' => $this->owner->id,
-            'amount' => 5000, 'status' => 'paid', 'paid_at' => now(),
-        ]);
+        $booking = $this->bookingWithPaidAdvance('pending_admin_review');
 
-        $totals = $this->report()['totals'];
+        Sanctum::actingAs($this->admin);
+        $this->patchJson("/api/admin/bookings/{$booking->id}/reject", [
+            'rejection_reason' => 'Creative breaches the content policy.',
+        ])->assertOk();
 
-        $this->assertSame(5000.0, (float) $totals['listing_fees']);
-        // The headline the dashboard shows: commission + the listing fee.
-        $this->assertSame(6000.0, (float) $totals['platform_income']);
-        // Booking-side figures must not move.
-        $this->assertSame(10000.0, (float) $totals['gross']);
-        $this->assertSame(1000.0, (float) $totals['commission']);
+        $this->assertDatabaseHas('payments', ['booking_id' => $booking->id, 'payment_type' => 'advance', 'status' => 'refunded']);
+        $this->assertSame(0.0, (float) $this->totals()['gross']);
     }
 
-    public function test_a_refunded_listing_fee_is_left_out(): void
+    public function test_an_owner_rejection_refunds_the_advance_and_it_stays_out(): void
     {
-        ListingPayment::create([
-            'billboard_id' => $this->billboard->id, 'owner_id' => $this->owner->id,
-            'amount' => 5000, 'status' => 'refunded', 'paid_at' => now(), 'refunded_at' => now(),
+        $booking = $this->bookingWithPaidAdvance('pending_admin_review');
+
+        Sanctum::actingAs($this->admin);
+        $this->patchJson("/api/admin/bookings/{$booking->id}/approve")->assertOk();
+
+        Sanctum::actingAs($this->owner);
+        $this->patchJson("/api/owner/bookings/{$booking->id}/reject", [
+            'rejection_reason' => 'The board is already committed to another campaign.',
+        ])->assertOk();
+
+        $this->assertDatabaseHas('payments', ['booking_id' => $booking->id, 'payment_type' => 'advance', 'status' => 'refunded']);
+        $this->assertSame(0.0, (float) $this->totals()['gross']);
+    }
+
+    public function test_commission_is_pro_rated_against_what_the_client_has_actually_paid(): void
+    {
+        // A client who pays the advance and then walks away never hands over
+        // the balance, so the platform never earns the cut on it. Booking the
+        // full 1,000 up front would report income that may never arrive.
+        $booking = $this->bookingWithPaidAdvance('confirmed');
+
+        $this->assertSame(300.0, (float) $this->totals()['commission'], '10% of the 3,000 advance');
+
+        Sanctum::actingAs($this->admin);
+        $this->postJson("/api/admin/bookings/{$booking->id}/balance-payment", ['method' => 'bank'])->assertCreated();
+
+        // The other 700 arrives with the balance - 1,000 in total, the same as
+        // the amount frozen on the booking, only now it is all collected.
+        $this->assertSame(1000.0, (float) $this->totals()['commission']);
+    }
+
+    public function test_commission_uses_the_rate_frozen_on_the_booking_not_the_current_setting(): void
+    {
+        // Booking sold at 20% (commission 2,000 of 10,000), regardless of what
+        // the admin's commission_rate setting says today.
+        $booking = Booking::create([
+            'billboard_id' => $this->billboard->id, 'user_id' => $this->client->id,
+            'start_date' => now()->toDateString(), 'end_date' => now()->addDays(9)->toDateString(),
+            'total_amount' => 10000, 'advance_amount' => 3000, 'status' => 'confirmed',
+        ]);
+        Payment::create([
+            'booking_id' => $booking->id, 'payment_type' => 'advance', 'amount' => 3000,
+            'status' => 'paid', 'commission_amount' => 2000, 'owner_payable' => 8000, 'paid_at' => now(),
         ]);
 
-        $totals = $this->report()['totals'];
+        $this->assertSame(600.0, (float) $this->totals()['commission'], '20% of the 3,000 advance');
+    }
 
-        $this->assertSame(0.0, (float) $totals['listing_fees']);
-        $this->assertSame(1000.0, (float) $totals['platform_income']);
+    // ----------------------------------------------------------- listing fees
+
+    public function test_a_fee_on_a_board_still_awaiting_review_is_not_income_yet(): void
+    {
+        $this->billboard->update(['listing_status' => 'pending_review', 'reviewed_at' => null]);
+        $this->payListingFee($this->billboard);
+
+        // Admin can still reject this board, which refunds the fee.
+        $this->assertSame(0.0, (float) $this->totals()['listing_fees']);
+    }
+
+    public function test_the_fee_lands_as_income_the_moment_admin_approves(): void
+    {
+        $this->billboard->update(['listing_status' => 'pending_review', 'reviewed_at' => null]);
+        $this->payListingFee($this->billboard);
+
+        $this->assertSame(0.0, (float) $this->totals()['listing_fees']);
+
+        Sanctum::actingAs($this->admin);
+        $this->patchJson("/api/admin/billboards/{$this->billboard->id}/approve")->assertOk();
+
+        $this->assertSame(5000.0, (float) $this->totals()['listing_fees']);
+    }
+
+    public function test_rejecting_the_board_refunds_the_fee_and_it_stays_out(): void
+    {
+        $this->billboard->update(['listing_status' => 'pending_review', 'reviewed_at' => null]);
+        $this->payListingFee($this->billboard);
+
+        Sanctum::actingAs($this->admin);
+        $this->patchJson("/api/admin/billboards/{$this->billboard->id}/reject", [
+            'rejection_reason' => 'Permit document is unreadable.',
+        ])->assertOk();
+
+        $this->assertDatabaseHas('listing_payments', ['billboard_id' => $this->billboard->id, 'status' => 'refunded']);
+        $this->assertSame(0.0, (float) $this->totals()['listing_fees']);
+    }
+
+    public function test_a_rejected_board_never_contributes_even_if_the_refund_did_not_run(): void
+    {
+        // Fee left as 'paid' on purpose: the board status alone has to keep it out.
+        $this->billboard->update(['listing_status' => 'rejected']);
+        $this->payListingFee($this->billboard);
+
+        $this->assertSame(0.0, (float) $this->totals()['listing_fees']);
+    }
+
+    public function test_the_fee_is_bucketed_in_the_month_it_was_approved(): void
+    {
+        // Paid two months ago, approved today: it belongs to today's month, so
+        // approving never rewrites a figure the admin already read last month.
+        $this->payListingFee($this->billboard, now()->subMonths(2));
+        $this->billboard->update(['reviewed_at' => now()]);
+
+        $row = collect($this->rows())->firstWhere('month', now()->format('Y-m'));
+
+        $this->assertSame(5000.0, (float) $row['listing_fees']);
     }
 
     public function test_a_fee_on_a_board_with_no_bookings_still_gets_a_row(): void
@@ -113,104 +242,77 @@ class AdminRevenueReportTest extends TestCase
             'owner_id' => $this->owner->id, 'title' => 'Freshly Listed', 'address' => 'Dhaka',
             'latitude' => 23.9, 'longitude' => 90.5, 'size' => '20ft x 10ft', 'type' => 'unipole',
             'daily_rate' => 4500, 'pricing_mode' => 'daily', 'listing_status' => 'approved',
+            'reviewed_at' => now(),
         ]);
+        $this->payListingFee($fresh);
 
-        ListingPayment::create([
-            'billboard_id' => $fresh->id, 'owner_id' => $this->owner->id,
-            'amount' => 5000, 'status' => 'paid', 'paid_at' => now(),
-        ]);
+        $row = collect($this->rows())->firstWhere('billboard_id', $fresh->id);
 
-        $data = $this->report();
-        $row = collect($data['rows'])->firstWhere('billboard_id', $fresh->id);
-
-        // Nothing booked on it yet, so it exists in the report purely for the
-        // fee - the month bucket the dashboard chart reads has to include it.
+        // Nothing booked on it yet, so it is in the report purely for the fee -
+        // the month bucket the dashboard chart reads has to include it.
         $this->assertNotNull($row, 'a board with only a listing fee must still appear');
         $this->assertSame(5000.0, (float) $row['listing_fees']);
         $this->assertSame(0.0, (float) $row['gross']);
-        $this->assertSame(now()->format('Y-m'), $row['month']);
     }
 
-    public function test_a_fee_on_a_board_still_awaiting_review_is_not_income_yet(): void
+    // ----------------------------------------------------------------- totals
+
+    public function test_platform_income_adds_booking_commission_to_listing_fees(): void
     {
-        $this->billboard->update(['listing_status' => 'pending_review', 'reviewed_at' => null]);
-
-        ListingPayment::create([
-            'billboard_id' => $this->billboard->id, 'owner_id' => $this->owner->id,
-            'amount' => 5000, 'status' => 'paid', 'paid_at' => now(),
-        ]);
-
-        // Admin can still reject this board, which refunds the fee - so the
-        // platform has not earned it yet.
-        $totals = $this->report()['totals'];
-
-        $this->assertSame(0.0, (float) $totals['listing_fees']);
-        $this->assertSame(1000.0, (float) $totals['platform_income']);
-    }
-
-    public function test_the_fee_lands_as_income_the_moment_admin_approves(): void
-    {
-        $this->billboard->update(['listing_status' => 'pending_review', 'reviewed_at' => null]);
-
-        ListingPayment::create([
-            'billboard_id' => $this->billboard->id, 'owner_id' => $this->owner->id,
-            'amount' => 5000, 'status' => 'paid', 'paid_at' => now(),
-        ]);
-
-        $this->assertSame(0.0, (float) $this->report()['totals']['listing_fees']);
-
-        // Approve it the way admin actually does, through the API.
-        Sanctum::actingAs($this->admin);
-        $this->patchJson("/api/admin/billboards/{$this->billboard->id}/approve")->assertOk();
-
-        $this->assertSame(5000.0, (float) $this->report()['totals']['listing_fees']);
-    }
-
-    public function test_rejecting_the_board_refunds_the_fee_and_it_stays_out(): void
-    {
-        $this->billboard->update(['listing_status' => 'pending_review', 'reviewed_at' => null]);
-
-        ListingPayment::create([
-            'billboard_id' => $this->billboard->id, 'owner_id' => $this->owner->id,
-            'amount' => 5000, 'status' => 'paid', 'paid_at' => now(),
-        ]);
-
-        Sanctum::actingAs($this->admin);
-        $this->patchJson("/api/admin/billboards/{$this->billboard->id}/reject", [
-            'rejection_reason' => 'Permit document is unreadable.',
-        ])->assertOk();
-
-        // The money went back to the owner, so it was never platform income.
-        $this->assertDatabaseHas('listing_payments', ['billboard_id' => $this->billboard->id, 'status' => 'refunded']);
-        $this->assertSame(0.0, (float) $this->report()['totals']['listing_fees']);
-    }
-
-    public function test_a_rejected_board_never_contributes_even_if_the_refund_did_not_run(): void
-    {
-        $this->billboard->update(['listing_status' => 'rejected']);
-
-        // Left as 'paid' on purpose: the board status alone has to keep it out.
-        ListingPayment::create([
-            'billboard_id' => $this->billboard->id, 'owner_id' => $this->owner->id,
-            'amount' => 5000, 'status' => 'paid', 'paid_at' => now(),
-        ]);
-
-        $this->assertSame(0.0, (float) $this->report()['totals']['listing_fees']);
-    }
-
-    public function test_the_fee_is_bucketed_in_the_month_it_was_approved(): void
-    {
-        // Paid two months ago, approved today: it belongs to today's month, so
-        // approving never rewrites a figure the admin already read last month.
-        ListingPayment::create([
-            'billboard_id' => $this->billboard->id, 'owner_id' => $this->owner->id,
-            'amount' => 5000, 'status' => 'paid', 'paid_at' => now()->subMonths(2),
-        ]);
+        $this->bookingWithPaidAdvance('confirmed');
         $this->billboard->update(['reviewed_at' => now()]);
+        $this->payListingFee($this->billboard);
 
-        $row = collect($this->report()['rows'])
-            ->firstWhere('month', now()->format('Y-m'));
+        $totals = $this->totals();
 
-        $this->assertSame(5000.0, (float) $row['listing_fees']);
+        // 10% of the 3,000 advance collected, plus the whole 5,000 fee.
+        $this->assertSame(300.0, (float) $totals['commission']);
+        $this->assertSame(5000.0, (float) $totals['listing_fees']);
+        $this->assertSame(5300.0, (float) $totals['platform_income']);
+    }
+
+    // ---------------------------------------------------------------- helpers
+
+    /**
+     * A 10,000 booking with the 3,000 advance paid. Commission is 10% of the
+     * WHOLE booking and frozen onto the advance row, exactly as
+     * Client\BookingController writes it.
+     */
+    private function bookingWithPaidAdvance(string $status): Booking
+    {
+        $booking = Booking::create([
+            'billboard_id' => $this->billboard->id, 'user_id' => $this->client->id,
+            'start_date' => now()->toDateString(), 'end_date' => now()->addDays(9)->toDateString(),
+            'total_amount' => 10000, 'advance_amount' => 3000, 'status' => $status,
+        ]);
+
+        Payment::create([
+            'booking_id' => $booking->id, 'payment_type' => 'advance', 'amount' => 3000,
+            'status' => 'paid', 'commission_amount' => 1000, 'owner_payable' => 9000, 'paid_at' => now(),
+        ]);
+
+        return $booking;
+    }
+
+    private function payListingFee(Billboard $billboard, $paidAt = null): ListingPayment
+    {
+        return ListingPayment::create([
+            'billboard_id' => $billboard->id, 'owner_id' => $this->owner->id,
+            'amount' => 5000, 'status' => 'paid', 'paid_at' => $paidAt ?? now(),
+        ]);
+    }
+
+    private function totals(): array
+    {
+        Sanctum::actingAs($this->admin);
+
+        return $this->getJson('/api/admin/reports/revenue')->assertOk()->json('data.totals');
+    }
+
+    private function rows(): array
+    {
+        Sanctum::actingAs($this->admin);
+
+        return $this->getJson('/api/admin/reports/revenue')->assertOk()->json('data.rows');
     }
 }
