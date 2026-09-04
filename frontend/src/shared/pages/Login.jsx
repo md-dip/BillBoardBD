@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
@@ -12,6 +12,12 @@ const DEMO_ACCOUNTS = [
 export default function Login() {
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Set by whoever sent us here - the booking card or ProtectedRoute. The
+    // notice says why, and `from` is the page to return to after logging in.
+    const notice = location.state?.notice;
+    const from = location.state?.from?.pathname;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -28,8 +34,11 @@ export default function Login() {
         setSubmitting(true);
         try {
             const user = await login(email, password);
-            // Redirect based on role
-            if (user.role === 'admin') {
+            // Back to the page that needed the login, if there was one;
+            // otherwise the role's own landing page.
+            if (from) {
+                navigate(from, { replace: true });
+            } else if (user.role === 'admin') {
                 navigate('/admin');
             } else if (user.role === 'owner') {
                 navigate('/owner');
@@ -48,6 +57,8 @@ export default function Login() {
             <div className="login-card">
                 <h1 className="login-title">Welcome back</h1>
                 <p className="login-subtitle">Log in to book billboards or manage your listings.</p>
+
+                {notice && <p className="login-notice">{notice}</p>}
 
                 <form onSubmit={handleSubmit}>
                     <div className="login-field">
@@ -81,7 +92,7 @@ export default function Login() {
                     </button>
 
                     <p className="login-footer">
-                        No account? <Link to="/register">Register</Link>
+                        No account? <Link to="/register" state={location.state}>Register</Link>
                     </p>
 
                     <div className="login-demo-box">

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,4 +22,19 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
+
+        // Someone hitting a signed-in endpoint with no (or a dead) token.
+        // Laravel's own body is {"message": "Unauthenticated."}, which the SPA
+        // shows verbatim to whoever is on screen - so a visitor who clicks
+        // "Hold these dates" reads a framework term instead of what to do.
+        // Answer in plain language, on the usual success/data/message envelope.
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'data' => null,
+                    'message' => 'Please log in or register first.',
+                ], 401);
+            }
+        });
     })->create();

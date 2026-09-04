@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../../shared/api/axios';
+import { useAuth } from '../../shared/context/AuthContext';
 import { daysBetweenInclusive, todayIso } from '../../shared/utils/dateRange';
 import { formatBDT } from '../../shared/utils/formatPrice';
 import './BookingWizard.css';
 
 export default function BookingWizard({ billboard, advancePercentage, holdMinutes = 15 }) {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const [step, setStep] = useState('dates'); // 'dates' | 'campaign' | 'review' | 'done'
     const [startDate, setStartDate] = useState(todayIso());
     const [endDate, setEndDate] = useState(todayIso());
@@ -45,6 +51,20 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
         : null;
 
     async function handleHold() {
+        // A visitor is free to browse and price a board, but holding dates
+        // needs an account. Catch that here instead of letting the API answer
+        // 401: they get told what to do, and the board they were on rides
+        // along in the router state so logging in drops them back on it.
+        if (!user) {
+            navigate('/login', {
+                state: {
+                    from: location,
+                    notice: 'Please log in or register first to book a billboard.',
+                },
+            });
+            return;
+        }
+
         setLoading(true); setError('');
         try {
             const res = await api.post('/bookings/hold', {

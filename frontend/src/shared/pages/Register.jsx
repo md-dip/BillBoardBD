@@ -1,11 +1,17 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Register.css';
 
 export default function Register() {
     const { register } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Carried over from the login page when a visitor was sent to sign in
+    // mid-task (see shared/pages/Login.jsx) - same meaning as there.
+    const notice = location.state?.notice;
+    const from = location.state?.from?.pathname;
 
     const [form, setForm] = useState({
         name: '',
@@ -31,11 +37,12 @@ export default function Register() {
         setSubmitting(true);
         try {
             const user = await register(form);
-            // After registration, redirect based on role
+            // After registration, redirect based on role - a brand new client
+            // goes back to whatever they were trying to book, if anything.
             if (user.role === 'owner') {
                 navigate('/owner');
             } else {
-                navigate('/billboards');
+                navigate(from || '/billboards');
             }
         } catch (err) {
             // Laravel returns { errors: { email: ['already taken'], ... } } for 422 validation
@@ -54,6 +61,8 @@ export default function Register() {
             <div className="register-card">
                 <h1 className="register-title">Create an account</h1>
                 <p className="register-subtitle">Book billboards or list your own space for hire.</p>
+
+                {notice && <p className="register-notice">{notice}</p>}
 
                 <form onSubmit={handleSubmit}>
                     <div className="register-field">
@@ -138,7 +147,7 @@ export default function Register() {
                     </button>
 
                     <p className="register-footer">
-                        Already have an account? <Link to="/login">Log in</Link>
+                        Already have an account? <Link to="/login" state={location.state}>Log in</Link>
                     </p>
                 </form>
             </div>
