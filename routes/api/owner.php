@@ -4,6 +4,7 @@ use App\Http\Controllers\Owner\BillboardController as OwnerBillboardController;
 use App\Http\Controllers\Owner\BookingController as OwnerBookingController;
 use App\Http\Controllers\Owner\ListingPaymentController as OwnerListingPaymentController;
 use App\Http\Controllers\Owner\PayoutController as OwnerPayoutController;
+use App\Http\Controllers\Owner\ReportController as OwnerReportController;
 use App\Http\Controllers\Owner\ProofOfPostingController as OwnerProofOfPostingController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,9 @@ Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner')->group(functi
 
     // Stage 5: upload proof of posting
     Route::post('/bookings/{booking}/proof', [OwnerProofOfPostingController::class, 'store']);
+
+    // The transactions behind the dashboard's "Revenue (BDT)" tile
+    Route::get('/reports/transactions', [OwnerReportController::class, 'transactions']);
 
     // Payouts (read-only history/outstanding) + the owner's own payout details
     Route::get('/payouts', [OwnerPayoutController::class, 'index']);

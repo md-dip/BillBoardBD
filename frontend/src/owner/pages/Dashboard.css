@@ -243,3 +243,58 @@
 @media (max-width: 768px) {
     .dashboard-two-col-grid { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   Drill-down affordance on the "Revenue (BDT)" tile. The link is only
+   a wrapper - it carries no card styling of its own, so the card
+   inside keeps the exact look the other three tiles have, and the
+   grid stretches every tile to the same height.
+   ============================================================ */
+.dashboard-kpi-grid { align-items: stretch; }
+
+.dashboard-kpi-link-revenue {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+.dashboard-kpi-link-revenue .dashboard-kpi-card-revenue {
+    height: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.dashboard-kpi-link-revenue:hover .dashboard-kpi-card-revenue {
+    border-color: #bfdbfe;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
+}
+
+/* Every tile fills its row so the linked one's extra line cannot make it
+   taller than the rest. */
+.dashboard-kpi-card { height: 100%; box-sizing: border-box; }
+
+/* "See transactions" line at the foot of the Revenue tile */
+.dashboard-kpi-drill-down-hint {
+    display: block;
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #2563eb;
+}
+
+/* "Awaiting payout" KPI card own colors + its drill-down link wrapper */
+.dashboard-kpi-card-awaiting-payout { background: #ffffff; border: 1px solid #e2e8f0; }
+.dashboard-kpi-link-awaiting-payout {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+.dashboard-kpi-link-awaiting-payout .dashboard-kpi-card-awaiting-payout {
+    height: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.dashboard-kpi-link-awaiting-payout:hover .dashboard-kpi-card-awaiting-payout {
+    border-color: #bfdbfe;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
+}

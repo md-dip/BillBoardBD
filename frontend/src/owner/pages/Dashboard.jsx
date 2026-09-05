@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { CalendarCheck, Clock, DollarSign, Megaphone } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { CalendarCheck, Clock, DollarSign, Megaphone, Wallet } from 'lucide-react';
 import api from '../../shared/api/axios';
 import OwnerShell from '../components/OwnerShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
@@ -107,13 +107,19 @@ export default function OwnerDashboard() {
   const navigate = useNavigate();
   const [billboards, setBillboards] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [earnings, setEarnings] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([api.get('/owner/billboards'), api.get('/owner/bookings')])
-      .then(([bbRes, bkRes]) => {
+    Promise.all([
+      api.get('/owner/billboards'),
+      api.get('/owner/bookings'),
+      api.get('/owner/reports/transactions'),
+    ])
+      .then(([bbRes, bkRes, txRes]) => {
         setBillboards(bbRes.data.data.data);
         setBookings(bkRes.data.data);
+        setEarnings(txRes.data.data.totals);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -135,11 +141,20 @@ export default function OwnerDashboard() {
   // keeps this tile on the exact same rule as the admin revenue report.
   const revenue = bookings.reduce((s, b) => s + Number(b.collected_amount ?? 0), 0);
 
+  // Earnings that have NOT reached the owner's account yet: verified and
+  // waiting on the next payout run, plus what is still held back for proof of
+  // installation. This is the figure a payout visibly reduces - "Revenue" is a
+  // lifetime total and never comes down.
+  const awaitingPayout = (Number(earnings?.ready_for_payout ?? 0)) + (Number(earnings?.held ?? 0));
+
   const kpis = [
     { slug: 'my-billboards', label: 'My billboards', value: billboards.length, icon: Megaphone },
     { slug: 'pending-requests', label: 'Pending requests', value: pending.length, icon: Clock, accent: 'warning' },
     { slug: 'confirmed-bookings', label: 'Confirmed bookings', value: inProgress.length, icon: CalendarCheck, accent: 'success' },
-    { slug: 'revenue', label: 'Revenue (BDT)', value: formatBDT(revenue), icon: DollarSign },
+    // The only tile with something behind it: the payments that add up to
+    // this figure (owner/pages/Transactions.jsx).
+    { slug: 'revenue', label: 'Revenue (BDT)', value: formatBDT(revenue), icon: DollarSign, to: '/owner/revenue' },
+    { slug: 'awaiting-payout', label: 'Awaiting payout', value: formatBDT(awaitingPayout), icon: Wallet, to: '/owner/revenue' },
   ];
 
   return (
@@ -147,8 +162,9 @@ export default function OwnerDashboard() {
       <div className="dashboard-kpi-grid">
         {kpis.map((k) => {
           const Icon = k.icon;
-          return (
-            <div className={`dashboard-kpi-card dashboard-kpi-card-${k.slug}`} key={k.label}>
+
+          const cardBody = (
+            <>
               <div className="dashboard-kpi-header">
                 <span className="dashboard-kpi-label">{k.label}</span>
                 <span className={`dashboard-kpi-icon ${k.accent || ''}`}>
@@ -156,8 +172,19 @@ export default function OwnerDashboard() {
                 </span>
               </div>
               <div className="dashboard-kpi-value">{k.value}</div>
-            </div>
+              {k.to && <span className="dashboard-kpi-drill-down-hint">See transactions</span>}
+            </>
           );
+
+          // A tile with somewhere to go is the same card inside a link, so the
+          // card keeps the exact look the other three have.
+          return k.to
+            ? (
+              <Link to={k.to} className={`dashboard-kpi-link-${k.slug}`} key={k.label}>
+                <div className={`dashboard-kpi-card dashboard-kpi-card-${k.slug}`}>{cardBody}</div>
+              </Link>
+            )
+            : <div className={`dashboard-kpi-card dashboard-kpi-card-${k.slug}`} key={k.label}>{cardBody}</div>;
         })}
       </div>
 

@@ -32,6 +32,7 @@ import OwnerMyBillboards from './owner/pages/MyBillboards';
 import OwnerBookingRequests from './owner/pages/BookingRequests';
 import OwnerPayouts from './owner/pages/Payouts';
 import OwnerPayoutReceipt from './owner/pages/PayoutReceipt';
+import OwnerTransactions from './owner/pages/Transactions';
 import OwnerHowItWorks from './owner/pages/HowItWorks';
 
 function AppRoutes() {
@@ -89,6 +90,8 @@ function AppRoutes() {
                     <Route path="/owner" element={<ProtectedRoute requireRole="owner"><OwnerDashboard /></ProtectedRoute>} />
                     <Route path="/owner/billboards" element={<ProtectedRoute requireRole="owner"><OwnerMyBillboards /></ProtectedRoute>} />
                     <Route path="/owner/bookings" element={<ProtectedRoute requireRole="owner"><OwnerBookingRequests /></ProtectedRoute>} />
+                    {/* The transactions behind the owner's own Revenue tile */}
+                    <Route path="/owner/revenue" element={<ProtectedRoute requireRole="owner"><OwnerTransactions /></ProtectedRoute>} />
                     <Route path="/owner/payouts" element={<ProtectedRoute requireRole="owner"><OwnerPayouts /></ProtectedRoute>} />
                     <Route path="/owner/payouts/:payoutId/receipt" element={<ProtectedRoute requireRole="owner"><OwnerPayoutReceipt /></ProtectedRoute>} />
 
