@@ -21,6 +21,7 @@ export default function OwnerBookingRequests() {
     usePageTitle('Booking Requests');
 
   const [bookings, setBookings] = useState([]);
+  const [earnings, setEarnings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending_owner_approval');
   const [rejectingId, setRejectingId] = useState(null);
@@ -32,8 +33,14 @@ export default function OwnerBookingRequests() {
 
   function load() {
     setLoading(true);
-    api.get('/owner/bookings')
-      .then((res) => setBookings(res.data.data))
+    Promise.all([api.get('/owner/bookings'), api.get('/owner/reports/transactions')])
+      .then(([bookingsRes, txRes]) => {
+        setBookings(bookingsRes.data.data);
+        // Read straight off the revenue ledger rather than adding the money up
+        // here, so this tab and the Revenue page can never quote two different
+        // figures for the same bookings.
+        setEarnings(txRes.data.data.totals);
+      })
       .finally(() => setLoading(false));
   }
 
@@ -82,6 +89,7 @@ export default function OwnerBookingRequests() {
   const groups = Object.fromEntries(STATUSES.map((s) => [s, bookings.filter((b) => b.status === s)]));
   const rows = groups[activeTab] || [];
 
+
   return (
     <OwnerShell title="Booking Requests">
       {error && <p className="bookings-error-text">{error}</p>}
@@ -102,6 +110,13 @@ export default function OwnerBookingRequests() {
               </button>
             ))}
           </div>
+
+          {activeTab === 'pending_proof_review' && (
+            <p className="bookings-awaiting-admin-total">
+              <strong>{formatBDT(earnings?.awaiting_verification ?? 0)}</strong> of your earnings is waiting on the
+              admin to verify these installations. It moves to your payout balance as soon as they do.
+            </p>
+          )}
 
           {activeTab === 'pending_owner_approval' && (
             <p className="bookings-muted bookings-mb-2 bookings-tab-hint-text">

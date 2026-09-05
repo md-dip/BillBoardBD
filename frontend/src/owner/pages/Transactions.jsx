@@ -24,7 +24,8 @@ const TYPES = {
 const PAYOUT_STATUSES = {
     paid_out: { label: 'Paid out', slug: 'paid-out' },
     ready: { label: 'Ready for payout', slug: 'ready' },
-    held: { label: 'Awaiting verification', slug: 'held' },
+    awaiting_verification: { label: 'Awaiting verification', slug: 'awaiting-verification' },
+    in_progress: { label: 'In progress', slug: 'in-progress' },
 };
 
 /**
@@ -84,7 +85,12 @@ export default function OwnerTransactions() {
     const journey = [
         { slug: 'paid-out', label: 'Paid out to you', value: formatBDT(totals?.paid_out ?? 0) },
         { slug: 'ready', label: 'Ready for payout', value: formatBDT(totals?.ready_for_payout ?? 0) },
-        { slug: 'held', label: 'Awaiting verification', value: formatBDT(totals?.held ?? 0) },
+        // Strictly what the admin is holding up: paid in full, proof uploaded.
+        // Same bookings as the "Awaiting Admin" tab on Booking Requests, and
+        // nothing else - money whose client still owes the balance, or whose
+        // proof has not been uploaded, gets no card of its own here. Each row
+        // in the table below still says which of those it is.
+        { slug: 'awaiting-verification', label: 'Awaiting verification', value: formatBDT(totals?.awaiting_verification ?? 0) },
     ];
 
     return (
@@ -92,13 +98,6 @@ export default function OwnerTransactions() {
             <Link to="/owner" className="owner-transactions-back-to-dashboard-link">
                 <ArrowLeft size={14} /> Back to dashboard
             </Link>
-
-            <p className="owner-transactions-intro">
-                Every payment collected on your boards, and what is left after the platform&apos;s commission. A
-                client&apos;s advance only appears once both the admin and you have approved that booking - before
-                that it is still refundable. Earnings reach your payout balance after the admin verifies your proof
-                of installation.
-            </p>
 
             <div className="owner-transactions-summary-grid">
                 {summary.map((card) => (
@@ -108,10 +107,6 @@ export default function OwnerTransactions() {
                     </div>
                 ))}
             </div>
-
-            <p className="owner-transactions-journey-caption">
-                Where those earnings are now - the three add back up to {formatBDT(totals?.earnings ?? 0)}:
-            </p>
 
             <div className="owner-transactions-journey-grid">
                 {journey.map((card) => (
@@ -146,7 +141,7 @@ export default function OwnerTransactions() {
                         <tbody>
                             {visible.map((tx) => {
                                 const type = TYPES[tx.type] ?? { label: tx.type, slug: 'booking-advance' };
-                                const payoutStatus = PAYOUT_STATUSES[tx.payout_status] ?? PAYOUT_STATUSES.held;
+                                const payoutStatus = PAYOUT_STATUSES[tx.payout_status] ?? PAYOUT_STATUSES.in_progress;
 
                                 return (
                                     <tr key={tx.id}>

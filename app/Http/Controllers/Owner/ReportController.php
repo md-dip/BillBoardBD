@@ -32,6 +32,13 @@ class ReportController extends Controller
     private const PAYABLE_BOOKING_STATUSES = ['paid_in_full', 'pending_proof_review', 'active'];
 
     /**
+     * Proof of installation uploaded, waiting on the admin to accept it - the
+     * status behind the "Awaiting Admin" tab on the owner's Booking Requests
+     * page, so both screens count the same bookings.
+     */
+    private const AWAITING_ADMIN_STATUS = 'pending_proof_review';
+
+    /**
      * Every payment collected on this owner's boards - what the "Revenue (BDT)"
      * tile on their dashboard is made of - and where each one's earnings have
      * got to since.
@@ -45,15 +52,20 @@ class ReportController extends Controller
      * Board listing fees are not here on purpose: that is money the owner PAID
      * the platform to list a board, not money a board earned them.
      *
-     * Every earned taka sits in exactly one of three buckets, which is what
+     * Every earned taka sits in exactly one of four buckets, which is what
      * answers "I was paid, so why has my earnings figure not moved?":
      *
-     *   paid_out - already disbursed in a payout run.
-     *   ready    - client paid in full and admin verified the proof of
-     *              installation, so it is waiting on the next payout run.
-     *   held     - earned, but not payable yet: either the client still owes
-     *              the balance, or the proof of installation has not been
-     *              uploaded/verified.
+     *   awaiting_verification - the client has paid and the owner has uploaded
+     *                           the proof of installation; the only thing left
+     *                           is the admin checking it. Exactly the bookings
+     *                           on the "Awaiting Admin" tab of Booking
+     *                           Requests, so the two screens quote one figure.
+     *   paid_out              - already disbursed in a payout run.
+     *   ready                 - admin verified the proof of installation, so
+     *                           it is waiting on the next payout run.
+     *   in_progress           - earned, but nothing is waiting on the admin
+     *                           yet: the client still owes the balance, or the
+     *                           owner has not uploaded the proof.
      */
     public function transactions(Request $request): JsonResponse
     {
@@ -136,13 +148,25 @@ class ReportController extends Controller
 
                 $payout = $payoutByBooking[$payment->booking_id] ?? null;
 
-                if ($payout) {
+                if ($payment->booking_status === self::AWAITING_ADMIN_STATUS) {
+                    // Checked FIRST, ahead of the payout: the owner's Booking
+                    // Requests page lists these bookings under "Awaiting Admin",
+                    // and this figure has to be the money on that tab - so a
+                    // booking's stage decides the bucket, not its payout
+                    // history. In normal operation the two can never disagree
+                    // anyway: a payout requires a verified proof, which moves
+                    // the booking off this status. It only differs for bookings
+                    // paid out before that gate existed.
+                    $status = 'awaiting_verification';
+                } elseif ($payout) {
                     $status = 'paid_out';
                 } elseif (in_array($payment->booking_status, self::PAYABLE_BOOKING_STATUSES, true)
                     && $proofVerified->has($payment->booking_id)) {
                     $status = 'ready';
                 } else {
-                    $status = 'held';
+                    // Balance still owed, or no proof uploaded yet. Money the
+                    // owner has earned, but the admin is not holding it up.
+                    $status = 'in_progress';
                 }
 
                 return [
@@ -184,11 +208,12 @@ class ReportController extends Controller
                     'collected' => round((float) $transactions->sum('amount'), 2),
                     'platform_cut' => round((float) $transactions->sum('platform_cut'), 2),
                     'earnings' => round((float) $transactions->sum('owner_earning'), 2),
-                    // The three buckets always add back up to `earnings`, since
+                    // The four buckets always add back up to `earnings`, since
                     // every row lands in exactly one of them.
                     'paid_out' => $inBucket('paid_out'),
                     'ready_for_payout' => $inBucket('ready'),
-                    'held' => $inBucket('held'),
+                    'awaiting_verification' => $inBucket('awaiting_verification'),
+                    'in_progress' => $inBucket('in_progress'),
                 ],
             ],
             'message' => null,

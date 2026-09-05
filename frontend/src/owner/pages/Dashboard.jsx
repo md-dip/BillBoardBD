@@ -141,11 +141,16 @@ export default function OwnerDashboard() {
   // keeps this tile on the exact same rule as the admin revenue report.
   const revenue = bookings.reduce((s, b) => s + Number(b.collected_amount ?? 0), 0);
 
-  // Earnings that have NOT reached the owner's account yet: verified and
-  // waiting on the next payout run, plus what is still held back for proof of
-  // installation. This is the figure a payout visibly reduces - "Revenue" is a
-  // lifetime total and never comes down.
-  const awaitingPayout = (Number(earnings?.ready_for_payout ?? 0)) + (Number(earnings?.held ?? 0));
+  // Strictly the money sitting with the admin: paid in full, proof of
+  // installation uploaded, waiting to be verified. The same figure as the
+  // Revenue page's card and the "Awaiting Admin" tab on Booking Requests -
+  // three screens, one number.
+  //
+  // Deliberately NOT everything the owner is owed: an advance-only booking, or
+  // one paid in full with no proof uploaded, is waiting on the client or on the
+  // owner, not on a payout, so it is not counted here. "Revenue (BDT)" beside
+  // it stays the lifetime total.
+  const awaitingVerification = Number(earnings?.awaiting_verification ?? 0);
 
   const kpis = [
     { slug: 'my-billboards', label: 'My billboards', value: billboards.length, icon: Megaphone },
@@ -154,7 +159,7 @@ export default function OwnerDashboard() {
     // The only tile with something behind it: the payments that add up to
     // this figure (owner/pages/Transactions.jsx).
     { slug: 'revenue', label: 'Revenue (BDT)', value: formatBDT(revenue), icon: DollarSign, to: '/owner/revenue' },
-    { slug: 'awaiting-payout', label: 'Awaiting payout', value: formatBDT(awaitingPayout), icon: Wallet, to: '/owner/revenue' },
+    { slug: 'awaiting-verification', label: 'Awaiting verification', value: formatBDT(awaitingVerification), icon: Wallet, to: '/owner/revenue' },
   ];
 
   return (

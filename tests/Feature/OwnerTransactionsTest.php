@@ -6,6 +6,7 @@ use App\Models\Billboard;
 use App\Models\Booking;
 use App\Models\ListingPayment;
 use App\Models\Payment;
+use App\Models\Payout;
 use App\Models\ProofOfPosting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -143,45 +144,131 @@ class OwnerTransactionsTest extends TestCase
 
     // ------------------------------------------------- where the money sits
 
-    public function test_earnings_split_into_paid_out_ready_and_held(): void
+    public function test_earnings_split_across_the_four_buckets(): void
     {
-        // Fully paid, proof verified, and already disbursed -> paid out.
-        $disbursed = $this->settledBooking(withVerifiedProof: true);
+        // Verified and already disbursed -> paid out.
+        $this->settledBooking('verified');
         Sanctum::actingAs($this->admin);
         $this->postJson("/api/admin/payouts/{$this->owner->id}", ['method' => 'bank'])->assertCreated();
 
-        // Fully paid and verified, but no payout run since -> ready.
-        $this->settledBooking(withVerifiedProof: true);
+        // Verified, but no payout run since -> ready.
+        $this->settledBooking('verified');
 
-        // Fully paid, proof not verified -> held.
-        $this->settledBooking(withVerifiedProof: false);
+        // Proof uploaded, sitting with the admin -> awaiting verification.
+        $this->settledBooking('awaiting');
+
+        // Paid in full but no proof uploaded, plus a booking whose client still
+        // owes the balance -> in progress. Nothing here is waiting on the admin,
+        // so neither may be called "awaiting verification".
+        $this->settledBooking('no_proof');
+        $this->bookingWithPaidAdvance('confirmed');
 
         $totals = $this->ledger()['totals'];
 
-        $this->assertSame(9000.0, (float) $totals['paid_out'], 'the booking already disbursed');
-        $this->assertSame(9000.0, (float) $totals['ready_for_payout'], 'verified, waiting on the next run');
-        $this->assertSame(9000.0, (float) $totals['held'], 'earned but proof not verified');
-        $this->assertSame(27000.0, (float) $totals['earnings']);
-        $this->assertNotNull($disbursed);
+        $this->assertSame(9000.0, (float) $totals['paid_out']);
+        $this->assertSame(9000.0, (float) $totals['ready_for_payout']);
+        $this->assertSame(9000.0, (float) $totals['awaiting_verification'], 'only what the admin is holding up');
+        $this->assertSame(11700.0, (float) $totals['in_progress'], '9,000 unproven + 2,700 advance-only');
+        $this->assertSame(38700.0, (float) $totals['earnings']);
     }
 
-    public function test_the_three_buckets_always_add_back_up_to_earnings(): void
+    public function test_money_with_no_proof_uploaded_is_not_called_awaiting_verification(): void
     {
-        $this->settledBooking(withVerifiedProof: true);
-        $this->settledBooking(withVerifiedProof: false);
+        // The exact complaint: paid in full, but the owner has not installed or
+        // uploaded anything. The admin is not holding this up.
+        $this->settledBooking('no_proof');
+
+        $totals = $this->ledger()['totals'];
+
+        $this->assertSame(0.0, (float) $totals['awaiting_verification']);
+        $this->assertSame(9000.0, (float) $totals['in_progress']);
+    }
+
+    public function test_an_advance_only_booking_is_not_called_awaiting_verification(): void
+    {
+        // Client has paid the advance but still owes the balance - again, not
+        // something the admin can act on.
+        $this->bookingWithPaidAdvance('confirmed');
+
+        $totals = $this->ledger()['totals'];
+
+        $this->assertSame(0.0, (float) $totals['awaiting_verification']);
+        $this->assertSame(2700.0, (float) $totals['in_progress']);
+    }
+
+    public function test_awaiting_verification_covers_exactly_the_awaiting_admin_tab(): void
+    {
+        $this->settledBooking('awaiting');
+        $this->settledBooking('no_proof');
+        $this->bookingWithPaidAdvance('confirmed');
+
+        Sanctum::actingAs($this->owner);
+        $bookings = collect($this->getJson('/api/owner/bookings')->assertOk()->json('data'));
+
+        // The tab lists bookings in pending_proof_review; the Revenue page's
+        // card is the owner's earnings on exactly those bookings.
+        $tabBookingIds = $bookings->where('status', 'pending_proof_review')->pluck('id');
+        $data = $this->ledger();
+
+        $tabEarnings = collect($data['transactions'])
+            ->whereIn('booking_id', $tabBookingIds)
+            ->sum('owner_earning');
+
+        $this->assertSame(1, $tabBookingIds->count());
+        $this->assertSame(round((float) $tabEarnings, 2), (float) $data['totals']['awaiting_verification']);
+    }
+
+    public function test_a_booking_on_the_awaiting_admin_tab_counts_there_even_if_it_was_paid_out(): void
+    {
+        // Legacy shape: a booking sitting on the Awaiting Admin tab whose money
+        // went out in a payout run made before the proof gate existed. The
+        // Revenue page's figure has to be the money on that tab, so the
+        // booking's stage wins over its payout history. (A payout now requires
+        // a verified proof, so new data cannot reach this state.)
+        $booking = $this->settledBooking('awaiting');
+
+        $payout = Payout::create([
+            'owner_id' => $this->owner->id,
+            'amount' => 9000,
+            'method' => 'bank',
+            'reference' => 'PAYOUT-LEGACY',
+            'paid_at' => now()->subMonth(),
+        ]);
+        Payment::query()
+            ->where('booking_id', $booking->id)
+            ->where('payment_type', 'advance')
+            ->update(['payout_id' => $payout->id]);
+
+        $totals = $this->ledger()['totals'];
+
+        $this->assertSame(9000.0, (float) $totals['awaiting_verification'], 'follows the tab, not the payout');
+        $this->assertSame(0.0, (float) $totals['paid_out']);
+    }
+
+    public function test_the_four_buckets_always_add_back_up_to_earnings(): void
+    {
+        $this->settledBooking('verified');
+        $this->settledBooking('awaiting');
+        $this->settledBooking('no_proof');
         $this->bookingWithPaidAdvance('confirmed');
 
         $totals = $this->ledger()['totals'];
 
         $this->assertSame(
             round((float) $totals['earnings'], 2),
-            round((float) $totals['paid_out'] + (float) $totals['ready_for_payout'] + (float) $totals['held'], 2)
+            round(
+                (float) $totals['paid_out']
+                + (float) $totals['ready_for_payout']
+                + (float) $totals['awaiting_verification']
+                + (float) $totals['in_progress'],
+                2
+            )
         );
     }
 
     public function test_a_payout_moves_money_from_ready_to_paid_out_without_touching_earnings(): void
     {
-        $this->settledBooking(withVerifiedProof: true);
+        $this->settledBooking('verified');
 
         $before = $this->ledger()['totals'];
         $this->assertSame(9000.0, (float) $before['ready_for_payout']);
@@ -202,8 +289,8 @@ class OwnerTransactionsTest extends TestCase
 
     public function test_the_ready_bucket_equals_the_payouts_page_outstanding_balance(): void
     {
-        $this->settledBooking(withVerifiedProof: true);
-        $this->settledBooking(withVerifiedProof: false);
+        $this->settledBooking('verified');
+        $this->settledBooking('awaiting');
 
         Sanctum::actingAs($this->owner);
         $outstanding = (float) $this->getJson('/api/owner/payouts')->assertOk()->json('data.outstanding');
@@ -214,7 +301,7 @@ class OwnerTransactionsTest extends TestCase
 
     public function test_a_paid_out_row_carries_the_run_it_was_paid_in(): void
     {
-        $this->settledBooking(withVerifiedProof: true);
+        $this->settledBooking('verified');
 
         Sanctum::actingAs($this->admin);
         $this->postJson("/api/admin/payouts/{$this->owner->id}", ['method' => 'bank', 'reference' => 'PAYOUT-TEST-1'])->assertCreated();
@@ -232,25 +319,35 @@ class OwnerTransactionsTest extends TestCase
     }
 
     /**
-     * A booking paid in full, optionally with a proof of installation that
-     * admin has verified - the gate money must pass to become payable.
+     * A booking the client has paid in full, left at one of the three stages
+     * that follow - each with the booking status the real flow would have set:
+     *
+     *   no_proof - paid_in_full, the owner has not uploaded anything yet
+     *   awaiting - pending_proof_review, uploaded and sitting with the admin
+     *   verified - active, the admin accepted it
      */
-    private function settledBooking(bool $withVerifiedProof): Booking
+    private function settledBooking(string $stage): Booking
     {
-        $booking = $this->bookingWithPaidAdvance('paid_in_full');
+        $booking = $this->bookingWithPaidAdvance(match ($stage) {
+            'no_proof' => 'paid_in_full',
+            'awaiting' => 'pending_proof_review',
+            'verified' => 'active',
+        });
 
         Payment::create([
             'booking_id' => $booking->id, 'payment_type' => 'balance', 'amount' => 7000,
             'status' => 'paid', 'commission_amount' => 0, 'owner_payable' => 7000, 'paid_at' => now(),
         ]);
 
-        ProofOfPosting::create([
-            'booking_id' => $booking->id,
-            'photo_path' => 'proof-of-posting/test.png',
-            'status' => $withVerifiedProof ? 'verified' : 'pending',
-            'verified_by' => $withVerifiedProof ? $this->admin->id : null,
-            'verified_at' => $withVerifiedProof ? now() : null,
-        ]);
+        if ($stage !== 'no_proof') {
+            ProofOfPosting::create([
+                'booking_id' => $booking->id,
+                'photo_path' => 'proof-of-posting/test.png',
+                'status' => $stage === 'verified' ? 'verified' : 'pending',
+                'verified_by' => $stage === 'verified' ? $this->admin->id : null,
+                'verified_at' => $stage === 'verified' ? now() : null,
+            ]);
+        }
 
         return $booking;
     }

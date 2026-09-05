@@ -281,20 +281,20 @@
     color: #2563eb;
 }
 
-/* "Awaiting payout" KPI card own colors + its drill-down link wrapper */
-.dashboard-kpi-card-awaiting-payout { background: #ffffff; border: 1px solid #e2e8f0; }
-.dashboard-kpi-link-awaiting-payout {
+/* "Awaiting verification" KPI card own colors + its drill-down link wrapper */
+.dashboard-kpi-card-awaiting-verification { background: #ffffff; border: 1px solid #e2e8f0; }
+.dashboard-kpi-link-awaiting-verification {
     display: block;
     height: 100%;
     text-decoration: none;
     color: inherit;
 }
-.dashboard-kpi-link-awaiting-payout .dashboard-kpi-card-awaiting-payout {
+.dashboard-kpi-link-awaiting-verification .dashboard-kpi-card-awaiting-verification {
     height: 100%;
     box-sizing: border-box;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
-.dashboard-kpi-link-awaiting-payout:hover .dashboard-kpi-card-awaiting-payout {
+.dashboard-kpi-link-awaiting-verification:hover .dashboard-kpi-card-awaiting-verification {
     border-color: #bfdbfe;
     box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
 }
