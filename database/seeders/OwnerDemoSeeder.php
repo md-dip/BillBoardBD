@@ -489,9 +489,9 @@ class OwnerDemoSeeder extends Seeder
     }
 
     /**
-     * Creates one real Payout row covering exactly the given bookings'
-     * advance payments (matched by brand_name, unique among this
-     * seeder's own rows) - the same math + payout_id linking
+     * Creates one real Payout row covering the given bookings' advance
+     * payments (matched by brand_name, unique among this seeder's own rows,
+     * and only those whose proof of installation admin has verified) - the same math + payout_id linking
      * PayoutService::payout() does for a live admin-triggered payout,
      * just scoped to a named subset so the demo shows 2 separate
      * historical runs instead of one lump sum covering everything.
@@ -504,6 +504,12 @@ class OwnerDemoSeeder extends Seeder
             ->whereHas(
                 'booking',
                 fn ($q) => $q->whereIn('brand_name', $brands)
+                    // Same gate a live payout has to pass (PayoutService): the
+                    // owner proved the campaign went up and admin accepted it.
+                    // Without this the demo seeds bookings that were paid out
+                    // while still sitting on the owner's "Awaiting Admin" tab,
+                    // which is a state the app can no longer produce.
+                    ->whereHas('proofOfPostings', fn ($q3) => $q3->where('status', 'verified'))
                     ->whereHas('billboard', fn ($q2) => $q2->where('owner_id', $owner->id))
             )
             ->get();

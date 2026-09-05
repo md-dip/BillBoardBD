@@ -55,17 +55,21 @@ class ReportController extends Controller
      * Every earned taka sits in exactly one of four buckets, which is what
      * answers "I was paid, so why has my earnings figure not moved?":
      *
-     *   awaiting_verification - the client has paid and the owner has uploaded
-     *                           the proof of installation; the only thing left
-     *                           is the admin checking it. Exactly the bookings
-     *                           on the "Awaiting Admin" tab of Booking
-     *                           Requests, so the two screens quote one figure.
-     *   paid_out              - already disbursed in a payout run.
-     *   ready                 - admin verified the proof of installation, so
-     *                           it is waiting on the next payout run.
-     *   in_progress           - earned, but nothing is waiting on the admin
-     *                           yet: the client still owes the balance, or the
-     *                           owner has not uploaded the proof.
+     * The stages money moves through, in order:
+     *
+     *   in_progress           - earned, but nothing is with the admin yet: the
+     *                           client still owes the balance, or the owner has
+     *                           not uploaded the proof of installation.
+     *   awaiting_verification - owner uploaded the proof; admin has not checked
+     *                           it. Exactly the bookings on the "Awaiting
+     *                           Admin" tab of Booking Requests, so the two
+     *                           screens quote one figure.
+     *   ready                 - admin verified the installation. Payable now,
+     *                           and showing as the outstanding balance on the
+     *                           Payouts page.
+     *   paid_out              - the admin has sent it. This bucket always
+     *                           equals the owner's payout history, because a
+     *                           payout is the only thing that fills it.
      */
     public function transactions(Request $request): JsonResponse
     {
@@ -148,24 +152,23 @@ class ReportController extends Controller
 
                 $payout = $payoutByBooking[$payment->booking_id] ?? null;
 
-                if ($payment->booking_status === self::AWAITING_ADMIN_STATUS) {
-                    // Checked FIRST, ahead of the payout: the owner's Booking
-                    // Requests page lists these bookings under "Awaiting Admin",
-                    // and this figure has to be the money on that tab - so a
-                    // booking's stage decides the bucket, not its payout
-                    // history. In normal operation the two can never disagree
-                    // anyway: a payout requires a verified proof, which moves
-                    // the booking off this status. It only differs for bookings
-                    // paid out before that gate existed.
-                    $status = 'awaiting_verification';
-                } elseif ($payout) {
+                if ($payout) {
+                    // Checked first, so "Paid out to you" always equals the
+                    // owner's payout history. Money that has been sent cannot
+                    // be waiting for anything.
                     $status = 'paid_out';
                 } elseif (in_array($payment->booking_status, self::PAYABLE_BOOKING_STATUSES, true)
                     && $proofVerified->has($payment->booking_id)) {
+                    // Admin accepted the proof: payable on the next run, and
+                    // showing as the outstanding balance on the Payouts page.
                     $status = 'ready';
+                } elseif ($payment->booking_status === self::AWAITING_ADMIN_STATUS) {
+                    // Owner has uploaded the proof, admin has not looked yet -
+                    // the same bookings as the "Awaiting Admin" tab.
+                    $status = 'awaiting_verification';
                 } else {
                     // Balance still owed, or no proof uploaded yet. Money the
-                    // owner has earned, but the admin is not holding it up.
+                    // owner has earned, but nothing is with the admin.
                     $status = 'in_progress';
                 }
 

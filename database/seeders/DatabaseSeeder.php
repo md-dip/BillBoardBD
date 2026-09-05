@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             BillboardPhotoSeeder::class,
             UserSeeder::class,
             OwnerDemoSeeder::class,
+            OwnerProofReviewDemoSeeder::class,
             UnassignedBillboardsOwnerSeeder::class,
         ]);
     }

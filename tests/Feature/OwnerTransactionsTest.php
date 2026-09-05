@@ -10,7 +10,9 @@ use App\Models\Payout;
 use App\Models\ProofOfPosting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -218,31 +220,81 @@ class OwnerTransactionsTest extends TestCase
         $this->assertSame(round((float) $tabEarnings, 2), (float) $data['totals']['awaiting_verification']);
     }
 
-    public function test_a_booking_on_the_awaiting_admin_tab_counts_there_even_if_it_was_paid_out(): void
+    public function test_money_walks_the_whole_flow_one_stage_at_a_time(): void
     {
-        // Legacy shape: a booking sitting on the Awaiting Admin tab whose money
-        // went out in a payout run made before the proof gate existed. The
-        // Revenue page's figure has to be the money on that tab, so the
-        // booking's stage wins over its payout history. (A payout now requires
-        // a verified proof, so new data cannot reach this state.)
-        $booking = $this->settledBooking('awaiting');
+        Storage::fake('public');
 
-        $payout = Payout::create([
-            'owner_id' => $this->owner->id,
-            'amount' => 9000,
-            'method' => 'bank',
-            'reference' => 'PAYOUT-LEGACY',
-            'paid_at' => now()->subMonth(),
-        ]);
-        Payment::query()
-            ->where('booking_id', $booking->id)
-            ->where('payment_type', 'advance')
-            ->update(['payout_id' => $payout->id]);
+        // Paid in full, nothing uploaded: the owner's move, not the admin's.
+        $booking = $this->settledBooking('no_proof');
 
         $totals = $this->ledger()['totals'];
+        $this->assertSame(9000.0, (float) $totals['in_progress']);
+        $this->assertSame(0.0, (float) $totals['awaiting_verification']);
 
-        $this->assertSame(9000.0, (float) $totals['awaiting_verification'], 'follows the tab, not the payout');
-        $this->assertSame(0.0, (float) $totals['paid_out']);
+        // The owner uploads the proof of installation.
+        Sanctum::actingAs($this->owner);
+        $this->post("/api/owner/bookings/{$booking->id}/proof", [
+            'photos' => [UploadedFile::fake()->image('installed.jpg', 800, 600)],
+        ])->assertCreated();
+
+        $totals = $this->ledger()['totals'];
+        $this->assertSame(0.0, (float) $totals['in_progress']);
+        $this->assertSame(9000.0, (float) $totals['awaiting_verification'], 'now with the admin');
+        $this->assertSame(0.0, (float) $totals['ready_for_payout'], 'not payable until admin accepts it');
+
+        // Admin verifies the installation.
+        Sanctum::actingAs($this->admin);
+        $this->patchJson("/api/admin/bookings/{$booking->id}/proof/verify")->assertOk();
+
+        $totals = $this->ledger()['totals'];
+        $this->assertSame(0.0, (float) $totals['awaiting_verification']);
+        $this->assertSame(9000.0, (float) $totals['ready_for_payout'], 'payable the moment admin verifies');
+
+        // ...and it is on the Payouts page the same moment.
+        Sanctum::actingAs($this->owner);
+        $this->assertSame(9000.0, (float) $this->getJson('/api/owner/payouts')->json('data.outstanding'));
+
+        // Admin sends it.
+        Sanctum::actingAs($this->admin);
+        $this->postJson("/api/admin/payouts/{$this->owner->id}", ['method' => 'bank'])->assertCreated();
+
+        $totals = $this->ledger()['totals'];
+        $this->assertSame(0.0, (float) $totals['ready_for_payout']);
+        $this->assertSame(9000.0, (float) $totals['paid_out'], 'only a payout fills this bucket');
+
+        Sanctum::actingAs($this->owner);
+        $this->assertSame(0.0, (float) $this->getJson('/api/owner/payouts')->json('data.outstanding'));
+    }
+
+    public function test_paid_out_always_equals_the_owners_payout_history(): void
+    {
+        $this->settledBooking('verified');
+        $this->settledBooking('awaiting');
+        $this->settledBooking('no_proof');
+
+        Sanctum::actingAs($this->admin);
+        $this->postJson("/api/admin/payouts/{$this->owner->id}", ['method' => 'bank'])->assertCreated();
+
+        Sanctum::actingAs($this->owner);
+        $history = collect($this->getJson('/api/owner/payouts')->json('data.history'))
+            ->sum(fn (array $payout) => (float) $payout['amount']);
+
+        // Only the verified booking was payable, and "Paid out to you" is
+        // exactly what the payout history says was sent - never more.
+        $this->assertSame(9000.0, round($history, 2));
+        $this->assertSame(round($history, 2), (float) $this->ledger()['totals']['paid_out']);
+    }
+
+    public function test_an_unverified_booking_is_never_payable(): void
+    {
+        // The rule underneath the whole flow: no verification, no payout.
+        $this->settledBooking('awaiting');
+        $this->settledBooking('no_proof');
+
+        Sanctum::actingAs($this->owner);
+        $this->assertSame(0.0, (float) $this->getJson('/api/owner/payouts')->json('data.outstanding'));
+        $this->assertSame(0.0, (float) $this->ledger()['totals']['ready_for_payout']);
+        $this->assertSame(0.0, (float) $this->ledger()['totals']['paid_out']);
     }
 
     public function test_the_four_buckets_always_add_back_up_to_earnings(): void
