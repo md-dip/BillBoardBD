@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Shared\ForgotPasswordRequest;
 use App\Http\Requests\Shared\LoginRequest;
 use App\Http\Requests\Shared\RegisterRequest;
+use App\Http\Requests\Shared\ResetPasswordRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -109,6 +112,67 @@ class AuthController extends Controller
             'success' => true,
             'data'    => $request->user(),
             'message' => null,
+        ]);
+    }
+
+    /**
+     * Email a password-reset link.
+     *
+     * Password::sendResetLink() does the whole job: it finds the user, mints a
+     * token into password_reset_tokens, throttles repeat requests (60s, see
+     * config/auth.php) and fires the ResetPassword notification. The link it
+     * puts in the mail points at our React app, not a Laravel route - that URL
+     * is built by the createUrlUsing() callback in AppServiceProvider.
+     */
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    {
+        Password::sendResetLink($request->only('email'));
+
+        // Deliberately the same answer whether or not that email has an
+        // account. Reporting 'no such user' here would turn this endpoint into
+        // a way to test which addresses are registered, so the status from
+        // sendResetLink() is intentionally not surfaced.
+        return response()->json([
+            'success' => true,
+            'data'    => null,
+            'message' => 'If that email has an account, a reset link is on its way.',
+        ]);
+    }
+
+    /**
+     * Set a new password using the token from the emailed link.
+     */
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    {
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                // 'password' is a hashed cast on User, so assigning the plain
+                // string here stores a hash.
+                $user->forceFill(['password' => $password])->save();
+
+                // Drop every existing API token: if the reset was triggered
+                // because the account was compromised, leaving the intruder's
+                // token alive would make the reset pointless.
+                $user->tokens()->delete();
+            }
+        );
+
+        if ($status !== Password::PasswordReset) {
+            // Wrong / expired / already-used token, or an email that does not
+            // match the token. __($status) turns Laravel's status key into the
+            // human message from lang/.
+            return response()->json([
+                'success' => false,
+                'data'    => null,
+                'message' => __($status),
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => null,
+            'message' => 'Password reset successfully. You can log in now.',
         ]);
     }
 }

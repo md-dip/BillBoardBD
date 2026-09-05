@@ -99,3 +99,9 @@
     padding: 10px 12px;
     margin: 0 0 20px;
 }
+
+/* "Forgot password?" link, sitting between the submit button and the
+   register line - its own class, not .login-footer, so the two can be
+   spaced and styled apart. */
+.login-forgot-password-link { text-align: center; font-size: 13px; margin: 14px 0 0; }
+.login-forgot-password-link a { color: #0071e3; text-decoration: underline; }

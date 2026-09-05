@@ -93,6 +93,10 @@ export default function Login() {
                         {submitting ? 'Logging in...' : 'Log in'}
                     </button>
 
+                    <p className="login-forgot-password-link">
+                        <Link to="/forgot-password">Forgot password?</Link>
+                    </p>
+
                     <p className="login-footer">
                         No account? <Link to="/register" state={location.state}>Register</Link>
                     </p>

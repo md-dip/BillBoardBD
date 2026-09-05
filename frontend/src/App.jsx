@@ -12,6 +12,8 @@ import Home from './shared/pages/Home';
 import HowItWorks from './shared/pages/HowItWorks';
 import Login from './shared/pages/Login';
 import Register from './shared/pages/Register';
+import ForgotPassword from './shared/pages/ForgotPassword';
+import ResetPassword from './shared/pages/ResetPassword';
 import NotFound from './shared/pages/NotFound';
 import ProtectedRoute from './shared/components/ProtectedRoute';
 import DefaultNavbar from './shared/components/Navbar';
@@ -69,6 +71,11 @@ function AppRoutes() {
                     />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    {/* Password reset, both public: step 1 asks for the email,
+                        step 2 is the target of the emailed link and reads its
+                        token + email out of the query string. */}
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/billboards/:id" element={<BillboardDetail />} />
                     <Route path="/dashboard" element={<ProtectedRoute requireRole="client"><MyBookings /></ProtectedRoute>} />
                     <Route path="/bookings/:bookingId/invoice" element={<ProtectedRoute requireRole="client"><ClientInvoice /></ProtectedRoute>} />

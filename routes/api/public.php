@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Route;
 // Public auth routes - no token needed
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Password reset - both are hit by a logged-out visitor, so no token. The
+// second one's safety is the emailed single-use token, checked by Laravel's
+// password broker against the password_reset_tokens table.
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::get('/settings/public', [SettingController::class, 'public']);
 
 // Public billboard routes - anyone can browse
