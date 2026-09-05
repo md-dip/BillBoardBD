@@ -11,6 +11,7 @@ use App\Models\ProofOfPosting;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Shared\InvoiceService;
+use Database\Seeders\Concerns\SeedsRealisticPaymentDates;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 
@@ -27,6 +28,8 @@ use Illuminate\Support\Facades\Storage;
  */
 class OwnerDemoSeeder extends Seeder
 {
+    use SeedsRealisticPaymentDates;
+
     /** A tiny 1x1 red PNG, used as a real (not broken) proof-of-posting photo. */
     private const PLACEHOLDER_PNG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
 
@@ -82,8 +85,8 @@ class OwnerDemoSeeder extends Seeder
             ],
             [
                 'billboard' => 'Gulshan-1 DCC Market Billboard',
-                'start_date' => '2026-08-01',
-                'end_date' => '2026-08-30',
+                'start_date' => '2026-09-20',
+                'end_date' => '2026-10-19',
                 'total_amount' => 220000,
                 'advance_amount' => 66000,
                 'status' => 'confirmed',
@@ -93,8 +96,8 @@ class OwnerDemoSeeder extends Seeder
             ],
             [
                 'billboard' => 'Banani Rail Crossing Unipole',
-                'start_date' => '2026-07-01',
-                'end_date' => '2026-07-15',
+                'start_date' => '2026-08-14',
+                'end_date' => '2026-08-28',
                 'total_amount' => 97500,
                 'advance_amount' => 29250,
                 'status' => 'paid_in_full',
@@ -116,8 +119,8 @@ class OwnerDemoSeeder extends Seeder
             ],
             [
                 'billboard' => 'Gulshan-2 Circle Unipole',
-                'start_date' => '2026-06-01',
-                'end_date' => '2026-06-15',
+                'start_date' => '2026-07-22',
+                'end_date' => '2026-08-05',
                 'total_amount' => 90000,
                 'advance_amount' => 27000,
                 'status' => 'active',
@@ -136,8 +139,8 @@ class OwnerDemoSeeder extends Seeder
             // Gulshan-2 Circle Unipole
             [
                 'billboard' => 'Gulshan-2 Circle Unipole',
-                'start_date' => '2026-07-01',
-                'end_date' => '2026-07-20',
+                'start_date' => '2026-08-10',
+                'end_date' => '2026-08-29',
                 'total_amount' => 120000,
                 'advance_amount' => 36000,
                 'status' => 'pending_proof_review',
@@ -172,8 +175,8 @@ class OwnerDemoSeeder extends Seeder
             // Gulshan-1 DCC Market Billboard
             [
                 'billboard' => 'Gulshan-1 DCC Market Billboard',
-                'start_date' => '2026-06-16',
-                'end_date' => '2026-06-30',
+                'start_date' => '2026-07-24',
+                'end_date' => '2026-08-07',
                 'total_amount' => 110000,
                 'advance_amount' => 33000,
                 'status' => 'rejected',
@@ -184,8 +187,8 @@ class OwnerDemoSeeder extends Seeder
             ],
             [
                 'billboard' => 'Gulshan-1 DCC Market Billboard',
-                'start_date' => '2026-07-01',
-                'end_date' => '2026-07-15',
+                'start_date' => '2026-07-22',
+                'end_date' => '2026-08-05',
                 'total_amount' => 110000,
                 'advance_amount' => 33000,
                 'status' => 'pending_proof_review',
@@ -206,8 +209,8 @@ class OwnerDemoSeeder extends Seeder
             ],
             [
                 'billboard' => 'Gulshan-1 DCC Market Billboard',
-                'start_date' => '2026-10-01',
-                'end_date' => '2026-10-15',
+                'start_date' => '2026-10-25',
+                'end_date' => '2026-11-08',
                 'total_amount' => 110000,
                 'advance_amount' => 33000,
                 'status' => 'pending_owner_approval',
@@ -219,8 +222,8 @@ class OwnerDemoSeeder extends Seeder
             // Banani 11 Road LED Screen
             [
                 'billboard' => 'Banani 11 Road LED Screen',
-                'start_date' => '2026-06-01',
-                'end_date' => '2026-06-15',
+                'start_date' => '2026-07-23',
+                'end_date' => '2026-08-06',
                 'total_amount' => 130000,
                 'advance_amount' => 39000,
                 'status' => 'active',
@@ -230,8 +233,8 @@ class OwnerDemoSeeder extends Seeder
             ],
             [
                 'billboard' => 'Banani 11 Road LED Screen',
-                'start_date' => '2026-07-16',
-                'end_date' => '2026-07-30',
+                'start_date' => '2026-08-11',
+                'end_date' => '2026-08-25',
                 'total_amount' => 130000,
                 'advance_amount' => 39000,
                 'status' => 'pending_proof_review',
@@ -254,8 +257,8 @@ class OwnerDemoSeeder extends Seeder
             // Banani Rail Crossing Unipole
             [
                 'billboard' => 'Banani Rail Crossing Unipole',
-                'start_date' => '2026-06-01',
-                'end_date' => '2026-06-20',
+                'start_date' => '2026-07-22',
+                'end_date' => '2026-08-10',
                 'total_amount' => 130000,
                 'advance_amount' => 39000,
                 'status' => 'active',
@@ -324,7 +327,14 @@ class OwnerDemoSeeder extends Seeder
             // that's the only way a booking reaches any of these stages.
             $advanceStatus = $row['status'] === 'rejected' ? 'refunded' : 'paid';
 
-            Payment::query()->firstOrCreate(
+            // Both payments are dated off the campaign they buy rather than
+            // "right now", so the demo's revenue lands in the months it was
+            // actually earned in (see SeedsRealisticPaymentDates) instead of
+            // piling every booking onto the current month.
+            $advancePaidAt = $this->advancePaidAt($row['start_date']);
+            $balancePaidAt = $this->balancePaidAt($row['start_date']);
+
+            $advance = Payment::query()->firstOrCreate(
                 ['booking_id' => $booking->id, 'payment_type' => 'advance'],
                 [
                     'amount' => $row['advance_amount'],
@@ -332,13 +342,13 @@ class OwnerDemoSeeder extends Seeder
                     'commission_amount' => $commission,
                     'owner_payable' => $ownerPayable,
                     'method' => 'bkash',
-                    'paid_at' => now(),
-                    'refunded_at' => $advanceStatus === 'refunded' ? now() : null,
                 ]
             );
 
+            $this->redatePayment($advance, $advancePaidAt);
+
             if ($hasBalance) {
-                Payment::query()->firstOrCreate(
+                $balance = Payment::query()->firstOrCreate(
                     ['booking_id' => $booking->id, 'payment_type' => 'balance'],
                     [
                         'amount' => $balanceAmount,
@@ -346,9 +356,10 @@ class OwnerDemoSeeder extends Seeder
                         'commission_amount' => 0,
                         'owner_payable' => $balanceAmount,
                         'method' => $isSettled ? 'bank' : null,
-                        'paid_at' => $isSettled ? now() : null,
                     ]
                 );
+
+                $this->redatePayment($balance, $balancePaidAt);
             }
 
             // Invoices, mirroring what the live payment flow would have issued:
@@ -356,10 +367,12 @@ class OwnerDemoSeeder extends Seeder
             // booking is settled. (A rejected booking's advance was refunded,
             // so it never gets one.)
             if ($advanceStatus === 'paid') {
-                $invoices->issue($booking->fresh(), 'advance');
+                // Each invoice is dated by the payment that triggered it, so
+                // it never claims to have been raised after the money landed.
+                $this->redateInvoice($invoices->issue($booking->fresh(), 'advance'), $advance->paid_at);
 
                 if ($isSettled) {
-                    $invoices->issue($booking->fresh(), 'final');
+                    $this->redateInvoice($invoices->issue($booking->fresh(), 'final'), $balance->paid_at);
                 }
             }
 
@@ -393,19 +406,19 @@ class OwnerDemoSeeder extends Seeder
             owner: $owner,
             admin: $admin,
             brands: ['Robi Axiata', 'Radiant Fashion House'],
-            paidAt: '2026-06-10',
             method: 'bank',
-            reference: 'PAYOUT-2026-06',
         );
 
         $this->seedHistoricalPayout(
             owner: $owner,
             admin: $admin,
             brands: ['Marks & Spencer Bangladesh', 'Akij Group', 'Daraz Bangladesh'],
-            paidAt: '2026-07-10',
             method: 'bank',
-            reference: 'PAYOUT-2026-07',
         );
+
+        // Runs seeded on an earlier pass still carry the date they were given
+        // then, which the campaign timeline above may have overtaken.
+        $this->realignSeededPayouts($owner);
 
         $this->seedListingSubmissions($owner);
     }
@@ -495,8 +508,11 @@ class OwnerDemoSeeder extends Seeder
      * PayoutService::payout() does for a live admin-triggered payout,
      * just scoped to a named subset so the demo shows 2 separate
      * historical runs instead of one lump sum covering everything.
+     *
+     * The run settles on the 10th of the month after the last advance it
+     * covers, so it can never be dated before the money it is paying out.
      */
-    private function seedHistoricalPayout(User $owner, ?User $admin, array $brands, string $paidAt, string $method, string $reference): void
+    private function seedHistoricalPayout(User $owner, ?User $admin, array $brands, string $method): void
     {
         $payments = Payment::query()
             ->where('payment_type', 'advance')
@@ -518,13 +534,15 @@ class OwnerDemoSeeder extends Seeder
             return;
         }
 
+        $settledAt = $this->payoutRunAfter($payments->max('paid_at') ?? now());
+
         $payout = Payout::query()->create([
             'owner_id' => $owner->id,
             'amount' => $payments->sum('owner_payable'),
             'method' => $method,
-            'reference' => $reference,
+            'reference' => 'PAYOUT-'.$settledAt->format('Y-m'),
             'paid_by' => $admin?->id,
-            'paid_at' => $paidAt,
+            'paid_at' => $settledAt,
         ]);
 
         Payment::query()->whereIn('id', $payments->pluck('id'))->update(['payout_id' => $payout->id]);

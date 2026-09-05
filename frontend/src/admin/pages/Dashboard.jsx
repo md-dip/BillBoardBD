@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CalendarCheck, DollarSign, Megaphone, ShieldAlert, TrendingUp } from 'lucide-react';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
@@ -14,6 +14,32 @@ function daysUntil(dateStr) {
 
 const KPIS = ['revenue', 'commission', 'pending-bookings', 'permits-expiring'];
 const BOXES = ['inventory', 'booking-pipeline'];
+
+// The revenue chart draws one bar per calendar month, never one bar per month
+// that happened to earn something - a quiet month is a fact the admin needs to
+// see, not a gap to skip over. So the axis is built as an unbroken run of
+// months and the API's rows are dropped onto it.
+//
+// It is never padded out before the platform's first taka: months from before
+// the books open are not quiet months, they are months that did not exist.
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function monthKey(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+// "2026-09" -> "2026-07" for shift -2. Goes through Date so it rolls over
+// years on its own.
+function shiftMonth(key, months) {
+  const [year, month] = key.split('-').map(Number);
+  return monthKey(new Date(year, month - 1 + months, 1));
+}
+
+// "2026-09" -> "Sep 26", short enough that a year of them still fits the axis.
+function monthLabel(key) {
+  const [year, month] = key.split('-');
+  return `${MONTH_LABELS[Number(month) - 1]} ${year.slice(2)}`;
+}
 
 // "Inventory" box - every mini-stat gets its own fully independent class
 // tree (mini-stat / label / value), so editing one stat's color in the CSS
@@ -119,15 +145,37 @@ export default function AdminDashboard() {
   }), [bookings, billboards, revenue]);
 
   const chartData = useMemo(() => {
-    if (!revenue?.rows) return [];
-    const map = new Map();
+    if (!revenue?.rows?.length) return [];
+
+    // The API returns one row per billboard per month; fold them down to a
+    // single figure pair per month first.
+    const earned = new Map();
     for (const r of revenue.rows) {
-      const entry = map.get(r.month) ?? { month: r.month, revenue: 0, commission: 0 };
+      const entry = earned.get(r.month) ?? { revenue: 0, commission: 0 };
       entry.revenue += Number(r.gross);
       entry.commission += Number(r.commission) + Number(r.listing_fees);
-      map.set(r.month, entry);
+      earned.set(r.month, entry);
     }
-    return [...map.values()].sort((a, b) => a.month.localeCompare(b.month));
+
+    const months = [...earned.keys()].sort();
+    const thisMonth = monthKey(new Date());
+
+    // Run the axis from the first month that ever earned anything through to
+    // today, so every month the platform has traded in gets its own bar.
+    const first = months[0];
+    const last = [months[months.length - 1], thisMonth].sort().pop();
+
+    const series = [];
+    for (let month = first; month <= last; month = shiftMonth(month, 1)) {
+      series.push({
+        month,
+        label: monthLabel(month),
+        revenue: 0,
+        commission: 0,
+        ...earned.get(month),
+      });
+    }
+    return series;
   }, [revenue]);
 
   if (loading) {
@@ -193,11 +241,12 @@ export default function AdminDashboard() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                  <XAxis dataKey="month" />
+                  <XAxis dataKey="label" interval={0} tickMargin={8} />
                   <YAxis tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} />
                   <Tooltip formatter={(v) => formatBDT(v)} />
-                  <Bar dataKey="revenue" fill="#2563eb" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="commission" fill="#93c5fd" radius={[6, 6, 0, 0]} />
+                  <Legend />
+                  <Bar dataKey="revenue" name="Revenue" fill="#2563eb" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="commission" name="Platform income" fill="#93c5fd" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}

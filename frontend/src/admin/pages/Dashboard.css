@@ -128,7 +128,9 @@
 }
 .admin-dashboard-revenue-chart-header-icon { color: #2563eb; }
 .admin-dashboard-revenue-chart-title { font-size: 16px; font-weight: 600; color: #0f172a; margin: 0; }
-.admin-dashboard-revenue-chart-container { height: 288px; }
+/* Tall enough that the month axis and the legend under it both fit without
+   eating into the bars. */
+.admin-dashboard-revenue-chart-container { height: 320px; }
 .admin-dashboard-revenue-chart-empty {
     height: 100%;
     display: flex;

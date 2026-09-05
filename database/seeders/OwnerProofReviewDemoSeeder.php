@@ -9,6 +9,7 @@ use App\Models\ProofOfPosting;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Shared\InvoiceService;
+use Database\Seeders\Concerns\SeedsRealisticPaymentDates;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 
@@ -27,6 +28,8 @@ use Illuminate\Support\Facades\Storage;
  */
 class OwnerProofReviewDemoSeeder extends Seeder
 {
+    use SeedsRealisticPaymentDates;
+
     /** How many bookings to keep parked on the Awaiting Admin tab. */
     private const TARGET = 3;
 
@@ -124,7 +127,10 @@ class OwnerProofReviewDemoSeeder extends Seeder
             $commission = round($row['total_amount'] * $commissionRate / 100, 2);
             $balanceAmount = round($row['total_amount'] - $row['advance_amount'], 2);
 
-            Payment::query()->firstOrCreate(
+            // Dated off the campaign, not off "now" - same rule the rest of
+            // the demo money follows (see SeedsRealisticPaymentDates), so the
+            // revenue-by-month chart keeps a real spread of months.
+            $advance = Payment::query()->firstOrCreate(
                 ['booking_id' => $booking->id, 'payment_type' => 'advance'],
                 [
                     'amount' => $row['advance_amount'],
@@ -132,11 +138,12 @@ class OwnerProofReviewDemoSeeder extends Seeder
                     'commission_amount' => $commission,
                     'owner_payable' => round($row['total_amount'] - $commission, 2),
                     'method' => 'bkash',
-                    'paid_at' => now(),
                 ]
             );
 
-            Payment::query()->firstOrCreate(
+            $this->redatePayment($advance, $this->advancePaidAt($row['start_date']));
+
+            $balance = Payment::query()->firstOrCreate(
                 ['booking_id' => $booking->id, 'payment_type' => 'balance'],
                 [
                     'amount' => $balanceAmount,
@@ -144,12 +151,14 @@ class OwnerProofReviewDemoSeeder extends Seeder
                     'commission_amount' => 0,
                     'owner_payable' => $balanceAmount,
                     'method' => 'bank',
-                    'paid_at' => now(),
                 ]
             );
 
-            $invoices->issue($booking->fresh(), 'advance');
-            $invoices->issue($booking->fresh(), 'final');
+            $this->redatePayment($balance, $this->balancePaidAt($row['start_date']));
+
+            // Dated by the payment each one bills for, same as above.
+            $this->redateInvoice($invoices->issue($booking->fresh(), 'advance'), $advance->paid_at);
+            $this->redateInvoice($invoices->issue($booking->fresh(), 'final'), $balance->paid_at);
 
             // The uploaded proof itself: pending, so it is the admin's move.
             if ($booking->proofOfPostings()->doesntExist()) {
