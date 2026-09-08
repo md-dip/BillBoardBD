@@ -95,7 +95,15 @@ class FullFlowTest extends TestCase
         });
     }
 
-    /** Fake SSLCommerz for the owner listing-fee flow (resolves a ListingPayment). */
+    /**
+     * Fake SSLCommerz for the whole listing-fee lifecycle (resolves a
+     * ListingPayment). Covers both legs, because Http::fake() ACCUMULATES stubs
+     * and the first match wins - registering a second faker mid-test would
+     * never be reached.
+     *
+     *   the owner paying  - the fee is still 'pending' and carries gateway_tran_id
+     *   the admin refunding - the fee is 'paid' and carries refund_gateway_tran_id
+     */
     private function fakeSslcommerzForListing(): void
     {
         Http::fake(function (ClientRequest $req) {
@@ -107,11 +115,14 @@ class FullFlowTest extends TestCase
                 ]);
             }
             if (str_contains($req->url(), '/validator/')) {
-                $p = ListingPayment::whereNotNull('gateway_tran_id')->where('status', '!=', 'paid')->latest('id')->first();
+                $refund = ListingPayment::whereNotNull('refund_gateway_tran_id')
+                    ->where('status', 'paid')->latest('id')->first();
+                $p = $refund ?: ListingPayment::whereNotNull('gateway_tran_id')
+                    ->where('status', '!=', 'paid')->latest('id')->first();
 
                 return Http::response([
                     'status' => 'VALID',
-                    'tran_id' => $p?->gateway_tran_id,
+                    'tran_id' => $refund ? $refund->refund_gateway_tran_id : $p?->gateway_tran_id,
                     'val_id' => $req->data()['val_id'] ?? 'val_x',
                     'currency' => 'BDT',
                     'amount' => number_format((float) ($p?->amount ?? 0), 2, '.', ''),
@@ -163,6 +174,44 @@ class FullFlowTest extends TestCase
         ])->assertRedirect('http://localhost:5173/dashboard?payment=success');
 
         $this->assertSame('paid', Payment::find($paymentId)->status);
+    }
+
+    /** Admin refunds a rejected booking's advance through the gateway. */
+    private function refundBookingViaGateway(int $bookingId): void
+    {
+        Sanctum::actingAs($this->admin);
+
+        $res = $this->postJson("/api/admin/bookings/{$bookingId}/refund/checkout")->assertOk();
+        $this->assertNotEmpty($res->json('data.gateway_url'), 'refund checkout returned no gateway_url');
+
+        $refund = Payment::where('booking_id', $bookingId)->where('payment_type', 'refund')->firstOrFail();
+        $this->assertNotNull($refund->gateway_tran_id, 'refund checkout did not persist gateway_tran_id');
+
+        $this->post('/api/refunds/sslcommerz/success', [
+            'tran_id' => $refund->gateway_tran_id,
+            'val_id' => 'val_rfnd_'.$refund->id,
+            'value_a' => (string) $refund->id,
+            'value_b' => 'booking_refund',
+        ])->assertRedirect('http://localhost:5173/admin/bookings?refund=success');
+    }
+
+    /** Admin refunds a rejected board's listing fee through the gateway. */
+    private function refundListingFeeViaGateway(int $billboardId, int $listingPaymentId): void
+    {
+        Sanctum::actingAs($this->admin);
+
+        $res = $this->postJson("/api/admin/billboards/{$billboardId}/refund/checkout")->assertOk();
+        $this->assertNotEmpty($res->json('data.gateway_url'), 'listing refund checkout returned no gateway_url');
+
+        $tranId = ListingPayment::find($listingPaymentId)->refund_gateway_tran_id;
+        $this->assertNotNull($tranId, 'listing refund checkout did not persist refund_gateway_tran_id');
+
+        $this->post('/api/refunds/sslcommerz/success', [
+            'tran_id' => $tranId,
+            'val_id' => 'val_rfnd_list_'.$listingPaymentId,
+            'value_a' => (string) $listingPaymentId,
+            'value_b' => 'listing_refund',
+        ])->assertRedirect('http://localhost:5173/admin/billboards?refund=success');
     }
 
     // ---------------------------------------------------------------------
@@ -279,7 +328,7 @@ class FullFlowTest extends TestCase
         $this->getJson("/api/billboards/{$billboardId}")->assertOk();
     }
 
-    public function test_rejected_listing_refunds_the_fee(): void
+    public function test_rejected_listing_fee_is_queued_then_refunded_by_admin(): void
     {
         $this->fakeSslcommerzForListing();
 
@@ -302,10 +351,25 @@ class FullFlowTest extends TestCase
             'rejection_reason' => 'Permit document is not legible.',
         ])->assertOk();
 
+        // Rejecting records the debt but moves no money - the fee is still 'paid'
+        // and the board is off the public map either way.
         $this->assertSame('rejected', Billboard::find($billboardId)->listing_status);
-        $this->assertSame('refunded', ListingPayment::find($feeId)->status);
-        $this->assertNotNull(ListingPayment::find($feeId)->refunded_at);
+        $this->assertSame('paid', ListingPayment::find($feeId)->status);
+        $this->assertNull(ListingPayment::find($feeId)->refunded_at);
         $this->getJson('/api/billboards')->assertOk()->assertJsonMissing(['id' => $billboardId]);
+
+        // The admin then pays it back by hand through SSLCommerz.
+        $this->refundListingFeeViaGateway($billboardId, $feeId);
+
+        $fee = ListingPayment::find($feeId);
+        $this->assertSame('refunded', $fee->status);
+        $this->assertNotNull($fee->refunded_at);
+        $this->assertNotNull($fee->refund_transaction_ref);
+
+        // The owner's ORIGINAL payment reference survives the refund leg - it is
+        // the only proof the fee was ever collected.
+        $this->assertNotNull($fee->gateway_tran_id);
+        $this->assertNotSame($fee->gateway_tran_id, $fee->refund_gateway_tran_id);
     }
 
     public function test_full_booking_lifecycle_with_gateway_and_invoices(): void
@@ -435,7 +499,7 @@ class FullFlowTest extends TestCase
             ->assertJsonPath('success', false);
     }
 
-    public function test_rejected_booking_refunds_the_advance(): void
+    public function test_rejected_booking_advance_is_queued_then_refunded_by_admin(): void
     {
         $this->fakeSslcommerz();
 
@@ -460,12 +524,25 @@ class FullFlowTest extends TestCase
             'rejection_reason' => 'Dates clash with scheduled maintenance work.',
         ])->assertOk();
 
+        // Rejecting records the debt but moves no money.
         $this->assertSame('rejected', Booking::find($bookingId)->status);
+        $this->assertSame('paid', Payment::find($advance->id)->status);
+        $this->assertDatabaseHas('payments', [
+            'booking_id' => $bookingId, 'payment_type' => 'refund', 'status' => 'pending',
+        ]);
+
+        // The admin then pays it back by hand through SSLCommerz, which is what
+        // finally flips the advance and stamps the refund row.
+        $this->refundBookingViaGateway($bookingId);
+
         $this->assertSame('refunded', Payment::find($advance->id)->status);
-        $this->assertDatabaseHas('payments', ['booking_id' => $bookingId, 'payment_type' => 'refund']);
+        $refund = Payment::where('booking_id', $bookingId)->where('payment_type', 'refund')->firstOrFail();
+        $this->assertSame('refunded', $refund->status);
+        $this->assertNotNull($refund->refunded_at);
+        $this->assertNotNull($refund->transaction_ref);
     }
 
-    public function test_owner_declined_booking_refunds_the_advance(): void
+    public function test_owner_declined_booking_advance_is_queued_then_refunded_by_admin(): void
     {
         $this->fakeSslcommerz();
 
@@ -497,20 +574,33 @@ class FullFlowTest extends TestCase
             'rejection_reason' => 'The site is already committed to another campaign.',
         ])->assertOk();
 
-        // booking terminal, advance flipped to refunded with a timestamp
+        // Booking terminal, and the refund queued - the owner cannot send money,
+        // so the advance sits until the admin settles it (parity with a reject).
         $this->assertSame('rejected', Booking::find($bookingId)->status);
+        $this->assertSame('paid', Payment::find($advance->id)->status);
+        $this->assertDatabaseHas('payments', [
+            'booking_id' => $bookingId, 'payment_type' => 'refund', 'status' => 'pending',
+        ]);
+
+        // The admin is told there is money to send back.
+        $adminBodies = $this->admin->notifications()->get()->pluck('data.body');
+        $this->assertTrue(
+            $adminBodies->contains(fn ($b) => str_contains((string) $b, 'awaiting refund')),
+            'admin should be told the advance is awaiting refund',
+        );
+
+        // The admin pays it, from their own Rejected tab.
+        $this->refundBookingViaGateway($bookingId);
+
         $refundedAdvance = Payment::find($advance->id);
         $this->assertSame('refunded', $refundedAdvance->status);
         $this->assertNotNull($refundedAdvance->refunded_at);
 
-        // dedicated audit 'refund' payment row exists (full parity with admin reject)
-        $this->assertDatabaseHas('payments', ['booking_id' => $bookingId, 'payment_type' => 'refund']);
-
-        // the client's notification wording mentions the refund
+        // the client's notification wording confirms the money actually went back
         $bodies = $this->client->notifications()->get()->pluck('data.body');
         $this->assertTrue(
-            $bodies->contains(fn ($b) => str_contains((string) $b, 'refunded')),
-            'client should get a BookingStatusNotification mentioning the refund',
+            $bodies->contains(fn ($b) => str_contains((string) $b, 'has been refunded')),
+            'client should get a BookingStatusNotification confirming the refund',
         );
     }
 

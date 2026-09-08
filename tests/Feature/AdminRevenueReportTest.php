@@ -114,7 +114,7 @@ class AdminRevenueReportTest extends TestCase
         $this->assertSame(9000.0, (float) $totals['owner_payable']);
     }
 
-    public function test_an_admin_rejection_refunds_the_advance_and_it_stays_out(): void
+    public function test_an_admin_rejection_queues_a_refund_and_the_advance_stays_out(): void
     {
         $booking = $this->bookingWithPaidAdvance('pending_admin_review');
 
@@ -123,11 +123,17 @@ class AdminRevenueReportTest extends TestCase
             'rejection_reason' => 'Creative breaches the content policy.',
         ])->assertOk();
 
-        $this->assertDatabaseHas('payments', ['booking_id' => $booking->id, 'payment_type' => 'advance', 'status' => 'refunded']);
+        // Rejecting records the debt without moving money: the advance is still
+        // 'paid' until the admin pays the refund out through SSLCommerz.
+        $this->assertDatabaseHas('payments', ['booking_id' => $booking->id, 'payment_type' => 'advance', 'status' => 'paid']);
+        $this->assertDatabaseHas('payments', ['booking_id' => $booking->id, 'payment_type' => 'refund', 'status' => 'pending']);
+
+        // The booking's own status is what keeps it out of revenue in the
+        // meantime - money owed back must never read as income.
         $this->assertSame(0.0, (float) $this->totals()['gross']);
     }
 
-    public function test_an_owner_rejection_refunds_the_advance_and_it_stays_out(): void
+    public function test_an_owner_rejection_queues_a_refund_and_the_advance_stays_out(): void
     {
         $booking = $this->bookingWithPaidAdvance('pending_admin_review');
 
@@ -139,7 +145,7 @@ class AdminRevenueReportTest extends TestCase
             'rejection_reason' => 'The board is already committed to another campaign.',
         ])->assertOk();
 
-        $this->assertDatabaseHas('payments', ['booking_id' => $booking->id, 'payment_type' => 'advance', 'status' => 'refunded']);
+        $this->assertDatabaseHas('payments', ['booking_id' => $booking->id, 'payment_type' => 'refund', 'status' => 'pending']);
         $this->assertSame(0.0, (float) $this->totals()['gross']);
     }
 
@@ -201,7 +207,7 @@ class AdminRevenueReportTest extends TestCase
         $this->assertSame(5000.0, (float) $this->totals()['listing_fees']);
     }
 
-    public function test_rejecting_the_board_refunds_the_fee_and_it_stays_out(): void
+    public function test_rejecting_the_board_queues_the_fee_refund_and_it_stays_out(): void
     {
         $this->billboard->update(['listing_status' => 'pending_review', 'reviewed_at' => null]);
         $this->payListingFee($this->billboard);
@@ -211,13 +217,16 @@ class AdminRevenueReportTest extends TestCase
             'rejection_reason' => 'Permit document is unreadable.',
         ])->assertOk();
 
-        $this->assertDatabaseHas('listing_payments', ['billboard_id' => $this->billboard->id, 'status' => 'refunded']);
+        // As with a booking advance, rejecting only records that the fee is
+        // owed back - it stays 'paid' until the admin refunds it by hand.
+        $this->assertDatabaseHas('listing_payments', ['billboard_id' => $this->billboard->id, 'status' => 'paid']);
         $this->assertSame(0.0, (float) $this->totals()['listing_fees']);
     }
 
-    public function test_a_rejected_board_never_contributes_even_if_the_refund_did_not_run(): void
+    public function test_a_rejected_board_never_contributes_while_its_fee_awaits_refund(): void
     {
-        // Fee left as 'paid' on purpose: the board status alone has to keep it out.
+        // Fee left as 'paid' on purpose: the board status alone has to keep it
+        // out, which is exactly the state every rejection now leaves behind.
         $this->billboard->update(['listing_status' => 'rejected']);
         $this->payListingFee($this->billboard);
 

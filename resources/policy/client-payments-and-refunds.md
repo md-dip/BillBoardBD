@@ -19,9 +19,14 @@ where the advertiser has no control over the outcome.
 
 ## When money is refunded
 
-The advance is refunded in full, automatically, if either the BillboardBD team or the
-billboard owner declines the request. There is no form to fill in and no waiting on a
-decision; the refund is issued as part of the rejection itself.
+The advance is refunded in full if either the BillboardBD team or the billboard owner
+declines the request. There is no form to fill in and no decision to wait on — the refund
+is owed the moment the request is turned down.
+
+Sending it is a manual step. The BillboardBD team pays the refund back through the payment
+gateway themselves, to the account the advance came from, so it lands shortly after the
+rejection rather than at the same instant. My Bookings shows the refund as pending until it
+has actually been sent, and then shows the date and reference it went out with.
 
 Once a booking has cleared both approvals, it is confirmed, and the advance is no longer
 refundable — the dates have been taken off the market and the owner has committed the

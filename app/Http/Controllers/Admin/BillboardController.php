@@ -86,7 +86,7 @@ class BillboardController extends Controller
         ], $result['status']);
     }
 
-    /** Reject an owner-submitted board → the listing fee is auto refunded. */
+    /** Reject an owner-submitted board → its listing fee becomes refundable. */
     public function reject(RejectListingRequest $request, Billboard $billboard): JsonResponse
     {
         $result = $this->approvals->reject($billboard, $request->validated('rejection_reason'), $request->user());

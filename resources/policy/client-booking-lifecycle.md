@@ -34,13 +34,14 @@ total, and it is what turns a held slot into a real request queued for review.
 ## Admin review
 
 The BillboardBD team checks the request and the board's permit status. This is usually
-quick. If the team declines the request, the advance is refunded in full, automatically —
-no claim needs to be made.
+quick. If the team declines the request, the advance is refunded in full — no claim needs
+to be made. The team sends it back through the payment gateway, so it lands shortly after
+the rejection rather than at the same instant.
 
 ## Owner acceptance
 
 The billboard owner then accepts or declines. If they decline, the advance is refunded in
-full, automatically, exactly as with an admin rejection.
+full, exactly as with an admin rejection — and by the BillboardBD team, not by the owner.
 
 When the owner accepts, the booking is confirmed and a due date is set for the remaining
 balance.

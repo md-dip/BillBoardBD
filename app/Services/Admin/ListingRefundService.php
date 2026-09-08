@@ -4,39 +4,75 @@ namespace App\Services\Admin;
 
 use App\Models\Billboard;
 use App\Models\ListingPayment;
+use App\Notifications\BillboardListingNotification;
 
 /**
- * Mock refund gateway for the board listing fee. When admin rejects a board the
- * owner already paid for, that fee goes straight back to the account it came
- * from. No real gateway call - mirrors Shared\RefundService and how "paying" is
- * mocked across the rest of the app.
+ * The owner's listing-fee refund, mirroring Shared\RefundService for bookings:
+ * rejecting a board records that the fee is owed back, and the admin pays it by
+ * hand through SSLCommerz from the Listing refunds tab.
+ *
+ * There is no second row here the way a booking gets a 'refund' payment - a
+ * board has exactly one listing_payments row, and the refund leg writes to its
+ * own refund_* columns so the owner's original payment reference survives
+ * intact.
+ *
+ * "A refund is owed" is therefore not a status of its own: it is a rejected
+ * board whose fee is still 'paid'. A board can only be rejected out of
+ * 'pending_review', which it can only reach by paying, so the pair is
+ * unambiguous.
  */
 class ListingRefundService
 {
     /**
-     * Refund the paid listing fee on a billboard, unless there isn't one or it
-     * has already been refunded. Flips the paid row to 'refunded' (so it drops
-     * out of revenue maths) and stamps a refund reference on it.
-     *
-     * @return ListingPayment|null the refunded row, or null when there was nothing to refund
+     * The listing fee still owed back on a board, or null when there is nothing
+     * to pay - the board was not rejected, the fee was never paid, or it has
+     * already been refunded. What the admin's Refund button is enabled by.
      */
-    public function refundListingFee(Billboard $billboard): ?ListingPayment
+    public function pendingRefundFor(Billboard $billboard): ?ListingPayment
     {
-        $payment = $billboard->listingPayments()
-            ->where('status', 'paid')
-            ->first();
-
-        if (! $payment) {
+        if ($billboard->listing_status !== 'rejected') {
             return null;
         }
 
+        return $billboard->listingPayments()
+            ->where('status', 'paid')
+            ->first();
+    }
+
+    /**
+     * Settle a listing-fee refund once the admin's SSLCommerz payment has been
+     * validated. Flips the row to 'refunded' so it drops out of the revenue
+     * maths and stamps the refund leg's own references onto it. Idempotent - a
+     * replayed callback or a callback/IPN race is a no-op.
+     *
+     * @param  array<string, mixed>  $attributes  refund_* gateway columns.
+     *                                            status/refunded_at are forced.
+     */
+    public function markRefunded(ListingPayment $payment, array $attributes = []): ListingPayment
+    {
+        if ($payment->status === 'refunded') {
+            return $payment;
+        }
+
         $payment->update([
+            ...$attributes,
             'status' => 'refunded',
             'refunded_at' => now(),
-            'transaction_ref' => $payment->transaction_ref
-                ?: 'RFND-LIST-'.$billboard->id.'-'.now()->format('YmdHis'),
         ]);
 
-        return $payment->fresh();
+        $payment = $payment->fresh(['billboard', 'owner']);
+        $billboard = $payment->billboard;
+
+        $amount = '৳'.number_format((float) $payment->amount);
+        $method = $payment->refund_method ? " to your {$payment->refund_method} account" : '';
+        $reference = $payment->refund_transaction_ref ? " (ref {$payment->refund_transaction_ref})" : '';
+
+        $payment->owner?->notify(new BillboardListingNotification(
+            $billboard,
+            'Listing fee refunded',
+            "Your listing fee of {$amount} for \"{$billboard?->title}\" has been refunded{$method}{$reference}.",
+        ));
+
+        return $payment;
     }
 }

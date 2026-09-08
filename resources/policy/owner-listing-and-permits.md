@@ -17,8 +17,11 @@ does not hold up are rejected with a reason attached, so the owner knows what to
 
 ## If a listing is rejected
 
-The listing fee is refunded in full, automatically, when the team rejects a listing. An
-owner is never charged for a board that was not allowed to go live.
+The listing fee is refunded in full when the team rejects a listing. An owner is never
+charged for a board that was not allowed to go live.
+
+Sending it is a manual step: the team pays the fee back through the payment gateway
+themselves, so it arrives shortly after the rejection rather than at the same instant.
 
 A rejected board can be corrected and resubmitted.
 
@@ -27,7 +30,7 @@ A rejected board can be corrected and resubmitted.
 - **pending_payment** — submitted, the listing fee has not gone through yet.
 - **pending_review** — paid, sitting in the team's review queue.
 - **approved** — live and visible on the public map.
-- **rejected** — declined, with a reason. The listing fee was refunded.
+- **rejected** — declined, with a reason. The listing fee is refunded.
 
 ## Advertising permits
 
@@ -43,8 +46,9 @@ date current on the listing is what prevents that.
 A booking request reaching an owner has already passed the team's review and has a paid
 advance behind it. The owner accepts or declines it.
 
-Declining refunds the advertiser's advance automatically and in full. There is no penalty
-for declining, but a board that repeatedly declines requests earns less.
+Declining refunds the advertiser's advance in full. An owner never sends that money
+themselves — the BillboardBD team pays it back to the advertiser. There is no penalty for
+declining, but a board that repeatedly declines requests earns less.
 
 Accepting confirms the booking and starts the advertiser's balance payment window.
 

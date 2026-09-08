@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Check, ChevronDown, ChevronUp, FileText, X } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Check, ChevronDown, ChevronUp, FileText, RotateCcw, X } from 'lucide-react';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
@@ -17,6 +17,15 @@ const STATUSES = [
   'rejected',
   'cancelled',
 ];
+
+// What the SSLCommerz redirect appends to the URL when the admin comes back
+// from paying a refund. Read once on mount, then cleared so a page refresh does
+// not replay the banner.
+const REFUND_RESULT = {
+  success: { text: 'Refund sent. The client has been notified.', ok: true },
+  failed: { text: 'That refund did not go through. Nothing was charged - you can try again.', ok: false },
+  cancelled: { text: 'Refund cancelled. The advance is still owed.', ok: false },
+};
 
 const STATUS_LABEL = {
   pending_admin_review: 'pending review',
@@ -39,6 +48,9 @@ export default function AdminBookings() {
   const [reason, setReason] = useState('');
   const [error, setError] = useState('');
   const [expandedId, setExpandedId] = useState(null);
+  const [refundingId, setRefundingId] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const refundResult = REFUND_RESULT[searchParams.get('refund')] || null;
 
   function load() {
     setLoading(true);
@@ -48,6 +60,12 @@ export default function AdminBookings() {
   }
 
   useEffect(load, []);
+
+  // Land on the Rejected tab when bouncing back from the gateway - that is
+  // where the refund was started and where its result belongs.
+  useEffect(() => {
+    if (searchParams.get('refund')) setActiveTab('rejected');
+  }, [searchParams]);
 
   async function handleApprove(id) {
     setError('');
@@ -68,6 +86,20 @@ export default function AdminBookings() {
       load();
     } catch (err) {
       setError(err.response?.data?.message || 'Could not reject this booking.');
+    }
+  }
+
+  // Hand the browser to SSLCommerz so the admin can pay the refund. The
+  // booking is settled by the gateway callback, not here - we only leave.
+  async function handleRefund(id) {
+    setError('');
+    setRefundingId(id);
+    try {
+      const res = await api.post(`/admin/bookings/${id}/refund/checkout`);
+      window.location.href = res.data.data.gateway_url;
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not open the refund checkout.');
+      setRefundingId(null);
     }
   }
 
@@ -107,6 +139,13 @@ export default function AdminBookings() {
 
   return (
     <AdminShell title="Bookings">
+      {refundResult && (
+        <p className={refundResult.ok ? 'admin-bookings-refund-done-text' : 'admin-bookings-refund-failed-text'}>
+          {refundResult.text}
+          <button type="button" className="admin-bookings-dismiss-btn" onClick={() => setSearchParams({})}>Dismiss</button>
+        </p>
+      )}
+
       {error && <p className="admin-bookings-error-text">{error}</p>}
 
       {loading ? (
@@ -154,6 +193,7 @@ export default function AdminBookings() {
                 {rows.map((bk) => {
                   const advancePayment = bk.payments?.find((p) => p.payment_type === 'advance');
                   const balancePayment = bk.payments?.find((p) => p.payment_type === 'balance');
+                  const refundPayment = bk.payments?.find((p) => p.payment_type === 'refund');
                   const expanded = expandedId === bk.id;
                   return (
                     <Fragment key={bk.id}>
@@ -241,8 +281,21 @@ export default function AdminBookings() {
                           ) : activeTab === 'rejected' ? (
                             <div className="admin-bookings-rejected-cell">
                               <span className="admin-bookings-row-sub">{bk.rejection_reason || 'N/A'}</span>
-                              {bk.payments?.some((p) => p.payment_type === 'refund') && (
+                              {refundPayment?.status === 'pending' && (
+                                <button
+                                  className="admin-bookings-refund-btn"
+                                  disabled={refundingId === bk.id}
+                                  onClick={() => handleRefund(bk.id)}
+                                >
+                                  <RotateCcw size={14} />
+                                  {refundingId === bk.id ? 'Opening...' : `Refund ${formatBDT(refundPayment.amount)}`}
+                                </button>
+                              )}
+                              {refundPayment?.status === 'refunded' && (
                                 <span className="admin-bookings-refund-note">advance refunded</span>
+                              )}
+                              {!refundPayment && (
+                                <span className="admin-bookings-row-sub">no advance to refund</span>
                               )}
                             </div>
                           ) : (

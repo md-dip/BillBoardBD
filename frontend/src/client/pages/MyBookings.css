@@ -188,8 +188,20 @@
     font-size: 0.85rem;
 }
 
-/* Green confirmation that the 30% advance was auto-refunded after an admin
-   rejection - shown just under .mybookings-rejection in the expanded card. */
+/* Amber notice that the advance is owed back but the admin has not sent it
+   yet - shown just under .mybookings-rejection in the expanded card, and
+   replaced by .mybookings-refund once the money has actually gone out. */
+.mybookings-refund-pending {
+    margin-top: 8px;
+    background: #fffbeb;
+    color: #92400e;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+}
+
+/* Green confirmation that the 30% advance has been refunded - the admin paid
+   it back through SSLCommerz and the gateway confirmed it. */
 .mybookings-refund {
     margin-top: 8px;
     background: #ecfdf5;

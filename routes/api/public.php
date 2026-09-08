@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Client\PaymentGatewayController;
 use App\Http\Controllers\Owner\ListingPaymentController;
 use App\Http\Controllers\Shared\AuthController;
@@ -36,3 +37,11 @@ Route::post('/listing-payments/sslcommerz/success', [ListingPaymentController::c
 Route::post('/listing-payments/sslcommerz/fail', [ListingPaymentController::class, 'fail']);
 Route::post('/listing-payments/sslcommerz/cancel', [ListingPaymentController::class, 'cancel']);
 Route::post('/listing-payments/sslcommerz/ipn', [ListingPaymentController::class, 'ipn']);
+
+// Admin manual-refund SSLCommerz callbacks - same rationale as above. One set
+// for both refund kinds; the posted value_b says whether a booking advance or
+// a board listing fee came back.
+Route::post('/refunds/sslcommerz/success', [RefundController::class, 'success']);
+Route::post('/refunds/sslcommerz/fail', [RefundController::class, 'fail']);
+Route::post('/refunds/sslcommerz/cancel', [RefundController::class, 'cancel']);
+Route::post('/refunds/sslcommerz/ipn', [RefundController::class, 'ipn']);

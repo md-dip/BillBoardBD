@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Check, FileText, Plus, X } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Check, FileText, Plus, RotateCcw, X } from 'lucide-react';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
@@ -21,6 +22,23 @@ const LISTING_LABEL = {
   approved: 'Approved',
   rejected: 'Rejected',
 };
+
+// What the SSLCommerz redirect appends to the URL when the admin comes back
+// from paying a listing-fee refund.
+const REFUND_RESULT = {
+  success: { text: 'Listing fee refunded. The owner has been notified.', ok: true },
+  failed: { text: 'That refund did not go through. Nothing was charged - you can try again.', ok: false },
+  cancelled: { text: 'Refund cancelled. The listing fee is still owed.', ok: false },
+};
+
+/* A rejected board still holding a paid listing fee is a refund the admin owes
+   the owner. There is no separate "refund due" status: rejection can only
+   happen after the fee cleared, so the pair says it on its own. */
+function feeAwaitingRefund(billboard) {
+  return billboard.listing_status === 'rejected'
+    ? billboard.listing_payments?.find((p) => p.status === 'paid') || null
+    : null;
+}
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -49,6 +67,9 @@ export default function AdminBillboards() {
   const [rejectingId, setRejectingId] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
   const [actingId, setActingId] = useState(null);
+  const [refunds, setRefunds] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const refundResult = REFUND_RESULT[searchParams.get('refund')] || null;
 
   // The review queue is fetched on its own (server-side filtered) so it can
   // never be hidden by the main list's pagination.
@@ -57,15 +78,28 @@ export default function AdminBillboards() {
       .then((res) => setRequests(res.data.data.data));
   }
 
+  // Rejected boards are fetched server-side filtered too, for the same reason:
+  // an old rejection must never fall off the end of the main list unpaid.
+  function loadRefunds() {
+    return api.get('/admin/billboards', { params: { listing_status: 'rejected' } })
+      .then((res) => setRefunds(res.data.data.data.filter(feeAwaitingRefund)));
+  }
+
   function load() {
     setLoading(true);
     Promise.all([
       api.get('/admin/billboards').then((res) => setBillboards(res.data.data.data)),
       loadRequests(),
+      loadRefunds(),
     ]).finally(() => setLoading(false));
   }
 
   useEffect(load, []);
+
+  // Land on the refunds tab when bouncing back from the gateway.
+  useEffect(() => {
+    if (searchParams.get('refund')) setTab('refunds');
+  }, [searchParams]);
 
   async function handleDelete(id) {
     if (!window.confirm('Delete this billboard?')) return;
@@ -117,6 +151,20 @@ export default function AdminBillboards() {
     }
   }
 
+  // Hand the browser to SSLCommerz so the admin can pay the fee back. The
+  // board is settled by the gateway callback, not here - we only leave.
+  async function handleRefund(id) {
+    setError('');
+    setActingId(id);
+    try {
+      const res = await api.post(`/admin/billboards/${id}/refund/checkout`);
+      window.location.href = res.data.data.gateway_url;
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not open the refund checkout.');
+      setActingId(null);
+    }
+  }
+
   return (
     <AdminShell title="Billboards">
       <div className="admin-billboards-tabs">
@@ -134,7 +182,21 @@ export default function AdminBillboards() {
         >
           Listing requests ({requests.length})
         </button>
+        <button
+          type="button"
+          className={`admin-billboards-tab-refunds ${tab === 'refunds' ? 'admin-billboards-tab-active' : ''}`}
+          onClick={() => setTab('refunds')}
+        >
+          Listing refunds ({refunds.length})
+        </button>
       </div>
+
+      {refundResult && (
+        <p className={refundResult.ok ? 'admin-billboards-refund-done-text' : 'admin-billboards-refund-failed-text'}>
+          {refundResult.text}
+          <button type="button" className="admin-billboards-dismiss-btn" onClick={() => setSearchParams({})}>Dismiss</button>
+        </p>
+      )}
 
       {error && <p className="admin-billboards-error-text">{error}</p>}
 
@@ -295,7 +357,8 @@ export default function AdminBillboards() {
       {tab === 'requests' && (
         <>
           <p className="admin-billboards-muted admin-billboards-requests-hint">
-            Owner-submitted boards whose listing fee has cleared. Approve to publish on the map, or reject to auto-refund the fee.
+            Owner-submitted boards whose listing fee has cleared. Approve to publish on the map, or reject with a reason -
+            the fee then moves to Listing refunds for you to pay back.
           </p>
 
           {loading ? (
@@ -371,6 +434,63 @@ export default function AdminBillboards() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {tab === 'refunds' && (
+        <>
+          <p className="admin-billboards-muted admin-billboards-refunds-hint">
+            Boards you rejected whose listing fee is still with BillboardBD. Refunding opens SSLCommerz so you can send
+            the fee back to the owner yourself; the board is marked refunded once that payment clears.
+          </p>
+
+          {loading ? (
+            <p className="admin-billboards-muted">Loading...</p>
+          ) : refunds.length === 0 ? (
+            <div className="admin-billboards-table-card admin-billboards-refunds-empty">
+              No listing fees waiting to be refunded.
+            </div>
+          ) : (
+            <div className="admin-billboards-request-list">
+              {refunds.map((b) => {
+                const fee = feeAwaitingRefund(b);
+                return (
+                  <div className="admin-billboards-request-card" key={b.id}>
+                    {b.photo_url
+                      ? <img className="admin-billboards-request-photo" src={b.photo_url} alt={b.title} />
+                      : <div className="admin-billboards-request-photo admin-billboards-request-photo-empty">No photo</div>}
+
+                    <div className="admin-billboards-request-body">
+                      <div className="admin-billboards-request-title">{b.title}</div>
+                      <div className="admin-billboards-request-sub">{b.address}</div>
+                      <div className="admin-billboards-request-meta">
+                        <span>Owner: {b.owner?.name ?? 'N/A'}</span>
+                        <span>Fee paid: {formatBDT(fee.amount)}</span>
+                        {fee.paid_at && <span>Paid: {fee.paid_at.slice(0, 10)}</span>}
+                        {b.reviewed_at && <span>Rejected: {b.reviewed_at.slice(0, 10)}</span>}
+                      </div>
+                      {b.listing_rejection_reason && (
+                        <div className="admin-billboards-refund-reason">
+                          Rejection reason: {b.listing_rejection_reason}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="admin-billboards-request-actions">
+                      <button
+                        className="admin-billboards-refund-fee-btn"
+                        disabled={actingId === b.id}
+                        onClick={() => handleRefund(b.id)}
+                      >
+                        <RotateCcw size={14} />
+                        {actingId === b.id ? 'Opening...' : `Refund ${formatBDT(fee.amount)}`}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </>

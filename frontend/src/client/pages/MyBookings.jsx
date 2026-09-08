@@ -28,9 +28,14 @@ const STATUS_LABEL = {
 function paymentSummary(booking) {
     const advance = booking.payments?.find((p) => p.payment_type === 'advance');
     const balance = booking.payments?.find((p) => p.payment_type === 'balance');
+    const refund = booking.payments?.find((p) => p.payment_type === 'refund');
 
     if (balance?.status === 'paid') return { text: 'Fully paid', payable: null };
     if (balance?.status === 'pending') return { text: 'Balance due', payable: balance };
+    // Checked before the advance's own status: while a refund is queued the
+    // advance is still 'paid', and saying so on a rejected booking reads as if
+    // nothing is coming back.
+    if (refund?.status === 'pending') return { text: 'Refund pending', payable: null };
     if (advance?.status === 'refunded') return { text: 'Advance refunded', payable: null };
     if (advance?.status === 'paid') return { text: 'Advance paid', payable: null };
     if (advance?.status === 'pending') return { text: 'Advance unpaid', payable: advance };
@@ -204,9 +209,16 @@ export default function Dashboard() {
                                     {b.status === 'rejected' && b.rejection_reason && (
                                         <div className="mybookings-rejection">Rejected: {b.rejection_reason}</div>
                                     )}
-                                    {refund && (
+                                    {refund?.status === 'pending' && (
+                                        <div className="mybookings-refund-pending">
+                                            Your advance of {formatBDT(refund.amount)} is being refunded. We will confirm here
+                                            as soon as it has been sent.
+                                        </div>
+                                    )}
+                                    {refund?.status === 'refunded' && (
                                         <div className="mybookings-refund">
-                                            Advance of {formatBDT(refund.amount)} refunded to your {refund.method} account
+                                            Advance of {formatBDT(refund.amount)} refunded
+                                            {refund.method ? ` to your ${refund.method} account` : ''}
                                             {refund.refunded_at ? ` on ${refund.refunded_at.slice(0, 10)}` : ''}
                                             {refund.transaction_ref ? ` · ref ${refund.transaction_ref}` : ''}
                                         </div>

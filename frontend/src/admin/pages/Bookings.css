@@ -116,7 +116,8 @@
     color: #15803d;
 }
 
-/* "Rejected" tab actions cell: reason line + auto-refund confirmation */
+/* "Rejected" tab actions cell: reason line, then either the Refund button
+   (advance still owed) or the confirmation that it has been sent. */
 .admin-bookings-rejected-cell {
     display: flex;
     flex-direction: column;
@@ -132,6 +133,64 @@
     background: #dcfce7;
     color: #15803d;
 }
+
+/* "Refund <amount>" button - opens the admin's SSLCommerz checkout. Amber
+   rather than the blue of Approve/Verify: this one sends money out. */
+.admin-bookings-refund-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: #b45309;
+    color: #ffffff;
+    transition: background 0.15s;
+}
+.admin-bookings-refund-btn:hover { background: #92400e; }
+.admin-bookings-refund-btn:disabled {
+    background: #d6a76d;
+    cursor: not-allowed;
+}
+
+/* Result banners after coming back from the refund checkout. */
+.admin-bookings-refund-done-text,
+.admin-bookings-refund-failed-text {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+.admin-bookings-refund-done-text {
+    background: #dcfce7;
+    color: #15803d;
+}
+.admin-bookings-refund-failed-text {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* "Dismiss" button inside those banners. */
+.admin-bookings-dismiss-btn {
+    flex: none;
+    padding: 3px 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.08);
+    color: inherit;
+}
+.admin-bookings-dismiss-btn:hover { background: rgba(0, 0, 0, 0.16); }
 
 /* Inline reject-reason form (input + Confirm + Cancel) */
 .admin-bookings-inline-form {

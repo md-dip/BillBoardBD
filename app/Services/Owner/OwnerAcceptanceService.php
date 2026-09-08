@@ -15,8 +15,10 @@ use App\Services\Shared\RefundService;
  * creates the balance payment and starts the countdown to the final-payment
  * due date - mirrors BookingApprovalService's shape for the admin's stage 2.
  *
- * Declining here is terminal and, exactly like an admin rejection, auto-refunds
- * the advance the client already paid to their source account (see RefundService).
+ * Declining here is terminal and, exactly like an admin rejection, records the
+ * client's advance as owed back (see RefundService). The owner cannot send that
+ * money themselves, so the admin is notified and pays it out by hand from the
+ * Rejected tab of their own Bookings page.
  */
 class OwnerAcceptanceService
 {
@@ -88,10 +90,10 @@ class OwnerAcceptanceService
             'rejection_reason' => $reason,
         ]);
 
-        // The client paid the advance up front, so an owner decline auto-refunds
-        // it to the account it came from - identical mechanism to an admin
-        // rejection (mock, no real gateway call).
-        $refund = $this->refunds->refundAdvance($booking);
+        // The client paid the advance up front, so an owner decline leaves the
+        // same debt behind as an admin rejection - identical mechanism, and the
+        // admin settles it either way.
+        $refund = $this->refunds->queueAdvanceRefund($booking);
 
         $booking = $booking->fresh(['billboard', 'user', 'payments']);
 
@@ -99,20 +101,20 @@ class OwnerAcceptanceService
         $adminBody = "\"{$booking->billboard?->title}\" was declined by its owner. Reason: {$reason}";
         if ($refund) {
             $amount = '৳'.number_format((float) $refund->amount);
-            $clientBody .= " Your advance of {$amount} has been refunded to your {$refund->method} account (ref {$refund->transaction_ref}).";
-            $adminBody .= " The client's advance of {$amount} has been refunded to their {$refund->method} account (ref {$refund->transaction_ref}).";
+            $clientBody .= " Your advance of {$amount} will be refunded - we will confirm here as soon as it has been sent.";
+            $adminBody .= " The client's advance of {$amount} is now awaiting refund - pay it from the Rejected tab of Bookings.";
         }
 
         $booking->user->notify(new BookingStatusNotification(
             $booking,
-            $refund ? 'Booking declined - advance refunded' : 'Booking declined',
+            $refund ? 'Booking declined - refund on the way' : 'Booking declined',
             $clientBody,
         ));
 
         foreach (User::query()->where('role', 'admin')->get() as $admin) {
             $admin->notify(new BookingStatusNotification(
                 $booking,
-                $refund ? 'Booking declined by owner - advance refunded' : 'Booking declined by owner',
+                $refund ? 'Booking declined by owner - refund due' : 'Booking declined by owner',
                 $adminBody,
             ));
         }
@@ -120,7 +122,7 @@ class OwnerAcceptanceService
         return [
             'ok' => true,
             'status' => 200,
-            'message' => $refund ? 'Booking rejected and advance refunded' : 'Booking rejected',
+            'message' => $refund ? 'Booking rejected - the advance is now awaiting refund' : 'Booking rejected',
             'booking' => $booking,
         ];
     }

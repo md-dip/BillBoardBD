@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
 use App\Http\Controllers\Admin\ProofOfPostingController as AdminProofOfPostingController;
+use App\Http\Controllers\Admin\RefundController as AdminRefundController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,12 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     // Stage 5: proof-of-posting verification
     Route::patch('/bookings/{booking}/proof/verify', [AdminProofOfPostingController::class, 'verify']);
     Route::patch('/bookings/{booking}/proof/reject', [AdminProofOfPostingController::class, 'reject']);
+
+    // Manual refunds - admin pays a rejected booking's advance or a rejected
+    // board's listing fee back through SSLCommerz (callbacks are public, see
+    // api/public.php).
+    Route::post('/bookings/{booking}/refund/checkout', [AdminRefundController::class, 'bookingCheckout']);
+    Route::post('/billboards/{billboard}/refund/checkout', [AdminRefundController::class, 'listingCheckout']);
 
     // Platform settings (commission %, advance %, final payment window)
     Route::get('/settings', [AdminSettingController::class, 'index']);

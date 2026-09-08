@@ -323,7 +323,8 @@
     margin-bottom: 16px;
 }
 .admin-billboards-tab-all,
-.admin-billboards-tab-requests {
+.admin-billboards-tab-requests,
+.admin-billboards-tab-refunds {
     padding: 8px 14px;
     border: none;
     background: transparent;
@@ -335,7 +336,8 @@
     margin-bottom: -1px;
 }
 .admin-billboards-tab-all:hover,
-.admin-billboards-tab-requests:hover { color: #0f172a; }
+.admin-billboards-tab-requests:hover,
+.admin-billboards-tab-refunds:hover { color: #0f172a; }
 .admin-billboards-tab-active { color: #2563eb; border-bottom-color: #2563eb; }
 
 /* ---- "Listing" status pill in the All-billboards table ---- */
@@ -359,6 +361,67 @@
 /* ---- Requests tab ---- */
 .admin-billboards-requests-hint { margin-bottom: 16px; }
 .admin-billboards-requests-empty { padding: 32px; text-align: center; color: #64748b; }
+
+/* ---- "Listing refunds" tab: rejected boards whose fee is still owed back ---- */
+.admin-billboards-refunds-hint { margin-bottom: 16px; }
+.admin-billboards-refunds-empty { padding: 32px; text-align: center; color: #64748b; }
+.admin-billboards-refund-reason {
+    margin-top: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 13px;
+}
+
+/* Result banners after coming back from the refund checkout. */
+.admin-billboards-refund-done-text,
+.admin-billboards-refund-failed-text {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+.admin-billboards-refund-done-text { background: #dcfce7; color: #15803d; }
+.admin-billboards-refund-failed-text { background: #fef3c7; color: #92400e; }
+
+/* "Dismiss" button inside those banners. */
+.admin-billboards-dismiss-btn {
+    flex: none;
+    padding: 3px 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.08);
+    color: inherit;
+}
+.admin-billboards-dismiss-btn:hover { background: rgba(0, 0, 0, 0.16); }
+
+/* "Refund <amount>" button - opens the admin's SSLCommerz checkout. Amber
+   rather than the green of Approve: this one sends money out. */
+.admin-billboards-refund-fee-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: #b45309;
+    color: #ffffff;
+    transition: background 0.15s;
+}
+.admin-billboards-refund-fee-btn:hover { background: #92400e; }
+.admin-billboards-refund-fee-btn:disabled { opacity: 0.6; cursor: default; }
 
 .admin-billboards-request-list { display: flex; flex-direction: column; gap: 12px; }
 .admin-billboards-request-card {

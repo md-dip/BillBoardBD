@@ -31,7 +31,8 @@ Both exist for a reason. The team's review catches expired permits and requests 
 break advertising rules before an owner wastes time on them. The owner's acceptance
 exists because it is their board — nobody can sell space on it without their agreement.
 
-Either party declining ends the booking and refunds the advertiser automatically.
+Either party declining ends the booking, and the advertiser's advance is refunded in full.
+The BillboardBD team sends every refund itself, whichever party declined.
 
 ## Currency and payments
 

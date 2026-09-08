@@ -11,8 +11,9 @@ use App\Notifications\BillboardListingNotification;
  * paid and the board is 'pending_review').
  *
  *   approve()  the board goes live on the public map/list.
- *   reject()   terminal - the listing fee the owner paid is auto refunded to
- *              their source account (see ListingRefundService).
+ *   reject()   terminal - the listing fee the owner paid is recorded as owed
+ *              back, and the admin pays it out by hand through SSLCommerz from
+ *              the Listing refunds tab (see ListingRefundService).
  *
  * Mirrors Admin\BookingApprovalService.
  */
@@ -67,26 +68,29 @@ class ListingApprovalService
             'reviewed_by' => $admin->id,
         ]);
 
-        $refund = $this->refunds->refundListingFee($billboard);
+        // Rejecting records the debt; it does not move the money. The fee stays
+        // 'paid' until the admin has actually sent it back, which is what the
+        // Listing refunds tab is for.
+        $refund = $this->refunds->pendingRefundFor($billboard);
 
         $billboard = $billboard->fresh(['owner', 'listingPayments']);
 
         $body = "Your board \"{$billboard->title}\" was rejected. Reason: {$reason}";
         if ($refund) {
             $amount = '৳'.number_format((float) $refund->amount);
-            $body .= " Your listing fee of {$amount} has been refunded (ref {$refund->transaction_ref}).";
+            $body .= " Your listing fee of {$amount} will be refunded - we will confirm here as soon as it has been sent.";
         }
 
         $billboard->owner?->notify(new BillboardListingNotification(
             $billboard,
-            $refund ? 'Board rejected - listing fee refunded' : 'Board rejected',
+            $refund ? 'Board rejected - refund on the way' : 'Board rejected',
             $body,
         ));
 
         return [
             'ok' => true,
             'status' => 200,
-            'message' => $refund ? 'Board rejected and listing fee refunded' : 'Board rejected',
+            'message' => $refund ? 'Board rejected - the listing fee is now awaiting refund' : 'Board rejected',
             'billboard' => $billboard,
         ];
     }
