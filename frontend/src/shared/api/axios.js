@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { clearToken, readToken } from './tokenStore';
 
 const api = axios.create({
     baseURL: 'http://127.0.0.1:8000/api',
@@ -12,9 +13,10 @@ const api = axios.create({
 // multipart/form-data (with the right boundary) for FormData. If we forced
 // application/json, the campaign creative upload (FormData) would break.
 
-// Attach the Bearer token to every request if one is saved in localStorage.
+// Attach the Bearer token to every request if this TAB has one saved
+// (see tokenStore - each tab holds its own actor).
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
+    const token = readToken();
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -26,7 +28,7 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.removeItem('token');
+            clearToken();
         }
         return Promise.reject(error);
     }
