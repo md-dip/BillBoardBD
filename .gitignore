@@ -34,3 +34,9 @@ Thumbs.db
 
 # Local design/analysis docs (activity diagrams etc. - not shipped with the app)
 /docs/
+
+# Practicum report draft (personal document, not part of the app)
+/BillboardBD_Practicum_Report_DRAFT.docx
+
+# Test suite (kept local, not shipped with the repo)
+/tests/
