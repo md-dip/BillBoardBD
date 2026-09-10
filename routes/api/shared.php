@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Shared\AssistantController;
 use App\Http\Controllers\Shared\AuthController;
 use App\Http\Controllers\Shared\NotFoundController;
 use App\Http\Controllers\Shared\NotificationController;
@@ -13,6 +14,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Notifications (shared by all 3 actors)
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+
+    // BillboardBD Assistant. Throttled per user because every question costs
+    // real money upstream - a stuck retry loop in the browser should hit a 429
+    // here, not run up the platform's API bill.
+    Route::get('/assistant/status', [AssistantController::class, 'status']);
+    Route::post('/assistant/ask', [AssistantController::class, 'ask'])->middleware('throttle:20,1');
 });
 
 // Any /api/* URL that matched none of the routes in this folder. ->fallback()

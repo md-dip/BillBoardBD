@@ -17,6 +17,7 @@ import ResetPassword from './shared/pages/ResetPassword';
 import NotFound from './shared/pages/NotFound';
 import ProtectedRoute from './shared/components/ProtectedRoute';
 import DefaultNavbar from './shared/components/Navbar';
+import AssistantPanel from './shared/components/AssistantPanel';
 import { useAuth } from './shared/context/AuthContext';
 import './App.css';
 import AdminDashboard from './admin/pages/Dashboard';
@@ -107,6 +108,18 @@ function AppRoutes() {
                 </Routes>
             </div>
             {showClientChrome && <Footer />}
+            {/* Floats over every page. Renders nothing unless a client or owner
+                is signed in AND the backend has an API key configured, so an
+                admin - and an install without one - never sees it.
+
+                Keyed on the account id so React discards the whole component
+                when the signed-in user changes. The conversation lives in this
+                component's state and is replayed to the API as history, so
+                without the key a chat would survive a logout: the next person
+                at this browser would read the previous one's questions, and
+                their first message would carry that conversation to the model
+                as its own context. */}
+            <AssistantPanel key={user?.id ?? 'signed-out'} />
         </div>
     );
 }
