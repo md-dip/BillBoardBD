@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Jobs;
+namespace Rag\Ingestion;
 
-use App\Services\Shared\Rag\Indexer;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -13,6 +12,9 @@ use Illuminate\Foundation\Queue\Queueable;
  * user should wait on that while accepting a booking or recording a payment.
  * The project already runs a queue worker alongside the dev server, so this
  * costs no new infrastructure.
+ *
+ * Dispatched by RagReindexObserver, and runs against IngestionPipeline's narrow
+ * per-source reindex methods rather than a full rebuild.
  */
 class ReindexRagDocuments implements ShouldQueue
 {
@@ -33,7 +35,7 @@ class ReindexRagDocuments implements ShouldQueue
         return $this->kind.':'.$this->id;
     }
 
-    public function handle(Indexer $indexer): void
+    public function handle(IngestionPipeline $indexer): void
     {
         match ($this->kind) {
             'booking' => $indexer->reindexBooking($this->id),

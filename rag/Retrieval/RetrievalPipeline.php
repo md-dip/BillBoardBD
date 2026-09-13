@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Services\Shared\Rag;
+namespace Rag\Retrieval;
 
-use App\Models\RagDocument;
 use App\Models\User;
-use App\Services\Shared\Rag\Embeddings\EmbeddingClient;
-use App\Services\Shared\Rag\Scoring\LexicalScorer;
 use Illuminate\Support\Collection;
+use Rag\Embeddings\EmbeddingClient;
+use Rag\Storage\RagDocument;
 
 /**
- * The retrieval pipeline: question -> scoped candidates -> two rankings -> top K.
+ * The whole retrieval pipeline, start to finish: question -> scoped candidates
+ * -> two rankings -> top K. This is the class the "Retrieval pipeline" box in
+ * the architecture diagram maps to.
  *
  * The order of those steps is the security model. Visibility is applied in SQL
  * first, so scoring only ever runs over documents this user is already entitled
@@ -28,7 +29,7 @@ use Illuminate\Support\Collection;
  * Swapping in pgvector or Postgres full-text later means changing this class
  * and nothing else.
  */
-class Retriever
+class RetrievalPipeline
 {
     /**
      * Fusion constant. Reciprocal rank fusion combines the two rankings by

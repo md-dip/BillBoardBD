@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Observers;
+namespace Rag\Ingestion;
 
-use App\Jobs\ReindexRagDocuments;
 use App\Models\Billboard;
 use App\Models\Booking;
 use App\Models\Payment;

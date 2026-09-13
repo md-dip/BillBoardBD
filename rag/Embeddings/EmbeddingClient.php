@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Services\Shared\Rag\Embeddings;
+namespace Rag\Embeddings;
 
 /**
- * Turns text into vectors - the "Embedding API" step of the pipeline, used on
- * both sides of it: once per document at ingestion, once per question at
- * retrieval. The same client must serve both, or the question would land in a
- * different space from the documents and every score would be meaningless.
+ * Turns text into vectors - the "Embedding API" step of the pipeline, shared by
+ * both rag/Ingestion and rag/Retrieval: once per document at ingestion, once
+ * per question at retrieval. The same client must serve both, or the question
+ * would land in a different space from the documents and every score would be
+ * meaningless.
  *
  * Implementations report the model they represent so stored vectors can be
  * matched against the one currently in use, and stale ones ignored rather than

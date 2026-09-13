@@ -5,6 +5,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Rag\Ingestion\IndexKnowledgeBaseCommand;
+use Rag\Retrieval\BenchmarkRetrievalCommand;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,6 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    // Laravel only auto-discovers artisan commands living in
+    // app/Console/Commands. These two live in rag/ instead, alongside the
+    // pipeline they run, so they are registered explicitly here.
+    ->withCommands([
+        IndexKnowledgeBaseCommand::class,
+        BenchmarkRetrievalCommand::class,
+    ])
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,

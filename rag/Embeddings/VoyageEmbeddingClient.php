@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Shared\Rag\Embeddings;
+namespace Rag\Embeddings;
 
 use Illuminate\Support\Facades\Http;
 use RuntimeException;

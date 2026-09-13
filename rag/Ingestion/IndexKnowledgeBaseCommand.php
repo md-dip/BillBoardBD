@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Rag\Ingestion;
 
-use App\Services\Shared\Rag\DocumentBuilders\BillboardDocumentBuilder;
-use App\Services\Shared\Rag\DocumentBuilders\BoardEarningsDocumentBuilder;
-use App\Services\Shared\Rag\DocumentBuilders\BookingDocumentBuilder;
-use App\Services\Shared\Rag\DocumentBuilders\PayoutDocumentBuilder;
-use App\Services\Shared\Rag\DocumentBuilders\PolicyDocumentBuilder;
-use App\Services\Shared\Rag\Embeddings\EmbeddingClient;
-use App\Services\Shared\Rag\Indexer;
 use Illuminate\Console\Command;
+use Rag\Embeddings\EmbeddingClient;
+use Rag\Ingestion\DocumentBuilders\BillboardDocumentBuilder;
+use Rag\Ingestion\DocumentBuilders\BoardEarningsDocumentBuilder;
+use Rag\Ingestion\DocumentBuilders\BookingDocumentBuilder;
+use Rag\Ingestion\DocumentBuilders\PayoutDocumentBuilder;
+use Rag\Ingestion\DocumentBuilders\PolicyDocumentBuilder;
 
 /**
- * Build the assistant's knowledge base.
+ * The CLI entry point into the ingestion pipeline - runs IngestionPipeline
+ * against every document builder.
  *
  *   php artisan rag:index                     # only what has changed
  *   php artisan rag:index --force             # re-embed everything
@@ -23,7 +23,7 @@ use Illuminate\Console\Command;
  * vectors from two models cannot be compared and the old ones are ignored by
  * the retriever until they are rewritten.
  */
-class RagIndex extends Command
+class IndexKnowledgeBaseCommand extends Command
 {
     protected $signature = 'rag:index
         {--force : re-embed every document even if its text has not changed}
@@ -31,7 +31,7 @@ class RagIndex extends Command
 
     protected $description = "Build the BillboardBD Assistant's retrieval knowledge base";
 
-    public function handle(Indexer $indexer, EmbeddingClient $embeddings): int
+    public function handle(IngestionPipeline $indexer, EmbeddingClient $embeddings): int
     {
         $builders = [
             app(PolicyDocumentBuilder::class),

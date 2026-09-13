@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Shared\Rag\Scoring;
+namespace Rag\Retrieval;
 
 /**
  * BM25-style keyword scoring - the lexical half of hybrid retrieval.

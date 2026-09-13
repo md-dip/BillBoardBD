@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Services\Shared\Rag\DocumentBuilders;
+namespace Rag\Ingestion\DocumentBuilders;
 
-use App\Services\Shared\Rag\DocumentDraft;
+use Rag\Ingestion\DocumentDraft;
 
 /**
+ * Step 2 of ingestion - "Extract" + "Document builder" in the pipeline diagram.
  * Turns one kind of source - a policy file, a table - into documents.
  *
  * The job of every builder is the same: write what a person would write. A row

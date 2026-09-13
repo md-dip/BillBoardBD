@@ -1,33 +1,36 @@
 <?php
 
-namespace App\Services\Shared\Rag;
+namespace Rag\Ingestion;
 
 use App\Models\Billboard;
 use App\Models\Booking;
 use App\Models\Payout;
-use App\Models\RagDocument;
-use App\Services\Shared\Rag\DocumentBuilders\BillboardDocumentBuilder;
-use App\Services\Shared\Rag\DocumentBuilders\BoardEarningsDocumentBuilder;
-use App\Services\Shared\Rag\DocumentBuilders\BookingDocumentBuilder;
-use App\Services\Shared\Rag\DocumentBuilders\DocumentBuilder;
-use App\Services\Shared\Rag\DocumentBuilders\PayoutDocumentBuilder;
-use App\Services\Shared\Rag\Embeddings\EmbeddingClient;
+use Rag\Embeddings\EmbeddingClient;
+use Rag\Ingestion\DocumentBuilders\BillboardDocumentBuilder;
+use Rag\Ingestion\DocumentBuilders\BoardEarningsDocumentBuilder;
+use Rag\Ingestion\DocumentBuilders\BookingDocumentBuilder;
+use Rag\Ingestion\DocumentBuilders\DocumentBuilder;
+use Rag\Ingestion\DocumentBuilders\PayoutDocumentBuilder;
+use Rag\Storage\RagDocument;
 
 /**
- * The ingestion pipeline: sources -> documents -> vectors -> knowledge base.
+ * The whole ingestion pipeline, start to finish: sources -> documents ->
+ * vectors -> knowledge base. This is the class the "Ingestion pipeline" box in
+ * the architecture diagram maps to.
  *
  * Two things keep it cheap enough to run often. Each draft carries a hash of
  * its own text and visibility, so a document that has not moved is skipped
  * without being re-embedded; and documents are embedded in batches rather than
  * one request each.
  *
- * A full rebuild is the command; the observers call the narrow reindex methods
- * at the bottom, which is what keeps the index honest between rebuilds. That
- * matters more here than in a document-based RAG: a PDF sits still, but a
- * booking changes stage several times a week, and a stale document would have
- * the assistant confidently describing a stage the booking has already left.
+ * A full rebuild is the command (IndexKnowledgeBaseCommand); RagReindexObserver
+ * calls the narrow reindex methods at the bottom, which is what keeps the index
+ * honest between rebuilds. That matters more here than in a document-based RAG:
+ * a PDF sits still, but a booking changes stage several times a week, and a
+ * stale document would have the assistant confidently describing a stage the
+ * booking has already left.
  */
-class Indexer
+class IngestionPipeline
 {
     public function __construct(
         private readonly EmbeddingClient $embeddings,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Shared\Rag\Embeddings;
+namespace Rag\Embeddings;
 
 /**
  * A deterministic, offline embedder - no API key, no network, same vector every

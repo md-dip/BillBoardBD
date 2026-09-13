@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Shared\Rag;
+namespace Rag\Ingestion;
 
 /**
  * One document on its way into the knowledge base, before it has been embedded
- * or stored. Builders produce these; the Indexer decides what has changed and
- * what needs a new vector.
+ * or stored. Builders produce these; IngestionPipeline decides what has changed
+ * and what needs a new vector.
  */
 readonly class DocumentDraft
 {

@@ -7,19 +7,19 @@ use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Payout;
 use App\Models\ProofOfPosting;
-use App\Observers\RagReindexObserver;
 use App\Services\Client\AssistantTools as ClientAssistantTools;
 use App\Services\Owner\AssistantTools as OwnerAssistantTools;
 use App\Services\Owner\OwnerLedgerService;
-use App\Services\Shared\Rag\DocumentBuilders\BoardEarningsDocumentBuilder;
-use App\Services\Shared\Rag\DocumentBuilders\PolicyDocumentBuilder;
-use App\Services\Shared\Rag\Embeddings\EmbeddingClient;
-use App\Services\Shared\Rag\Embeddings\HashingEmbeddingClient;
-use App\Services\Shared\Rag\Embeddings\VoyageEmbeddingClient;
-use App\Services\Shared\Rag\Retriever;
-use App\Services\Shared\Rag\Scoring\LexicalScorer;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
+use Rag\Embeddings\EmbeddingClient;
+use Rag\Embeddings\HashingEmbeddingClient;
+use Rag\Embeddings\VoyageEmbeddingClient;
+use Rag\Ingestion\DocumentBuilders\BoardEarningsDocumentBuilder;
+use Rag\Ingestion\DocumentBuilders\PolicyDocumentBuilder;
+use Rag\Ingestion\RagReindexObserver;
+use Rag\Retrieval\LexicalScorer;
+use Rag\Retrieval\RetrievalPipeline;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -70,7 +70,7 @@ class AppServiceProvider extends ServiceProvider
             (int) config('rag.ingestion.board_month_history'),
         ));
 
-        $this->app->bind(Retriever::class, fn ($app) => new Retriever(
+        $this->app->bind(RetrievalPipeline::class, fn ($app) => new RetrievalPipeline(
             $app->make(EmbeddingClient::class),
             $app->make(LexicalScorer::class),
             (int) config('rag.retrieval.top_k'),

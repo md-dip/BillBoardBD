@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\Shared\Rag\DocumentBuilders;
+namespace Rag\Ingestion\DocumentBuilders;
 
 use App\Models\Billboard;
-use App\Services\Shared\Rag\DocumentDraft;
+use Rag\Ingestion\DocumentDraft;
 
 /**
  * Every publicly listed billboard, written as a description rather than a row.

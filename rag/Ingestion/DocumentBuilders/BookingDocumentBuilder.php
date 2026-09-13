@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\Shared\Rag\DocumentBuilders;
+namespace Rag\Ingestion\DocumentBuilders;
 
 use App\Models\Booking;
 use App\Services\Client\AssistantTools as ClientAssistantTools;
-use App\Services\Shared\Rag\DocumentDraft;
+use Rag\Ingestion\DocumentDraft;
 
 /**
  * Every booking, written twice - once for the advertiser who made it, once for

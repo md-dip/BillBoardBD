@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\Shared\Rag\DocumentBuilders;
+namespace Rag\Ingestion\DocumentBuilders;
 
 use App\Models\User;
 use App\Services\Owner\OwnerLedgerService;
-use App\Services\Shared\Rag\DocumentDraft;
+use Rag\Ingestion\DocumentDraft;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 

@@ -1,19 +1,24 @@
 <?php
 
-namespace App\Models;
+namespace Rag\Storage;
 
-use App\Services\Shared\Rag\Indexer;
-use App\Services\Shared\Rag\Retriever;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Rag\Ingestion\IngestionPipeline;
+use Rag\Retrieval\RetrievalPipeline;
 
 /**
- * One document in the assistant's knowledge base.
+ * One document in the assistant's knowledge base - this table is where "store
+ * in a vector DB" from the pipeline diagram actually happens. There is no
+ * separate vector database here: the app's own Postgres plays that role, with
+ * the vector kept in the `embedding` JSON column. See config/rag.php for why
+ * that is a size decision rather than a shortcut.
  *
- * @see Indexer     writes these
- * @see Retriever   reads them
+ * @see IngestionPipeline   writes these
+ * @see RetrievalPipeline   reads them
  */
 #[Fillable([
     'source_type', 'source_id', 'title', 'content',

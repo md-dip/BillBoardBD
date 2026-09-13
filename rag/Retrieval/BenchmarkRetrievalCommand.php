@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Rag\Retrieval;
 
 use App\Models\User;
-use App\Services\Shared\Rag\Retriever;
 use Illuminate\Console\Command;
 
 /**
- * Measure the retrieval half of the assistant against a fixed set of questions.
+ * The CLI entry point into the retrieval pipeline - measures RetrievalPipeline
+ * against a fixed set of questions.
  *
  *   php artisan rag:benchmark
  *   php artisan rag:benchmark --k=6 --set=storage/app/rag-benchmark.json
@@ -22,7 +22,7 @@ use Illuminate\Console\Command;
  * to the model, so a wanted document at rank 4 has done its job. Rank is
  * reported alongside because a lower one leaves more room in the context.
  */
-class RagBenchmark extends Command
+class BenchmarkRetrievalCommand extends Command
 {
     protected $signature = 'rag:benchmark
         {--k=6 : how many documents count as retrieved}
@@ -63,8 +63,8 @@ class RagBenchmark extends Command
 
         foreach ($modes as $mode) {
             config(['rag.retrieval.mode' => $mode]);
-            app()->forgetInstance(Retriever::class);
-            $retriever = app(Retriever::class);
+            app()->forgetInstance(RetrievalPipeline::class);
+            $retriever = app(RetrievalPipeline::class);
 
             $found = 0;
             $ranks = [];

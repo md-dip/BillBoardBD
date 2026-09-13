@@ -6,7 +6,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Services\Client\AssistantTools as ClientTools;
 use App\Services\Owner\AssistantTools as OwnerTools;
-use App\Services\Shared\Rag\Retriever;
+use Rag\Retrieval\RetrievalPipeline;
 
 /**
  * Which tools the BillboardBD Assistant may call, and who may call them.
@@ -22,7 +22,7 @@ class ToolRegistry
     public function __construct(
         private readonly ClientTools $clientTools,
         private readonly OwnerTools $ownerTools,
-        private readonly Retriever $retriever,
+        private readonly RetrievalPipeline $retriever,
     ) {}
 
     /** Roles the assistant has been built for. Admin tooling is not written yet. */
@@ -101,7 +101,7 @@ class ToolRegistry
     }
 
     /**
-     * Retrieval is scoped by Retriever using the authenticated user, so a
+     * Retrieval is scoped by RetrievalPipeline using the authenticated user, so a
      * passage belonging to another account cannot come back however the query
      * is phrased. The model supplies only the words to search for.
      *

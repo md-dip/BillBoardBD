@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\Shared\Rag\DocumentBuilders;
+namespace Rag\Ingestion\DocumentBuilders;
 
 use App\Models\Payout;
-use App\Services\Shared\Rag\DocumentDraft;
+use Rag\Ingestion\DocumentDraft;
 
 /**
  * Money the platform has actually sent an owner. Owner-only, pinned to the
