@@ -5,7 +5,7 @@ namespace Rag\Ingestion\DocumentBuilders;
 use Rag\Ingestion\DocumentDraft;
 
 /**
- * The hand-written policy corpus in resources/policy/*.md - the only part of
+ * The hand-written policy corpus in rag/policy/*.md - the only part of
  * the knowledge base that is prose rather than a rendered row.
  *
  * Audience comes from the filename: client-*.md is retrievable only by clients,

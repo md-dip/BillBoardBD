@@ -33,7 +33,7 @@ class ProofOfPostingController extends Controller
         $booking->user->notify(new BookingStatusNotification(
             $booking,
             'Your campaign is live',
-            "Your campaign on \"{$booking->billboard?->title}\" is now live. View the installation proof in My Bookings.",
+            "Your campaign on \"{$booking->billboard?->title}\" is now live. Installation has been verified by our admin team - you're welcome to visit the site and check the quality yourself, and we'd love to hear your feedback.",
         ));
 
         if ($owner = $booking->billboard?->owner) {

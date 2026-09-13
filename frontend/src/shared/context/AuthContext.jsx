@@ -1,3 +1,5 @@
+// This is React's mechanism for sharing "who is logged in" across the entire app
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import api from '../api/axios';
 import { clearToken, discardLegacyToken, readToken, writeToken } from '../api/tokenStore';

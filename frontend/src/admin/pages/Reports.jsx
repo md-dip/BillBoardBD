@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Pie, PieChart, ResponsiveContainer, Sector, Tooltip, XAxis, YAxis } from 'recharts';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
@@ -130,11 +130,14 @@ export default function AdminReports() {
               <div className="admin-reports-inventory-chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={typeShare} dataKey="value" nameKey="name" outerRadius={100} label>
-                      {typeShare.map((_, i) => (
-                        <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                      ))}
-                    </Pie>
+                    <Pie
+                      data={typeShare}
+                      dataKey="value"
+                      nameKey="name"
+                      outerRadius={100}
+                      label
+                      shape={(props) => <Sector {...props} fill={COLORS[props.index % COLORS.length]} />}
+                    />
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>

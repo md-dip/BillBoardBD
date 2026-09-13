@@ -61,7 +61,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(PolicyDocumentBuilder::class, fn () => new PolicyDocumentBuilder(
-            resource_path((string) config('rag.ingestion.policy_path')),
+            base_path((string) config('rag.ingestion.policy_path')),
             (int) config('rag.ingestion.chunk_chars'),
         ));
 
