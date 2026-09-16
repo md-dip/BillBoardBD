@@ -74,8 +74,11 @@ return [
         // each and are never split.
         'chunk_chars' => 1200,
 
-        // Where the hand-written policy corpus lives.
-        'policy_path' => 'policy',
+        // Where the hand-written policy corpus lives, relative to the app base
+        // path. Kept beside the rest of the RAG pipeline (rag/) rather than
+        // under resources/, since it is corpus data for this system, not a
+        // Blade/asset resource.
+        'policy_path' => 'rag/policy',
 
         // How many months of per-board earnings summaries to keep indexed.
         'board_month_history' => 24,

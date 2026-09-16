@@ -36,11 +36,17 @@ export function getBillboardIcon(billboard) {
   const color = markerColor(billboard);
   const svg = `
     <svg width="30" height="38" viewBox="0 0 30 38" xmlns="http://www.w3.org/2000/svg">
+      <!-- shadow: soft oval on the ground, drawn first so it sits behind the pole/board -->
       <ellipse cx="15" cy="35" rx="6" ry="2" fill="rgba(0,0,0,0.28)" />
+      <!-- pole: thin grey bar holding the board up -->
       <rect x="13.5" y="17" width="3" height="17" fill="#5b5b5b" />
+      <!-- board: the colored sign itself, color comes from markerColor(billboard) -->
       <rect x="1" y="1" width="28" height="17" rx="2" fill="${color}" stroke="#fff" stroke-width="1.6" />
+      <!-- stripe 1: middle horizontal line across the board -->
       <line x1="5" y1="9.5" x2="25" y2="9.5" stroke="#fff" stroke-width="1.4" stroke-opacity="0.85" />
+      <!-- stripe 2: top horizontal line, shorter, gives an uneven sign-panel look -->
       <line x1="5" y1="5.5" x2="18" y2="5.5" stroke="#fff" stroke-width="1.4" stroke-opacity="0.6" />
+      <!-- stripe 3: bottom horizontal line, also shorter than the middle one -->
       <line x1="5" y1="13.5" x2="21" y2="13.5" stroke="#fff" stroke-width="1.4" stroke-opacity="0.6" />
     </svg>
   `;
