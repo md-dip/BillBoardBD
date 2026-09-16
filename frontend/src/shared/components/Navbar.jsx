@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import './Navbar.css';
 
 // The default navbar shown to anonymous (logged-out) visitors. Once someone
@@ -6,6 +8,8 @@ import './Navbar.css';
 // client/components/Navbar.jsx for the client role) - this file stays purely
 // the logged-out case, it doesn't need to know about any actor.
 export default function Navbar() {
+    const [open, setOpen] = useState(false);
+
     return (
         <nav className="navbar">
             <Link to="/" className="logo">
@@ -18,15 +22,27 @@ export default function Navbar() {
                 <span className="logo-text">Billboard<span className="logo-accent">BD</span></span>
             </Link>
 
-            <div className="nav-links">
-                <NavLink to="/" end>Home</NavLink>
-                <NavLink to="/billboards">Find Billboards</NavLink>
-                <NavLink to="/how-it-works">How it works</NavLink>
-            </div>
+            <button
+                type="button"
+                className="navbar-toggle"
+                aria-label={open ? 'Close menu' : 'Open menu'}
+                aria-expanded={open}
+                onClick={() => setOpen((o) => !o)}
+            >
+                {open ? <X size={22} /> : <Menu size={22} />}
+            </button>
 
-            <div className="nav-actions">
-                <Link to="/login" className="log-in-link">Log in</Link>
-                <Link to="/register" className="sign-up-btn">Sign up</Link>
+            <div className={`navbar-menu${open ? ' navbar-menu-open' : ''}`} onClick={() => setOpen(false)}>
+                <div className="nav-links">
+                    <NavLink to="/" end>Home</NavLink>
+                    <NavLink to="/billboards">Find Billboards</NavLink>
+                    <NavLink to="/how-it-works">How it works</NavLink>
+                </div>
+
+                <div className="nav-actions">
+                    <Link to="/login" className="log-in-link">Log in</Link>
+                    <Link to="/register" className="sign-up-btn">Sign up</Link>
+                </div>
             </div>
         </nav>
     );

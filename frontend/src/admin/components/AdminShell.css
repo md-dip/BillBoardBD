@@ -159,19 +159,45 @@
 .admin-title {
   font-size: 20px;
   font-weight: 700;
+  /* Truncates instead of pushing the bell out of the header on a page
+     with a long title at a narrow width - min-width:0 is required for
+     a flex child to shrink below its content's natural width at all */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .admin-content {
   flex: 1;
   padding: 24px;
 }
 
-/* Pushes the notification bell to the far right of the header */
+/* Pushes the notification bell to the far right of the header. Never
+   shrinks - the bell must never be the thing that gives up space when
+   the header gets tight, the title truncates first. */
 .admin-header-actions {
   margin-left: auto;
+  flex-shrink: 0;
 }
 
-/* Collapse the sidebar to icon-only on narrow screens */
+/* Collapse the sidebar to icon-only on narrow screens. The footer stays
+   visible (unlike a plain display:none) so Logout and the Site link -
+   the only way back out to the live site from in here - are still
+   reachable; only the now-redundant "Signed in as ..." text and the
+   Site link's own label go, following the same icon-only pattern the
+   nav links above already use. */
 @media (max-width: 768px) {
   .admin-sidebar { width: 60px; }
-  .admin-brand span, .admin-nav-link span, .admin-sidebar-footer { display: none; }
+  .admin-brand span, .admin-nav-link span { display: none; }
+  .admin-signed-in-label, .admin-signed-in-name { display: none; }
+  .admin-sidebar-footer { padding: 8px; }
+  .admin-footer-actions { flex-direction: column; }
+  .admin-site-link { flex: none; }
+  .admin-site-link span { display: none; }
+}
+
+/* Tighten content padding on phones - the icon-rail sidebar already eats
+   60px, so the flat 24px padding above leaves very little room left */
+@media (max-width: 480px) {
+  .admin-content { padding: 16px; }
 }

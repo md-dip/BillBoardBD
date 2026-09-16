@@ -358,4 +358,33 @@
 /* Stack the add/edit form's field grids on narrow screens */
 @media (max-width: 768px) {
     .billboards-form-grid-2, .billboards-form-grid-3 { grid-template-columns: 1fr; }
+
+    /* Table is too wide to reflow - scroll it horizontally inside its card
+       instead, rather than squeezing columns illegibly. .billboards-card is
+       reused for the form above too, but overflow-x:auto is a no-op there
+       since that card never overflows. The Actions column is pinned to the
+       right edge with position:sticky so the Edit button stays reachable
+       without the user having to discover/perform the scroll first. */
+    .billboards-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    .billboards-card::-webkit-scrollbar { height: 8px; }
+    .billboards-card::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .billboards-card::-webkit-scrollbar-track { background: #f1f5f9; }
+
+    .billboards-table {
+        min-width: 720px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .billboards-table th.text-right,
+    .billboards-table td.text-right {
+        position: sticky;
+        right: 0;
+        background: #ffffff;
+        box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.2);
+    }
+    .billboards-table thead th.text-right { background: #f8fafc; }
 }

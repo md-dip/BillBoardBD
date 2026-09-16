@@ -214,6 +214,16 @@
     .owner-payout-receipt-meta { text-align: left; }
     .owner-payout-receipt-parties { grid-template-columns: 1fr; }
     .owner-payout-receipt-account-grid { grid-template-columns: 1fr; }
+
+    /* Table is too wide to reflow - scroll it horizontally instead of
+       squeezing columns illegibly */
+    .owner-payout-receipt-lines-wrap {
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+    .owner-payout-receipt-lines-wrap::-webkit-scrollbar { height: 8px; }
+    .owner-payout-receipt-lines-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .owner-payout-receipt-lines { min-width: 520px; }
 }
 
 /* Print: show only the document, drop the page chrome (navbar/footer/topbar). */

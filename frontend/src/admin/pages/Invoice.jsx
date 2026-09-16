@@ -88,6 +88,7 @@ export default function AdminInvoice() {
                     </div>
 
                     <div className="admin-invoice-section-label">Campaign details</div>
+                    <div className="admin-invoice-lines-wrap">
                     <table className="admin-invoice-lines">
                         <thead>
                             <tr>
@@ -125,8 +126,10 @@ export default function AdminInvoice() {
                             </tr>
                         </tfoot>
                     </table>
+                    </div>
 
                     <div className="admin-invoice-section-label">Payment history</div>
+                    <div className="admin-invoice-payments-wrap">
                     <table className="admin-invoice-payments">
                         <thead>
                             <tr>
@@ -160,6 +163,7 @@ export default function AdminInvoice() {
                             </tr>
                         </tfoot>
                     </table>
+                    </div>
 
                     <div className="admin-invoice-footer-note">
                         Internal copy - includes the platform commission and payable-to-owner split, which the client&apos;s

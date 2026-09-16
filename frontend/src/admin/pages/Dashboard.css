@@ -259,6 +259,9 @@
 @media (max-width: 560px) {
     .admin-dashboard-kpi-grid { grid-template-columns: minmax(0, 1fr); }
 }
+@media (max-width: 480px) {
+    .admin-dashboard-booking-pipeline-mini-stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
 
 /* ============================================================
    Drill-down affordance on the two money tiles. The link is only a

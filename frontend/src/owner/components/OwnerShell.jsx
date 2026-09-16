@@ -55,7 +55,7 @@ export default function OwnerShell({ children, title }) {
           <div className="owner-signed-in-name">{user?.name || 'Owner'}</div>
           <div className="owner-footer-actions">
             <Link to="/" className="owner-site-link">
-              <Home size={14} /> Site
+              <Home size={14} /> <span>Site</span>
             </Link>
             <button type="button" className="owner-logout-btn" onClick={logout}>
               <LogOut size={14} />

@@ -355,3 +355,39 @@
     display: block;
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
 }
+
+/* ---- Phone/tablet: stack list above map instead of side-by-side ----
+   The fixed-viewport, two-independently-scrolling-panels layout above
+   works well with a mouse, but nested scroll areas are an easy way to
+   "grab" the wrong thing on a touch screen - so below 768px the page
+   scrolls naturally instead, with the map given a flat px height rather
+   than vh (mobile browser chrome show/hide would otherwise make a vh-sized
+   map visibly resize mid-scroll). List stays first in both DOM and view
+   order, since the filters/search are what a phone user needs first.
+   Leaflet's own InvalidateOnMount (FindBillboards.jsx) already listens for
+   `resize`, which this breakpoint change triggers automatically. */
+@media (max-width: 768px) {
+    .find-page {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        height: auto;
+        min-height: calc(100vh - 64px);
+        overflow: visible;
+    }
+
+    .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #e5e5e5;
+        overflow-y: visible;
+    }
+
+    .map-wrapper {
+        height: 340px;
+    }
+}
+
+@media (max-width: 480px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+}

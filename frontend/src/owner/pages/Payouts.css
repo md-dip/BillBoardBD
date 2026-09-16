@@ -271,4 +271,33 @@
 @media (max-width: 768px) {
     .payouts-form-grid { grid-template-columns: 1fr; }
     .payouts-details-grid { grid-template-columns: 1fr; }
+
+    /* Table is too wide to reflow - scroll it horizontally inside its card
+       instead, rather than squeezing columns illegibly. .payouts-card is
+       reused for the form cards below too, but overflow-x:auto is a no-op
+       there since those cards never overflow. The Receipt link column is
+       pinned to the right edge with position:sticky so it stays reachable
+       without the user having to discover/perform the scroll first. */
+    .payouts-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    .payouts-card::-webkit-scrollbar { height: 8px; }
+    .payouts-card::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .payouts-card::-webkit-scrollbar-track { background: #f1f5f9; }
+
+    .payouts-table {
+        min-width: 560px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .payouts-table thead th:last-child,
+    .payouts-table td.payouts-receipt-cell {
+        position: sticky;
+        right: 0;
+        background: #ffffff;
+        box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.2);
+    }
+    .payouts-table thead th:last-child { background: #f8fafc; }
 }

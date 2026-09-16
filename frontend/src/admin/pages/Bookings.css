@@ -21,6 +21,25 @@
     margin-bottom: 16px;
     flex-wrap: wrap;
 }
+
+/* On narrower screens, a single scrollable row instead of wrapping - with
+   8 tabs, a wrapped 2nd/3rd row of pill buttons is easy to misread as "the
+   rest of the tabs are gone" since nothing marks where row 1 ends and row
+   2 begins. A scrollable strip makes it unambiguous that there's more. */
+@media (max-width: 768px) {
+    .admin-bookings-tabs-list {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    .admin-bookings-tabs-list::-webkit-scrollbar { height: 6px; }
+    .admin-bookings-tabs-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .admin-bookings-tab-trigger {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+}
 .admin-bookings-tab-trigger {
     padding: 10px 16px;
     background: transparent;
@@ -379,3 +398,39 @@
     text-decoration: none;
 }
 .admin-bookings-invoice-link:hover { text-decoration: underline; }
+
+/* Table is too wide to reflow - scroll it horizontally inside its card
+   instead, rather than squeezing columns illegibly. The Actions column
+   is pinned to the right edge with position:sticky so the buttons stay
+   reachable without the user having to discover/perform the scroll
+   first - relying on scrolling alone to reach the only actionable
+   buttons on the row is not good enough on a phone. */
+@media (max-width: 768px) {
+    .admin-bookings-table-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        /* Always-visible scrollbar (not an auto-hiding overlay one) so
+           the fact that this table scrolls is obvious, not just implied */
+        scrollbar-width: thin;
+    }
+    .admin-bookings-table-card::-webkit-scrollbar { height: 8px; }
+    .admin-bookings-table-card::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .admin-bookings-table-card::-webkit-scrollbar-track { background: #f1f5f9; }
+
+    .admin-bookings-table {
+        min-width: 720px;
+        /* position:sticky on td/th does not work under border-collapse:
+           collapse in any browser - separate is required for the pinned
+           Actions column below to actually stick */
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .admin-bookings-table th.admin-bookings-text-right,
+    .admin-bookings-table td.admin-bookings-text-right {
+        position: sticky;
+        right: 0;
+        background: #ffffff;
+        box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.2);
+    }
+    .admin-bookings-table thead th.admin-bookings-text-right { background: #f8fafc; }
+}

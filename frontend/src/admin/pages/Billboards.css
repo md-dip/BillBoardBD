@@ -566,4 +566,32 @@
     .admin-billboards-form-grid-2, .admin-billboards-form-grid-3 { grid-template-columns: 1fr; }
     .admin-billboards-request-card { flex-direction: column; }
     .admin-billboards-request-actions { width: 100%; }
+
+    /* Table is too wide to reflow - scroll it horizontally inside its card
+       instead, rather than squeezing columns illegibly. The Actions column
+       is pinned to the right edge with position:sticky so its buttons stay
+       reachable without the user having to discover/perform the scroll
+       first. */
+    .admin-billboards-table-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    .admin-billboards-table-card::-webkit-scrollbar { height: 8px; }
+    .admin-billboards-table-card::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .admin-billboards-table-card::-webkit-scrollbar-track { background: #f1f5f9; }
+
+    .admin-billboards-table {
+        min-width: 720px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .admin-billboards-table th.admin-billboards-text-right,
+    .admin-billboards-table td.admin-billboards-text-right {
+        position: sticky;
+        right: 0;
+        background: #ffffff;
+        box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.2);
+    }
+    .admin-billboards-table thead th.admin-billboards-text-right { background: #f8fafc; }
 }

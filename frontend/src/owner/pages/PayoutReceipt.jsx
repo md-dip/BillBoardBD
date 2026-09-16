@@ -146,6 +146,7 @@ export default function OwnerPayoutReceipt() {
                         )}
 
                         <div className="owner-payout-receipt-section-label">Settled bookings</div>
+                        <div className="owner-payout-receipt-lines-wrap">
                         <table className="owner-payout-receipt-lines">
                             <thead>
                                 <tr>
@@ -190,6 +191,7 @@ export default function OwnerPayoutReceipt() {
                                 </tr>
                             </tfoot>
                         </table>
+                        </div>
 
                         {!receipt.totals.amount_matches_lines && (
                             <div className="owner-payout-receipt-note">

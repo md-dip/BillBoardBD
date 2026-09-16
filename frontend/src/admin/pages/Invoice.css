@@ -182,6 +182,17 @@
     .admin-invoice-doc-head { flex-direction: column; }
     .admin-invoice-meta { text-align: left; }
     .admin-invoice-parties { grid-template-columns: 1fr; }
+
+    /* Both tables are too wide to reflow - scroll them horizontally
+       instead of squeezing columns illegibly */
+    .admin-invoice-lines-wrap, .admin-invoice-payments-wrap {
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+    .admin-invoice-lines-wrap::-webkit-scrollbar, .admin-invoice-payments-wrap::-webkit-scrollbar { height: 8px; }
+    .admin-invoice-lines-wrap::-webkit-scrollbar-thumb, .admin-invoice-payments-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .admin-invoice-lines { min-width: 460px; }
+    .admin-invoice-payments { min-width: 480px; }
 }
 
 /* Print: show only the document, drop the admin shell + topbar. */

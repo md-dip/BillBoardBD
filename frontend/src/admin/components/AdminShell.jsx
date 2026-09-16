@@ -56,7 +56,7 @@ export default function AdminShell({ children, title }) {
           <div className="admin-signed-in-name">{user?.name || 'Admin'}</div>
           <div className="admin-footer-actions">
             <Link to="/" className="admin-site-link">
-              <Home size={14} /> Site
+              <Home size={14} /> <span>Site</span>
             </Link>
             <button type="button" className="admin-logout-btn" onClick={logout}>
               <LogOut size={14} />

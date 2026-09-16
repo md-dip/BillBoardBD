@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { LogOut } from 'lucide-react';
+import { LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '../../shared/context/AuthContext';
 import NotificationBell from '../../shared/components/NotificationBell';
 import './Navbar.css';
@@ -10,6 +11,7 @@ import './Navbar.css';
 // state; it can just assume a client user exists.
 export default function Navbar() {
     const { user, logout } = useAuth();
+    const [open, setOpen] = useState(false);
 
     async function handleLogout() {
         await logout();
@@ -27,19 +29,31 @@ export default function Navbar() {
                 <span className="logo-text">Billboard<span className="logo-accent">BD</span></span>
             </Link>
 
-            <div className="nav-links">
-                <NavLink to="/" end>Home</NavLink>
-                <NavLink to="/billboards">Find Billboards</NavLink>
-                <NavLink to="/how-it-works">How it works</NavLink>
-            </div>
+            <button
+                type="button"
+                className="navbar-toggle"
+                aria-label={open ? 'Close menu' : 'Open menu'}
+                aria-expanded={open}
+                onClick={() => setOpen((o) => !o)}
+            >
+                {open ? <X size={22} /> : <Menu size={22} />}
+            </button>
 
-            <div className="nav-actions">
-                <Link to="/dashboard" className="my-bookings-btn">My bookings</Link>
-                <span className="nav-user">{user?.name.split(' ').slice(0, 2).join(' ')}</span>
-                <NotificationBell />
-                <button className="nav-icon-btn" onClick={handleLogout} aria-label="Log out" title="Log out">
-                    <LogOut size={16} />
-                </button>
+            <div className={`navbar-menu${open ? ' navbar-menu-open' : ''}`} onClick={() => setOpen(false)}>
+                <div className="nav-links">
+                    <NavLink to="/" end>Home</NavLink>
+                    <NavLink to="/billboards">Find Billboards</NavLink>
+                    <NavLink to="/how-it-works">How it works</NavLink>
+                </div>
+
+                <div className="nav-actions">
+                    <Link to="/dashboard" className="my-bookings-btn">My bookings</Link>
+                    <span className="nav-user">{user?.name.split(' ').slice(0, 2).join(' ')}</span>
+                    <NotificationBell />
+                    <button className="nav-icon-btn" onClick={handleLogout} aria-label="Log out" title="Log out">
+                        <LogOut size={16} />
+                    </button>
+                </div>
             </div>
         </nav>
     );

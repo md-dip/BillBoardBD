@@ -34,6 +34,14 @@
     }
 }
 
+/* Stack the two date inputs on phones - still too narrow for 2 columns
+   even once the card itself has the full content width */
+@media (max-width: 480px) {
+    .booking-dates {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Big price line at the top of the card */
 .booking-price {
     font-size: 28px;

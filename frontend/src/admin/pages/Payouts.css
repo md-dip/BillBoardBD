@@ -246,3 +246,40 @@
     transition: background 0.15s;
 }
 .admin-payouts-receipt-link:hover { background: #f1f5f9; }
+
+/* Both tables are too wide to reflow - scroll them horizontally inside
+   their cards instead, rather than squeezing columns illegibly. The
+   outstanding table's Action column is pinned to the right edge with
+   position:sticky so its "Record balance" buttons stay reachable
+   without the user having to discover/perform the scroll first - the
+   history table is read-only so it only needs the scroll. */
+@media (max-width: 768px) {
+    .admin-payouts-outstanding-table-card,
+    .admin-payouts-history-table-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    .admin-payouts-outstanding-table-card::-webkit-scrollbar,
+    .admin-payouts-history-table-card::-webkit-scrollbar { height: 8px; }
+    .admin-payouts-outstanding-table-card::-webkit-scrollbar-thumb,
+    .admin-payouts-history-table-card::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .admin-payouts-outstanding-table-card::-webkit-scrollbar-track,
+    .admin-payouts-history-table-card::-webkit-scrollbar-track { background: #f1f5f9; }
+
+    .admin-payouts-outstanding-table {
+        min-width: 560px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .admin-payouts-outstanding-table th.admin-payouts-text-right,
+    .admin-payouts-outstanding-table td.admin-payouts-text-right {
+        position: sticky;
+        right: 0;
+        background: #ffffff;
+        box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.2);
+    }
+    .admin-payouts-outstanding-table thead th.admin-payouts-text-right { background: #f8fafc; }
+
+    .admin-payouts-history-table { min-width: 640px; }
+}

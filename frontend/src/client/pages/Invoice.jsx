@@ -92,6 +92,7 @@ export default function Invoice() {
                         </div>
 
                         <div className="client-invoice-section-label">Campaign details</div>
+                        <div className="client-invoice-lines-wrap">
                         <table className="client-invoice-lines">
                             <thead>
                                 <tr>
@@ -121,8 +122,10 @@ export default function Invoice() {
                                 </tr>
                             </tfoot>
                         </table>
+                        </div>
 
                         <div className="client-invoice-section-label">Payment history</div>
+                        <div className="client-invoice-payments-wrap">
                         <table className="client-invoice-payments">
                             <thead>
                                 <tr>
@@ -156,6 +159,7 @@ export default function Invoice() {
                                 </tr>
                             </tfoot>
                         </table>
+                        </div>
 
                         {invoice.kind === 'advance' && invoice.balance_due > 0 && (
                             <div className="client-invoice-note">

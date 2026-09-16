@@ -201,6 +201,17 @@
     .client-invoice-doc-head { flex-direction: column; }
     .client-invoice-meta { text-align: left; }
     .client-invoice-parties { grid-template-columns: 1fr; }
+
+    /* Both tables are too wide to reflow - scroll them horizontally
+       instead of squeezing columns illegibly */
+    .client-invoice-lines-wrap, .client-invoice-payments-wrap {
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+    .client-invoice-lines-wrap::-webkit-scrollbar, .client-invoice-payments-wrap::-webkit-scrollbar { height: 8px; }
+    .client-invoice-lines-wrap::-webkit-scrollbar-thumb, .client-invoice-payments-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .client-invoice-lines { min-width: 460px; }
+    .client-invoice-payments { min-width: 480px; }
 }
 
 /* Print: show only the document, drop the page chrome (navbar/footer/topbar). */

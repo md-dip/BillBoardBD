@@ -158,4 +158,16 @@
 /* Stack the summary cards on narrow screens */
 @media (max-width: 768px) {
     .admin-permits-kpi-grid { grid-template-columns: 1fr; }
+
+    /* Table is too wide to reflow - scroll it horizontally inside its card
+       instead, rather than squeezing columns illegibly */
+    .admin-permits-table-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    .admin-permits-table-card::-webkit-scrollbar { height: 8px; }
+    .admin-permits-table-card::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .admin-permits-table-card::-webkit-scrollbar-track { background: #f1f5f9; }
+    .admin-permits-table { min-width: 600px; }
 }
