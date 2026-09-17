@@ -18,7 +18,7 @@ export default function Navbar() {
     }
 
     return (
-        <nav className="navbar">
+        <nav className="navbar client-navbar">
             <Link to="/" className="logo">
                 <span className="logo-mark">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -29,15 +29,22 @@ export default function Navbar() {
                 <span className="logo-text">Billboard<span className="logo-accent">BD</span></span>
             </Link>
 
-            <button
-                type="button"
-                className="navbar-toggle"
-                aria-label={open ? 'Close menu' : 'Open menu'}
-                aria-expanded={open}
-                onClick={() => setOpen((o) => !o)}
-            >
-                {open ? <X size={22} /> : <Menu size={22} />}
-            </button>
+            {/* Always visible, at every width - deliberately NOT inside .navbar-menu,
+                since that collapses behind the hamburger on mobile and closes itself
+                on any inside click (including a tap on the bell, which made its own
+                dropdown open and immediately get hidden by the menu closing under it). */}
+            <div className="navbar-persistent-actions">
+                <NotificationBell />
+                <button
+                    type="button"
+                    className="navbar-toggle"
+                    aria-label={open ? 'Close menu' : 'Open menu'}
+                    aria-expanded={open}
+                    onClick={() => setOpen((o) => !o)}
+                >
+                    {open ? <X size={22} /> : <Menu size={22} />}
+                </button>
+            </div>
 
             <div className={`navbar-menu${open ? ' navbar-menu-open' : ''}`} onClick={() => setOpen(false)}>
                 <div className="nav-links">
@@ -49,7 +56,6 @@ export default function Navbar() {
                 <div className="nav-actions">
                     <Link to="/dashboard" className="my-bookings-btn">My bookings</Link>
                     <span className="nav-user">{user?.name.split(' ').slice(0, 2).join(' ')}</span>
-                    <NotificationBell />
                     <button className="nav-icon-btn" onClick={handleLogout} aria-label="Log out" title="Log out">
                         <LogOut size={16} />
                     </button>

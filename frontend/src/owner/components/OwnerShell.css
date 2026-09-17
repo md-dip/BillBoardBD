@@ -132,6 +132,14 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  /* Without this, a flex item's default min-width is "auto" - at least as
+     wide as whatever its widest descendant demands. One page with a wide
+     table or a nowrap row can then force this whole column wider than the
+     viewport, dragging the header (and the notification bell inside it)
+     off-screen with it even though neither has anything to do with that
+     page's content. This is what actually lets .owner-content shrink to
+     fit a narrow screen at all. */
+  min-width: 0;
 }
 .owner-header {
   position: sticky;
@@ -159,6 +167,7 @@
 .owner-content {
   flex: 1;
   padding: 24px;
+  min-width: 0;
 }
 
 /* Pushes the notification bell to the far right of the header. Never

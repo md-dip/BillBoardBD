@@ -32,6 +32,14 @@
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: thin;
+        /* The real fix: a flex container's default min-width is "auto",
+           which for a row of flex-shrink:0 children means "at least as
+           wide as all of them combined" - that demand overrides
+           overflow-x:auto and cascades into every ancestor flex item
+           up through AdminShell, which is what was pushing the header's
+           bell off-screen too. min-width:0 lets this box actually
+           become narrower than its content, so overflow-x can do its job. */
+        min-width: 0;
     }
     .admin-bookings-tabs-list::-webkit-scrollbar { height: 6px; }
     .admin-bookings-tabs-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }

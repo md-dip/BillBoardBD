@@ -99,11 +99,21 @@
 .notification-bell-item-body { font-size: 12.5px; color: #64748b; margin-top: 2px; line-height: 1.4; }
 .notification-bell-item-time { font-size: 11px; color: #94a3b8; margin-top: 4px; }
 
-/* Phone: the flat 340px width can overflow a narrow viewport - same
-   calc(100vw - Npx) idiom AssistantPanel.css already uses for its panel */
-@media (max-width: 480px) {
+/* Tablet/phone: anchor to the viewport instead of the bell's own wrapper.
+   Positioning relative to the wrapper (the default above) assumes the bell
+   sits at the true right edge of its row, which is true in AdminShell's and
+   OwnerShell's header but NOT in the client Navbar, where the bell shares
+   .navbar-persistent-actions with the hamburger toggle sitting just to its
+   right - anchoring "right: -8px" off the wrapper there pushed the dropdown
+   36px past the left edge of the screen instead of centering it under the
+   bell. Fixed positioning relative to the viewport works correctly for
+   every consumer regardless of where the bell itself ends up sitting. */
+@media (max-width: 768px) {
     .notification-bell-dropdown {
-        width: calc(100vw - 32px);
-        right: -8px;
+        position: fixed;
+        top: 72px;
+        left: 16px;
+        right: 16px;
+        width: auto;
     }
 }

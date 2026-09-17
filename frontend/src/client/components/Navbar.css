@@ -9,6 +9,24 @@
     padding: 12px max(32px, calc((100% - 1200px) / 2));
 }
 
+/* Sticky, client only - .client-navbar is a class unique to this file's
+   <nav>, not just ".navbar" (shared/owner/admin Navbar.css each define
+   that same bare class too, and this app bundles all CSS into one
+   stylesheet with no code-splitting - a bare ".navbar { position: sticky }"
+   here would win the cascade for every actor's navbar, not just this
+   one, since they'd all still just be the last-loaded ".navbar" rule).
+   Keeps this page's navbar reachable while scrolling Home / How it works
+   / My bookings instead of it scrolling away with the content - same
+   pattern AdminShell/OwnerShell's own header already uses. z-index:10
+   matches theirs too: above normal page content, below the notification
+   dropdown (200) and the assistant panel (1200) so neither ever renders
+   underneath it. */
+.client-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
 /* "BillboardBD" logo link: icon + text side by side */
 .navbar .logo {
     display: flex;
@@ -122,14 +140,37 @@
 }
 
 /* Wrapper around nav-links + nav-actions. A plain flex row continuing
-   .navbar's own row on desktop (nav-actions' margin-left:auto still pushes
-   against this box's own right edge, which is flush with .navbar's since
-   this is flex:1) - only becomes a stacked dropdown below 768px. */
+   .navbar's own row on desktop - only becomes a stacked dropdown below
+   768px. order:1 (vs. .navbar-persistent-actions' order:2) keeps it
+   visually before the bell/hamburger group on desktop even though the
+   bell needs to come first in DOM order to stay pinned on mobile - see
+   that rule's own comment. */
 .navbar-menu {
     display: flex;
     align-items: center;
     flex: 1;
     min-width: 0;
+    order: 1;
+}
+
+/* Bell + hamburger toggle, grouped so both can be pushed to the far right
+   together with one margin-left:auto. Always rendered, at every width -
+   never lives inside .navbar-menu, so it's never hidden behind the
+   hamburger and never affected by .navbar-menu's click-to-close handler.
+   order:2 puts it after .navbar-menu on desktop (matching where the bell
+   used to sit, among the logged-in actions) even though it comes BEFORE
+   .navbar-menu in DOM order - that DOM position is what matters on
+   mobile: .navbar is a wrapping flex row there, and order affects which
+   row wraps first, so being before the flex-basis:100% menu is what
+   keeps this group pinned to row 1 whether the menu is open or closed.
+   The mobile media query below resets order to the default (0) so DOM
+   order takes back over at that width. */
+.navbar-persistent-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    order: 2;
 }
 
 /* Hamburger toggle - hidden on desktop, shown at the mobile breakpoint below */
@@ -144,7 +185,6 @@
     background: transparent;
     color: #1d1d1f;
     cursor: pointer;
-    margin-left: auto;
 }
 
 /* Phone/tablet: collapse nav-links + nav-actions behind the hamburger toggle */
@@ -157,6 +197,13 @@
 
     .navbar-toggle {
         display: inline-flex;
+    }
+
+    /* Back to plain DOM order at this width - see .navbar-persistent-actions'
+       comment above for why that's what keeps it pinned to row 1. */
+    .navbar-menu,
+    .navbar-persistent-actions {
+        order: 0;
     }
 
     .navbar-menu {
@@ -199,8 +246,7 @@
         border-top: 1px solid #f0f0f0;
     }
 
-    /* Bell + logout icon buttons stay compact rather than stretching full-width */
-    .nav-actions .notification-bell-wrap,
+    /* Logout icon button stays compact rather than stretching full-width */
     .nav-actions .nav-icon-btn {
         align-self: flex-start;
     }
