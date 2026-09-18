@@ -32,7 +32,7 @@ Thumbs.db
 # Generated image-gen prompts (regenerate with tools/genprompts locally)
 /billboard-image-prompts.md
 
-# Local design/analysis docs (activity diagrams etc. - not shipped with the app)
+# Local design/a (activity diagrams etc. - not shipped with the app)
 /docs/
 
 # Practicum report draft (personal document, not part of the app)
