@@ -1,0 +1,212 @@
+/* ============================================================
+   Owner invoice page (/owner/bookings/:bookingId/invoice) - the owner's
+   copy of a booking's invoice: same document the admin sees, including
+   the platform-commission and payable-to-owner split, since that split
+   is the owner's own payout for this booking. Fully self-contained:
+   every class is prefixed .owner-invoice-*.
+   ============================================================ */
+
+.owner-invoice-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+.owner-invoice-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.owner-invoice-back-link:hover { text-decoration: underline; }
+.owner-invoice-print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.88rem;
+    color: #334155;
+    cursor: pointer;
+}
+.owner-invoice-print-btn:hover { background: #f8fafc; }
+
+.owner-invoice-status { color: #64748b; padding: 40px 0; text-align: center; }
+
+.owner-invoice-empty {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 40px 24px;
+    text-align: center;
+    color: #475569;
+}
+.owner-invoice-empty-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* ---- The printable document card ---- */
+.owner-invoice-doc {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 820px;
+}
+
+.owner-invoice-doc-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #eef2f7;
+}
+.owner-invoice-brand-name { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+.owner-invoice-brand-accent { color: #2563eb; }
+.owner-invoice-brand-line { font-size: 0.8rem; color: #64748b; line-height: 1.6; }
+.owner-invoice-meta { text-align: right; }
+.owner-invoice-meta-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+.owner-invoice-number { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 2px 0 6px; }
+.owner-invoice-meta-line { font-size: 0.8rem; color: #64748b; line-height: 1.6; }
+.owner-invoice-kind-pill {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 9px;
+    border-radius: 999px;
+}
+.owner-invoice-kind-pill-advance { background: #fef3c7; color: #92400e; }
+.owner-invoice-kind-pill-final { background: #dcfce7; color: #15803d; }
+
+.owner-invoice-parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 22px 0;
+    border-bottom: 1px solid #eef2f7;
+}
+.owner-invoice-party-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 6px;
+}
+.owner-invoice-party-name { font-weight: 600; color: #0f172a; font-size: 0.95rem; }
+.owner-invoice-party-line { font-size: 0.82rem; color: #64748b; line-height: 1.6; }
+
+.owner-invoice-section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin: 22px 0 8px;
+}
+
+.owner-invoice-lines,
+.owner-invoice-payments {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+}
+.owner-invoice-lines th,
+.owner-invoice-payments th {
+    text-align: left;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    padding: 8px 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.owner-invoice-lines td,
+.owner-invoice-payments td {
+    padding: 10px 8px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+}
+.owner-invoice-lines tfoot td,
+.owner-invoice-payments tfoot td {
+    border-bottom: none;
+    font-weight: 600;
+    color: #0f172a;
+    padding-top: 10px;
+}
+.owner-invoice-num { text-align: right; }
+.owner-invoice-method { text-transform: capitalize; }
+.owner-invoice-line-title { font-weight: 600; color: #0f172a; }
+.owner-invoice-line-sub { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; }
+
+/* The commission / payable-to-owner rows. */
+.owner-invoice-split-row td { color: #b91c1c; font-weight: 500; }
+.owner-invoice-owner-row td { color: #0f172a; }
+
+.owner-invoice-balance-row td {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.owner-invoice-footer-note {
+    margin-top: 26px;
+    padding-top: 18px;
+    border-top: 1px solid #eef2f7;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #94a3b8;
+}
+
+@media (max-width: 640px) {
+    .owner-invoice-doc { padding: 20px; }
+    .owner-invoice-doc-head { flex-direction: column; }
+    .owner-invoice-meta { text-align: left; }
+    .owner-invoice-parties { grid-template-columns: 1fr; }
+
+    /* Both tables are too wide to reflow - scroll them horizontally
+       instead of squeezing columns illegibly */
+    .owner-invoice-lines-wrap, .owner-invoice-payments-wrap {
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+    .owner-invoice-lines-wrap::-webkit-scrollbar, .owner-invoice-payments-wrap::-webkit-scrollbar { height: 8px; }
+    .owner-invoice-lines-wrap::-webkit-scrollbar-thumb, .owner-invoice-payments-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .owner-invoice-lines { min-width: 460px; }
+    .owner-invoice-payments { min-width: 480px; }
+}
+
+/* Print: show only the document, drop the owner shell + topbar. */
+@media print {
+    body * { visibility: hidden; }
+    .owner-invoice-doc, .owner-invoice-doc * { visibility: visible; }
+    .owner-invoice-doc {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-width: none;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+    }
+}

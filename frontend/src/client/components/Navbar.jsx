@@ -56,7 +56,7 @@ export default function Navbar() {
                 <div className="nav-actions">
                     <Link to="/dashboard" className="my-bookings-btn">My bookings</Link>
                     <span className="nav-user">{user?.name.split(' ').slice(0, 2).join(' ')}</span>
-                    <button className="nav-icon-btn" onClick={handleLogout} aria-label="Log out" title="Log out">
+                    <button className="logout-btn" onClick={handleLogout} aria-label="Log out" title="Log out">
                         <LogOut size={16} />
                     </button>
                 </div>

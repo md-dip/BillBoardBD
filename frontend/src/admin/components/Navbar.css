@@ -100,7 +100,7 @@
 /* ---- Logout button ---- */
 
 /* Square ghost button used for the logout icon */
-.nav-icon-btn {
+.logout-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -114,7 +114,7 @@
     transition: background 0.15s, color 0.15s;
 }
 /* Hover state for the logout icon button */
-.nav-icon-btn:hover {
+.logout-btn:hover {
     background: #f1f5f9;
     color: #1d1d1f;
 }
@@ -198,7 +198,7 @@
     }
 
     .nav-actions .admin-badge-link,
-    .nav-actions .nav-icon-btn {
+    .nav-actions .logout-btn {
         align-self: flex-start;
     }
 }

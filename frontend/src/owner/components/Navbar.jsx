@@ -51,7 +51,7 @@ export default function Navbar() {
                         <LayoutDashboard size={14} /> Owner
                     </Link>
                     <span className="nav-user">{user?.name}</span>
-                    <button className="nav-icon-btn" onClick={handleLogout} aria-label="Log out" title="Log out">
+                    <button className="logout-btn" onClick={handleLogout} aria-label="Log out" title="Log out">
                         <LogOut size={16} />
                     </button>
                 </div>

@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Check, ChevronDown, ChevronUp, Upload, X } from 'lucide-react';
 import api from '../../shared/api/axios';
 import OwnerShell from '../components/OwnerShell';
@@ -153,7 +154,7 @@ export default function OwnerBookingRequests() {
                         <td>
                           <button
                             type="button"
-                            className="bookings-btn bookings-btn-ghost bookings-btn-icon"
+                            className="bookings-btn bookings-btn-ghost bookings-btn-icon bookings-toggle-details-btn"
                             onClick={() => setExpandedId(expanded ? null : bk.id)}
                           >
                             {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -174,6 +175,12 @@ export default function OwnerBookingRequests() {
                           ) : 'N/A'}
                         </td>
                         <td className="text-right">
+                          <div className="bookings-flex bookings-flex-gap-2 bookings-justify-end bookings-items-center">
+                          {bk.invoices?.length > 0 && (
+                            <Link to={`/owner/bookings/${bk.id}/invoice`} className="bookings-btn bookings-btn-outline bookings-btn-sm bookings-invoice-btn">
+                              Invoice
+                            </Link>
+                          )}
                           {activeTab === 'pending_owner_approval' ? (
                             rejectingId === bk.id ? (
                               <div className="bookings-flex bookings-flex-gap-2 bookings-justify-end bookings-items-center">
@@ -183,16 +190,16 @@ export default function OwnerBookingRequests() {
                                   value={reason}
                                   onChange={(e) => setReason(e.target.value)}
                                 />
-                                <button className="bookings-btn bookings-btn-primary bookings-btn-sm" onClick={() => submitReject(bk.id)}>Confirm</button>
-                                <button className="bookings-btn bookings-btn-outline bookings-btn-sm" onClick={() => setRejectingId(null)}>Cancel</button>
+                                <button className="bookings-btn bookings-btn-primary bookings-btn-sm bookings-confirm-reject-btn" onClick={() => submitReject(bk.id)}>Confirm</button>
+                                <button className="bookings-btn bookings-btn-outline bookings-btn-sm bookings-cancel-reject-btn" onClick={() => setRejectingId(null)}>Cancel</button>
                               </div>
                             ) : (
                               <div className="bookings-flex bookings-flex-gap-2 bookings-justify-end">
-                                <button className="bookings-btn bookings-btn-primary bookings-btn-sm" onClick={() => handleApprove(bk.id)}>
+                                <button className="bookings-btn bookings-btn-primary bookings-btn-sm bookings-accept-btn" onClick={() => handleApprove(bk.id)}>
                                   <Check size={14} /> Accept
                                 </button>
                                 <button
-                                  className="bookings-btn bookings-btn-outline bookings-btn-sm"
+                                  className="bookings-btn bookings-btn-outline bookings-btn-sm bookings-decline-btn"
                                   onClick={() => { setRejectingId(bk.id); setReason(''); }}
                                 >
                                   <X size={14} /> Decline
@@ -209,11 +216,11 @@ export default function OwnerBookingRequests() {
                                   className="bookings-proof-file-input"
                                   onChange={(e) => setPhotos(e.target.files)}
                                 />
-                                <button className="bookings-btn bookings-btn-primary bookings-btn-sm" onClick={() => submitProof(bk.id)}>Submit</button>
-                                <button className="bookings-btn bookings-btn-outline bookings-btn-sm" onClick={() => { setUploadingId(null); setPhotos(null); }}>Cancel</button>
+                                <button className="bookings-btn bookings-btn-primary bookings-btn-sm bookings-submit-proof-btn" onClick={() => submitProof(bk.id)}>Submit</button>
+                                <button className="bookings-btn bookings-btn-outline bookings-btn-sm bookings-cancel-upload-btn" onClick={() => { setUploadingId(null); setPhotos(null); }}>Cancel</button>
                               </div>
                             ) : (
-                              <button className="bookings-btn bookings-btn-primary bookings-btn-sm" onClick={() => setUploadingId(bk.id)}>
+                              <button className="bookings-btn bookings-btn-primary bookings-btn-sm bookings-upload-proof-btn" onClick={() => setUploadingId(bk.id)}>
                                 <Upload size={14} /> Upload proof
                               </button>
                             )
@@ -222,6 +229,7 @@ export default function OwnerBookingRequests() {
                           ) : (
                             <span className="row-sub">N/A</span>
                           )}
+                          </div>
                         </td>
                       </tr>
                       {expanded && (
