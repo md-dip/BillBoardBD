@@ -37,6 +37,8 @@ Thumbs.db
 
 # Practicum report draft (personal document, not part of the app)
 /BillboardBD_Practicum_Report_DRAFT.docx
+~$*.docx
+~$BllboardBD_Practicum_Report_DRAFT.docx
 
 # Test suite (kept local, not shipped with the repo)
 /tests/
