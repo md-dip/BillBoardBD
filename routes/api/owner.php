@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 // Owner routes - require Sanctum token AND role=owner
 Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner')->group(function () {
     // Billboard CRUD, scoped to the logged-in owner's own listings
-    Route::apiResource('billboards', OwnerBillboardController::class)->except(['show']);
+    Route::apiResource('billboards', OwnerBillboardController::class)->except(['show'])->names('owner.billboards');
 
     // One-time board listing fee - SSLCommerz checkout (callbacks are public, see api/public.php)
     Route::post('/listing-payments/{listingPayment}/checkout', [OwnerListingPaymentController::class, 'checkout']);

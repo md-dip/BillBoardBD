@@ -15,7 +15,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/ping', fn () => response()->json(['success' => true, 'data' => null, 'message' => 'admin ok']));
 
     // Billboard CRUD (index/store/update/destroy - no show, admin edits from the list)
-    Route::apiResource('billboards', AdminBillboardController::class)->except(['show']);
+    Route::apiResource('billboards', AdminBillboardController::class)->except(['show'])->names('admin.billboards');
 
     // Owner-submitted board listing review
     Route::patch('/billboards/{billboard}/approve', [AdminBillboardController::class, 'approve']);
