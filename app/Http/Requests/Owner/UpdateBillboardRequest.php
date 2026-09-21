@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Requests\Shared;
+namespace App\Http\Requests\Owner;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Admin-only despite the Shared namespace - only Admin\BillboardController uses
- * this. It's the one place `rating` is settable; Owner\BillboardController has
- * its own Owner\UpdateBillboardRequest (identical, minus `rating`) precisely so
- * an owner can never set their own board's rating. Don't point a new
- * owner-facing endpoint at this class without dropping that field first.
+ * An owner editing their own board. Same fields as Shared\UpdateBillboardRequest
+ * except `rating` - that stays admin-only (see Admin\BillboardController, still
+ * on Shared\UpdateBillboardRequest), the same "server-controlled" rule
+ * StoreBillboardListingRequest already applies at listing time.
  */
 class UpdateBillboardRequest extends FormRequest
 {
@@ -29,7 +28,6 @@ class UpdateBillboardRequest extends FormRequest
             'monthly_rate' => ['nullable', 'numeric', 'min:0'],
             'pricing_mode' => ['sometimes', 'required', 'in:daily,monthly'],
             'photo' => ['nullable', 'string'],
-            'rating' => ['nullable', 'numeric', 'between:0,5'],
             'status' => ['sometimes', 'required', 'in:available,booked,hidden'],
             'permit_expiry_date' => ['sometimes', 'required', 'date'],
         ];

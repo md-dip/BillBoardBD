@@ -246,16 +246,12 @@ export default function OwnerMyBillboards() {
               </div>
 
               {editing.id ? (
-                <div className="billboards-form-grid billboards-form-grid-3">
+                <div className="billboards-form-grid billboards-form-grid-2">
                   <div>
                     <label className="billboards-form-label">Status</label>
                     <select className="billboards-form-select" value={editing.status} onChange={(e) => setEditing({ ...editing, status: e.target.value })}>
                       {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
-                  </div>
-                  <div>
-                    <label className="billboards-form-label">Rating</label>
-                    <input className="billboards-form-input" type="number" min="0" max="5" step="0.1" value={editing.rating ?? 0} onChange={(e) => setEditing({ ...editing, rating: e.target.value })} />
                   </div>
                   <div>
                     <label className="billboards-form-label">Permit expiry date</label>

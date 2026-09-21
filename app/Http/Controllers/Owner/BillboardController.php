@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Owner\StoreBillboardListingRequest;
-use App\Http\Requests\Shared\UpdateBillboardRequest;
+use App\Http\Requests\Owner\UpdateBillboardRequest;
 use App\Models\Billboard;
 use App\Services\Owner\ListingSubmissionService;
 use Illuminate\Http\JsonResponse;
