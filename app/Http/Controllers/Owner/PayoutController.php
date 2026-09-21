@@ -20,7 +20,7 @@ class PayoutController extends Controller
     {
         $owner = $request->user();
 
-        // Newest payout first. Swap ->sortByDesc() for ->sortBy() to reverse.
+        // Newest payout first. 
         $history = $this->payouts->history($owner)->sortByDesc('id')->values();
 
         return response()->json([

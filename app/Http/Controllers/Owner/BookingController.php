@@ -28,16 +28,7 @@ class BookingController extends Controller
             $query->where('status', $status);
         }
 
-        // collected_amount is what this booking has actually earned the owner a
-        // share of so far: nothing while it still awaits approval, the advance
-        // once both approvals are in, then the full amount after the balance is
-        // paid. Computed here rather than in the dashboard so the owner's
-        // Revenue tile and the admin's report cannot disagree.
-        //
-        // Ordered by id, not created_at: rows created in the same batch can
-        // share a created_at second, and a non-unique sort column lets ties
-        // come back in a different order on every request. id is unique and
-        // strictly creation-ordered.
+
         $bookings = $query->orderBy('id')->get()->each(function (Booking $booking) {
             $booking->collected_amount = $this->revenue->collectedOn($booking);
         });
