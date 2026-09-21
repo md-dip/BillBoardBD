@@ -20,7 +20,6 @@ Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner')->group(functi
     Route::get('/bookings', [OwnerBookingController::class, 'index']);
     Route::patch('/bookings/{booking}/approve', [OwnerBookingController::class, 'approve']);
     Route::patch('/bookings/{booking}/reject', [OwnerBookingController::class, 'reject']);
-    Route::get('/bookings/{booking}/invoice', [OwnerBookingController::class, 'invoice']);            // advance/final invoice, with owner's payout split
 
     // Stage 5: upload proof of posting
     Route::post('/bookings/{booking}/proof', [OwnerProofOfPostingController::class, 'store']);

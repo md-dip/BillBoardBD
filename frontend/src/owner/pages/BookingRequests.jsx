@@ -1,5 +1,4 @@
 import { Fragment, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Check, ChevronDown, ChevronUp, Upload, X } from 'lucide-react';
 import api from '../../shared/api/axios';
 import OwnerShell from '../components/OwnerShell';
@@ -176,11 +175,6 @@ export default function OwnerBookingRequests() {
                         </td>
                         <td className="text-right">
                           <div className="bookings-flex bookings-flex-gap-2 bookings-justify-end bookings-items-center">
-                          {bk.invoices?.length > 0 && (
-                            <Link to={`/owner/bookings/${bk.id}/invoice`} className="bookings-btn bookings-btn-outline bookings-btn-sm bookings-invoice-btn">
-                              Invoice
-                            </Link>
-                          )}
                           {activeTab === 'pending_owner_approval' ? (
                             rejectingId === bk.id ? (
                               <div className="bookings-flex bookings-flex-gap-2 bookings-justify-end bookings-items-center">
