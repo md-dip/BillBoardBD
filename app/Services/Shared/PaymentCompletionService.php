@@ -3,8 +3,7 @@
 namespace App\Services\Shared;
 
 use App\Models\Payment;
-use App\Models\User;
-use App\Notifications\BookingStatusNotification;
+use App\Notifications\NotificationService;
 
 /**
  * The single place a payment becomes "paid" and the booking moves forward.
@@ -17,7 +16,10 @@ use App\Notifications\BookingStatusNotification;
  */
 class PaymentCompletionService
 {
-    public function __construct(private readonly InvoiceService $invoices) {}
+    public function __construct(
+        private readonly InvoiceService $invoices,
+        private readonly NotificationService $notifications,
+    ) {}
 
     /**
      * @param  array<string, mixed>  $attributes  extra columns to persist on the
@@ -55,19 +57,9 @@ class PaymentCompletionService
         $payment->booking->update(['status' => 'pending_admin_review', 'expires_at' => null]);
 
         $booking = $payment->booking->fresh(['billboard', 'user']);
-        $title = 'New booking request';
-        $body = "A new booking for \"{$booking->billboard?->title}\" is awaiting your review.";
-
-        foreach (User::query()->where('role', 'admin')->get() as $admin) {
-            $admin->notify(new BookingStatusNotification($booking, $title, $body));
-        }
-
         $invoice = $this->invoices->issue($booking, 'advance');
-        $booking->user?->notify(new BookingStatusNotification(
-            $booking,
-            'Advance invoice ready',
-            "Invoice {$invoice->number} for your advance payment on \"{$booking->billboard?->title}\" is ready to view and download.",
-        ));
+
+        $this->notifications->notifyAdvancePaid($booking, $invoice);
     }
 
     /**
@@ -79,21 +71,8 @@ class PaymentCompletionService
         $payment->booking->update(['status' => 'paid_in_full']);
 
         $booking = $payment->booking->fresh(['billboard.owner', 'user']);
-        $title = 'Final payment received';
-        $body = "The final payment for \"{$booking->billboard?->title}\" has been paid in full. Please install by the start date.";
-
-        if ($owner = $booking->billboard?->owner) {
-            $owner->notify(new BookingStatusNotification($booking, $title, $body));
-        }
-        foreach (User::query()->where('role', 'admin')->get() as $admin) {
-            $admin->notify(new BookingStatusNotification($booking, 'Payment recorded', "Final payment recorded for \"{$booking->billboard?->title}\"."));
-        }
-
         $invoice = $this->invoices->issue($booking, 'final');
-        $booking->user?->notify(new BookingStatusNotification(
-            $booking,
-            'Final invoice ready',
-            "Invoice {$invoice->number} for \"{$booking->billboard?->title}\" is ready - your booking is now paid in full.",
-        ));
+
+        $this->notifications->notifyBalancePaid($booking, $invoice);
     }
 }

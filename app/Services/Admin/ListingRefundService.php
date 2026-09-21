@@ -4,7 +4,7 @@ namespace App\Services\Admin;
 
 use App\Models\Billboard;
 use App\Models\ListingPayment;
-use App\Notifications\BillboardListingNotification;
+use App\Notifications\NotificationService;
 
 /**
  * The owner's listing-fee refund, mirroring Shared\RefundService for bookings:
@@ -23,6 +23,8 @@ use App\Notifications\BillboardListingNotification;
  */
 class ListingRefundService
 {
+    public function __construct(private readonly NotificationService $notifications) {}
+
     /**
      * The listing fee still owed back on a board, or null when there is nothing
      * to pay - the board was not rejected, the fee was never paid, or it has
@@ -63,15 +65,7 @@ class ListingRefundService
         $payment = $payment->fresh(['billboard', 'owner']);
         $billboard = $payment->billboard;
 
-        $amount = '৳'.number_format((float) $payment->amount);
-        $method = $payment->refund_method ? " to your {$payment->refund_method} account" : '';
-        $reference = $payment->refund_transaction_ref ? " (ref {$payment->refund_transaction_ref})" : '';
-
-        $payment->owner?->notify(new BillboardListingNotification(
-            $billboard,
-            'Listing fee refunded',
-            "Your listing fee of {$amount} for \"{$billboard?->title}\" has been refunded{$method}{$reference}.",
-        ));
+        $this->notifications->notifyListingFeeRefunded($billboard, $payment);
 
         return $payment;
     }

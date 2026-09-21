@@ -6,7 +6,7 @@ use App\Models\Billboard;
 use App\Models\ListingPayment;
 use App\Models\Setting;
 use App\Models\User;
-use App\Notifications\BillboardListingNotification;
+use App\Notifications\NotificationService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Storage;
  */
 class ListingSubmissionService
 {
+    public function __construct(private readonly NotificationService $notifications) {}
+
     /**
      * @param  array<string, mixed>  $data  validated billboard fields
      * @return array{billboard: Billboard, listing_payment: ListingPayment}
@@ -76,19 +78,7 @@ class ListingSubmissionService
 
         $billboard = $billboard->fresh(['owner']);
 
-        foreach (User::query()->where('role', 'admin')->get() as $admin) {
-            $admin->notify(new BillboardListingNotification(
-                $billboard,
-                'New board listing request',
-                "{$billboard->owner?->name} submitted \"{$billboard->title}\" for review.",
-            ));
-        }
-
-        $billboard->owner?->notify(new BillboardListingNotification(
-            $billboard,
-            'Listing fee received',
-            "Your listing fee for \"{$billboard->title}\" is paid. The board is now awaiting admin review.",
-        ));
+        $this->notifications->notifyListingFeePaid($billboard);
 
         return $payment->fresh();
     }

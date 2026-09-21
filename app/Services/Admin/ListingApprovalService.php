@@ -4,7 +4,7 @@ namespace App\Services\Admin;
 
 use App\Models\Billboard;
 use App\Models\User;
-use App\Notifications\BillboardListingNotification;
+use App\Notifications\NotificationService;
 
 /**
  * Admin review of an owner-submitted board (reached once the listing fee is
@@ -19,7 +19,10 @@ use App\Notifications\BillboardListingNotification;
  */
 class ListingApprovalService
 {
-    public function __construct(private readonly ListingRefundService $refunds) {}
+    public function __construct(
+        private readonly ListingRefundService $refunds,
+        private readonly NotificationService $notifications,
+    ) {}
 
     /**
      * @return array{ok: bool, status: int, message: string, billboard?: Billboard}
@@ -38,11 +41,7 @@ class ListingApprovalService
 
         $billboard = $billboard->fresh(['owner']);
 
-        $billboard->owner?->notify(new BillboardListingNotification(
-            $billboard,
-            'Board approved',
-            "Your board \"{$billboard->title}\" has been approved and is now live on the map.",
-        ));
+        $this->notifications->notifyListingApproved($billboard);
 
         return [
             'ok' => true,
@@ -75,17 +74,7 @@ class ListingApprovalService
 
         $billboard = $billboard->fresh(['owner', 'listingPayments']);
 
-        $body = "Your board \"{$billboard->title}\" was rejected. Reason: {$reason}";
-        if ($refund) {
-            $amount = '৳'.number_format((float) $refund->amount);
-            $body .= " Your listing fee of {$amount} will be refunded - we will confirm here as soon as it has been sent.";
-        }
-
-        $billboard->owner?->notify(new BillboardListingNotification(
-            $billboard,
-            $refund ? 'Board rejected - refund on the way' : 'Board rejected',
-            $body,
-        ));
+        $this->notifications->notifyListingRejected($billboard, $reason, $refund);
 
         return [
             'ok' => true,

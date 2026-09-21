@@ -3,7 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\Booking;
-use App\Notifications\BookingStatusNotification;
+use App\Notifications\NotificationService;
 use App\Services\Shared\RefundService;
 
 /**
@@ -21,7 +21,10 @@ use App\Services\Shared\RefundService;
  */
 class BookingApprovalService
 {
-    public function __construct(private readonly RefundService $refunds) {}
+    public function __construct(
+        private readonly RefundService $refunds,
+        private readonly NotificationService $notifications,
+    ) {}
 
     /**
      * @return array{ok: bool, status: int, message: string, booking?: Booking}
@@ -35,17 +38,7 @@ class BookingApprovalService
         $booking->update(['status' => 'pending_owner_approval']);
         $booking = $booking->fresh(['billboard.owner', 'user']);
 
-        $title = 'New booking request in your panel';
-        $body = "A booking request for \"{$booking->billboard?->title}\" is ready for your review.";
-        if ($owner = $booking->billboard?->owner) {
-            $owner->notify(new BookingStatusNotification($booking, $title, $body));
-        }
-
-        $booking->user->notify(new BookingStatusNotification(
-            $booking,
-            'Admin approved your request',
-            "Your booking for \"{$booking->billboard?->title}\" was approved by admin and is now awaiting the owner's confirmation.",
-        ));
+        $this->notifications->notifyBookingForwardedToOwner($booking);
 
         return [
             'ok' => true,
@@ -75,17 +68,7 @@ class BookingApprovalService
 
         $booking = $booking->fresh(['billboard', 'user', 'payments']);
 
-        $body = "Your booking for \"{$booking->billboard?->title}\" was rejected by admin. Reason: {$reason}";
-        if ($refund) {
-            $amount = '৳'.number_format((float) $refund->amount);
-            $body .= " Your advance of {$amount} will be refunded - we will confirm here as soon as it has been sent.";
-        }
-
-        $booking->user->notify(new BookingStatusNotification(
-            $booking,
-            $refund ? 'Booking rejected - refund on the way' : 'Booking rejected',
-            $body,
-        ));
+        $this->notifications->notifyBookingRejectedByAdmin($booking, $reason, $refund);
 
         return [
             'ok' => true,

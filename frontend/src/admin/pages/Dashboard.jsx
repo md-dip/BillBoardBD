@@ -157,7 +157,7 @@ export default function AdminDashboard() {
       entry.commission += Number(r.commission) + Number(r.listing_fees);
       earned.set(r.month, entry);
     }
-
+// current date and time right now?
     const months = [...earned.keys()].sort();
     const thisMonth = monthKey(new Date());
 

@@ -5,8 +5,7 @@ namespace App\Services\Owner;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\Setting;
-use App\Models\User;
-use App\Notifications\BookingStatusNotification;
+use App\Notifications\NotificationService;
 use App\Services\Shared\RefundService;
 
 /**
@@ -22,7 +21,10 @@ use App\Services\Shared\RefundService;
  */
 class OwnerAcceptanceService
 {
-    public function __construct(private readonly RefundService $refunds) {}
+    public function __construct(
+        private readonly RefundService $refunds,
+        private readonly NotificationService $notifications,
+    ) {}
 
     /**
      * @return array{ok: bool, status: int, message: string, booking?: Booking}
@@ -54,19 +56,7 @@ class OwnerAcceptanceService
 
         $booking = $booking->fresh(['billboard', 'user', 'payments']);
 
-        $booking->user->notify(new BookingStatusNotification(
-            $booking,
-            'Owner accepted your booking',
-            "The owner accepted your booking for \"{$booking->billboard?->title}\". Pay the remaining balance by {$dueAt->toDateString()}.",
-        ));
-
-        foreach (User::query()->where('role', 'admin')->get() as $admin) {
-            $admin->notify(new BookingStatusNotification(
-                $booking,
-                'Booking confirmed',
-                "\"{$booking->billboard?->title}\" was confirmed by its owner and is now awaiting the final payment.",
-            ));
-        }
+        $this->notifications->notifyBookingConfirmedByOwner($booking, $dueAt);
 
         return [
             'ok' => true,
@@ -97,27 +87,7 @@ class OwnerAcceptanceService
 
         $booking = $booking->fresh(['billboard', 'user', 'payments']);
 
-        $clientBody = "The owner declined your booking for \"{$booking->billboard?->title}\". Reason: {$reason}";
-        $adminBody = "\"{$booking->billboard?->title}\" was declined by its owner. Reason: {$reason}";
-        if ($refund) {
-            $amount = '৳'.number_format((float) $refund->amount);
-            $clientBody .= " Your advance of {$amount} will be refunded - we will confirm here as soon as it has been sent.";
-            $adminBody .= " The client's advance of {$amount} is now awaiting refund - pay it from the Rejected tab of Bookings.";
-        }
-
-        $booking->user->notify(new BookingStatusNotification(
-            $booking,
-            $refund ? 'Booking declined - refund on the way' : 'Booking declined',
-            $clientBody,
-        ));
-
-        foreach (User::query()->where('role', 'admin')->get() as $admin) {
-            $admin->notify(new BookingStatusNotification(
-                $booking,
-                $refund ? 'Booking declined by owner - refund due' : 'Booking declined by owner',
-                $adminBody,
-            ));
-        }
+        $this->notifications->notifyBookingDeclinedByOwner($booking, $reason, $refund);
 
         return [
             'ok' => true,

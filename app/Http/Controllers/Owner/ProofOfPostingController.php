@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Owner\StoreProofOfPostingRequest;
 use App\Models\Booking;
-use App\Models\User;
-use App\Notifications\BookingStatusNotification;
+use App\Notifications\NotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 
 class ProofOfPostingController extends Controller
 {
+    public function __construct(private readonly NotificationService $notifications) {}
+
     public function store(StoreProofOfPostingRequest $request, Booking $booking): JsonResponse
     {
         if ($booking->billboard->owner_id !== $request->user()->id) {
@@ -42,13 +43,7 @@ class ProofOfPostingController extends Controller
         $booking->update(['status' => 'pending_proof_review']);
         $booking = $booking->fresh(['billboard', 'proofOfPostings']);
 
-        foreach (User::query()->where('role', 'admin')->get() as $admin) {
-            $admin->notify(new BookingStatusNotification(
-                $booking,
-                'Installation proof submitted',
-                "The owner uploaded proof of posting for \"{$booking->billboard?->title}\" - ready for verification.",
-            ));
-        }
+        $this->notifications->notifyProofSubmitted($booking);
 
         return response()->json([
             'success' => true,

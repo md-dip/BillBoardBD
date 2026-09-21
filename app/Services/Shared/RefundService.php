@@ -4,7 +4,7 @@ namespace App\Services\Shared;
 
 use App\Models\Booking;
 use App\Models\Payment;
-use App\Notifications\BookingStatusNotification;
+use App\Notifications\NotificationService;
 
 /**
  * The client's advance refund, in two halves.
@@ -25,6 +25,8 @@ use App\Notifications\BookingStatusNotification;
  */
 class RefundService
 {
+    public function __construct(private readonly NotificationService $notifications) {}
+
     /**
      * Record that the advance on a rejected booking has to go back, without
      * moving any money. Idempotent - a booking never queues two refunds.
@@ -96,15 +98,7 @@ class RefundService
         $refund = $refund->fresh();
         $booking = $booking->fresh(['billboard', 'user']);
 
-        $amount = '৳'.number_format((float) $refund->amount);
-        $method = $refund->method ? " to your {$refund->method} account" : '';
-        $reference = $refund->transaction_ref ? " (ref {$refund->transaction_ref})" : '';
-
-        $booking->user?->notify(new BookingStatusNotification(
-            $booking,
-            'Advance refunded',
-            "Your advance of {$amount} for \"{$booking->billboard?->title}\" has been refunded{$method}{$reference}.",
-        ));
+        $this->notifications->notifyAdvanceRefunded($booking, $refund);
 
         return $refund;
     }

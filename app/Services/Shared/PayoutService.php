@@ -4,7 +4,7 @@ namespace App\Services\Shared;
 
 use App\Models\Payout;
 use App\Models\User;
-use App\Notifications\PayoutNotification;
+use App\Notifications\NotificationService;
 use App\Services\Admin\AdminPanelCalculationService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +29,10 @@ use Illuminate\Support\Facades\DB;
  */
 class PayoutService
 {
-    public function __construct(private readonly AdminPanelCalculationService $calculations) {}
+    public function __construct(
+        private readonly AdminPanelCalculationService $calculations,
+        private readonly NotificationService $notifications,
+    ) {}
 
     public function outstandingForOwner(User $owner): float
     {
@@ -70,7 +73,7 @@ class PayoutService
 
             $this->calculations->settledPaymentsQueryForOwner($owner->id)->update(['payout_id' => $payout->id]);
 
-            $owner->notify(new PayoutNotification($payout));
+            $this->notifications->notifyPayoutSent($payout, $owner);
 
             return $payout->fresh();
         });

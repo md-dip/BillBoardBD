@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shared\RejectBookingRequest;
 use App\Models\Booking;
-use App\Notifications\BookingStatusNotification;
+use App\Notifications\NotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProofOfPostingController extends Controller
 {
+    public function __construct(private readonly NotificationService $notifications) {}
+
     public function verify(Request $request, Booking $booking): JsonResponse
     {
         if ($booking->status !== 'pending_proof_review') {
@@ -30,19 +32,7 @@ class ProofOfPostingController extends Controller
         $booking->update(['status' => 'active']);
         $booking = $booking->fresh(['billboard.owner', 'user']);
 
-        $booking->user->notify(new BookingStatusNotification(
-            $booking,
-            'Your campaign is live',
-            "Your campaign on \"{$booking->billboard?->title}\" is now live. Installation has been verified by our admin team - you're welcome to visit the site and check the quality yourself, and we'd love to hear your feedback.",
-        ));
-
-        if ($owner = $booking->billboard?->owner) {
-            $owner->notify(new BookingStatusNotification(
-                $booking,
-                'Installation confirmed',
-                "Installation for \"{$booking->billboard?->title}\" was verified and the campaign is now active.",
-            ));
-        }
+        $this->notifications->notifyProofVerified($booking);
 
         return response()->json([
             'success' => true,
@@ -74,13 +64,7 @@ class ProofOfPostingController extends Controller
         $booking->update(['status' => 'paid_in_full']);
         $booking = $booking->fresh(['billboard.owner']);
 
-        if ($owner = $booking->billboard?->owner) {
-            $owner->notify(new BookingStatusNotification(
-                $booking,
-                'Installation proof rejected',
-                "Your proof of posting for \"{$booking->billboard?->title}\" was rejected: {$reason}. Please re-upload.",
-            ));
-        }
+        $this->notifications->notifyProofRejected($booking, $reason);
 
         return response()->json([
             'success' => true,

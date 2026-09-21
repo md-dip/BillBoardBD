@@ -5,15 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Payment;
-use App\Models\User;
-use App\Notifications\BookingStatusNotification;
+use App\Notifications\NotificationService;
 use App\Services\Shared\InvoiceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function __construct(private readonly InvoiceService $invoices) {}
+    public function __construct(
+        private readonly InvoiceService $invoices,
+        private readonly NotificationService $notifications,
+    ) {}
 
     public function recordBalance(Request $request, Booking $booking): JsonResponse
     {
@@ -67,24 +69,10 @@ class PaymentController extends Controller
         $booking->update(['status' => 'paid_in_full']);
         $booking = $booking->fresh(['billboard.owner', 'user']);
 
-        if ($owner = $booking->billboard?->owner) {
-            $owner->notify(new BookingStatusNotification(
-                $booking,
-                'Final payment received',
-                "The final payment for \"{$booking->billboard?->title}\" has been paid in full. Please install by the start date.",
-            ));
-        }
-        foreach (User::query()->where('role', 'admin')->get() as $admin) {
-            $admin->notify(new BookingStatusNotification($booking, 'Payment recorded', "Final payment recorded for \"{$booking->billboard?->title}\"."));
-        }
-
         // Booking fully paid → the final invoice is generated now.
         $invoice = $this->invoices->issue($booking, 'final');
-        $booking->user?->notify(new BookingStatusNotification(
-            $booking,
-            'Final invoice ready',
-            "Invoice {$invoice->number} for \"{$booking->billboard?->title}\" is ready - your booking is now paid in full.",
-        ));
+
+        $this->notifications->notifyBalancePaid($booking, $invoice);
 
         return response()->json([
             'success' => true,
