@@ -39,16 +39,22 @@ class BookingController extends Controller
             ->delete();
 
         // Any booking still "in flight" on overlapping dates blocks this one.
-        $conflicts = $billboard->activeBookings()
+        // activeBookings() already excludes an expired 'held' row, so a 'held'
+        // conflict found here is always still genuinely running - distinguish
+        // it from a real booking, since one clears itself shortly and the
+        // other won't.
+        $conflict = $billboard->activeBookings()
             ->where('start_date', '<=', $endDate)
             ->where('end_date', '>=', $startDate)
-            ->exists();
+            ->first();
 
-        if ($conflicts) {
+        if ($conflict) {
             return response()->json([
                 'success' => false,
                 'data' => null,
-                'message' => 'These dates conflict with an existing booking.',
+                'message' => $conflict->status === 'held'
+                    ? 'Someone else is currently holding these dates. Please try again in a few minutes.'
+                    : 'These dates conflict with an existing booking.',
             ], 409);
         }
 

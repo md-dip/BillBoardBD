@@ -88,9 +88,14 @@ class Billboard extends Model
 
     public function activeBookings(): HasMany
     {
-        return $this->bookings()->whereIn('status', [
-            'held', 'pending_payment', 'pending_admin_review', 'pending_owner_approval',
-            'confirmed', 'paid_in_full', 'pending_proof_review', 'active',
-        ]);
+        // A 'held' row only blocks the dates while its 15-minute lock is still
+        // running - once expires_at passes, it must stop counting here, the
+        // same rule AssistantTools::blockedBillboardIds() already applies.
+        return $this->bookings()
+            ->whereIn('status', [
+                'held', 'pending_payment', 'pending_admin_review', 'pending_owner_approval',
+                'confirmed', 'paid_in_full', 'pending_proof_review', 'active',
+            ])
+            ->where(fn ($q) => $q->where('status', '!=', 'held')->orWhere('expires_at', '>', now()));
     }
 }
