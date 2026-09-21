@@ -5,6 +5,119 @@ import homePathFor from '../utils/homePathFor';
 import usePageTitle from '../hooks/usePageTitle';
 import './Register.css';
 
+function ClientRegisterFields({ form, onChange }) {
+    return (
+        <>
+            <div className="register-client-field">
+                <label className="register-client-label" htmlFor="name">Full name / Company</label>
+                <input
+                    id="name"
+                    name="name"
+                    className="register-client-input"
+                    value={form.name}
+                    onChange={onChange}
+                    required
+                />
+            </div>
+
+            <div className="register-client-field">
+                <label className="register-client-label" htmlFor="email">Email</label>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    className="register-client-input"
+                    value={form.email}
+                    onChange={onChange}
+                    required
+                />
+            </div>
+
+            <div className="register-client-field">
+                <label className="register-client-label" htmlFor="password">Password</label>
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    className="register-client-input"
+                    value={form.password}
+                    onChange={onChange}
+                    required
+                />
+            </div>
+
+            <div className="register-client-field">
+                <label className="register-client-label" htmlFor="phone">Phone (optional)</label>
+                <input
+                    id="phone"
+                    name="phone"
+                    className="register-client-input"
+                    value={form.phone}
+                    onChange={onChange}
+                />
+            </div>
+        </>
+    );
+}
+
+// Full, self-contained field set for registering as an owner. Mirrors
+// ClientRegisterFields in shape only - kept as its own component so an
+// owner-only field can be added here without any risk to the client form.
+function OwnerRegisterFields({ form, onChange }) {
+    return (
+        <>
+            <div className="register-owner-field">
+                <label className="register-owner-label" htmlFor="name">Company name</label>
+                <input
+                    id="name"
+                    name="name"
+                    className="register-owner-input"
+                    value={form.name}
+                    onChange={onChange}
+                    required
+                />
+            </div>
+
+            <div className="register-owner-field">
+                <label className="register-owner-label" htmlFor="email">Email</label>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    className="register-owner-input"
+                    value={form.email}
+                    onChange={onChange}
+                    required
+                />
+            </div>
+
+            <div className="register-owner-field">
+                <label className="register-owner-label" htmlFor="password">Password</label>
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    className="register-owner-input"
+                    value={form.password}
+                    onChange={onChange}
+                    required
+                />
+            </div>
+
+            <div className="register-owner-field">
+                <label className="register-owner-label" htmlFor="phone">Phone (optional)</label>
+                <input
+                    id="phone"
+                    name="phone"
+                    className="register-owner-input"
+                    value={form.phone}
+                    onChange={onChange}
+                />
+            </div>
+        </>
+    );
+}
+
 export default function Register() {
     usePageTitle('Register');
 
@@ -88,56 +201,11 @@ export default function Register() {
                         </div>
                     </div>
 
-                    <div className="register-field">
-                        <label className="register-label" htmlFor="name">
-                            {form.role === 'owner' ? 'Company name' : 'Full name / Company'}
-                        </label>
-                        <input
-                            id="name"
-                            name="name"
-                            className="register-input"
-                            value={form.name}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="register-field">
-                        <label className="register-label" htmlFor="email">Email</label>
-                        <input
-                            id="email"
-                            type="email"
-                            name="email"
-                            className="register-input"
-                            value={form.email}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="register-field">
-                        <label className="register-label" htmlFor="password">Password</label>
-                        <input
-                            id="password"
-                            type="password"
-                            name="password"
-                            className="register-input"
-                            value={form.password}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="register-field">
-                        <label className="register-label" htmlFor="phone">Phone (optional)</label>
-                        <input
-                            id="phone"
-                            name="phone"
-                            className="register-input"
-                            value={form.phone}
-                            onChange={handleChange}
-                        />
-                    </div>
+                    {form.role === 'client' ? (
+                        <ClientRegisterFields form={form} onChange={handleChange} />
+                    ) : (
+                        <OwnerRegisterFields form={form} onChange={handleChange} />
+                    )}
 
                     {Object.values(errors).flat().map((msg, i) => (
                         <p className="register-error-text" key={i}>{msg}</p>

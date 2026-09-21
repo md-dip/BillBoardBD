@@ -28,9 +28,20 @@
 .register-title { font-size: 28px; font-weight: 700; margin: 0 0 6px; color: #0f172a; }
 .register-subtitle { font-size: 14px; color: #64748b; margin: 0 0 24px; }
 
+/* "I want to" role-toggle label - the only field-level markup the client and
+   owner blocks below still share, since it sits above the role split itself. */
 .register-field { margin-bottom: 16px; }
 .register-label { display: block; font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 6px; }
-.register-input {
+
+.register-error-text { font-size: 13px; color: #dc2626; margin: 4px 0 0; }
+
+/* ---- Client registration fields (ClientRegisterFields in Register.jsx) ----
+   Fully independent from the owner fields below - editing one can never move
+   the other, same rule this file already applies to the two role-toggle
+   buttons. */
+.register-client-field { margin-bottom: 16px; }
+.register-client-label { display: block; font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 6px; }
+.register-client-input {
     width: 100%;
     padding: 12px 14px;
     font-size: 15px;
@@ -41,9 +52,23 @@
     outline: none;
     transition: border 0.15s, background 0.15s;
 }
-.register-input:focus { border-color: #0071e3; background: #ffffff; }
+.register-client-input:focus { border-color: #0071e3; background: #ffffff; }
 
-.register-error-text { font-size: 13px; color: #dc2626; margin: 4px 0 0; }
+/* ---- Owner registration fields (OwnerRegisterFields in Register.jsx) ---- */
+.register-owner-field { margin-bottom: 16px; }
+.register-owner-label { display: block; font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 6px; }
+.register-owner-input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f8fafc;
+    box-sizing: border-box;
+    outline: none;
+    transition: border 0.15s, background 0.15s;
+}
+.register-owner-input:focus { border-color: #0071e3; background: #ffffff; }
 
 /* Layout-only grid holding the 2 role options - no color, safe to share */
 .register-role-toggle {
