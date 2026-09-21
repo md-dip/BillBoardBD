@@ -1,12 +1,12 @@
 .admin-dashboard-muted { color: #64748b; font-size: 14px; }
 
-/* Layout-only grid holding the 4 KPI cards - no color here, safe to share */
+/* Layout-only grid holding the 5 KPI cards - no color here, safe to share */
 .admin-dashboard-kpi-grid {
     display: grid;
     /* minmax(0, 1fr), not a bare 1fr: a bare track is minmax(auto, 1fr), which
        lets a long value (the revenue total) widen its own column and squeeze
-       the others. Zero minimum keeps all four exactly equal. */
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+       the others. Zero minimum keeps every card exactly equal. */
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 16px;
     margin-bottom: 24px;
     /* Equal HEIGHT: the two drill-down cards carry an extra "View
@@ -66,6 +66,28 @@
     background: #f1f5f9;
 }
 .admin-dashboard-kpi-value-commission { font-size: 24px; font-weight: 600; color: #0f172a; }
+
+/* ---- "Payable to owners" KPI card ---- */
+.admin-dashboard-kpi-card-payable-to-owners {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+    height: 100%;
+    box-sizing: border-box;
+}
+.admin-dashboard-kpi-label-payable-to-owners { font-size: 13px; color: #64748b; }
+.admin-dashboard-kpi-icon-payable-to-owners {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    color: #15803d;
+    background: #dcfce7;
+}
+.admin-dashboard-kpi-value-payable-to-owners { font-size: 24px; font-weight: 600; color: #0f172a; }
 
 /* ---- "Pending bookings" KPI card ---- */
 .admin-dashboard-kpi-card-pending-bookings {
@@ -302,7 +324,23 @@
     box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
 }
 
-/* "View transactions" line at the foot of a drill-down tile */
+/* "Payable to owners" tile -> /admin/payouts */
+.admin-dashboard-kpi-link-payable-to-owners {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+.admin-dashboard-kpi-link-payable-to-owners .admin-dashboard-kpi-card-payable-to-owners {
+    height: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.admin-dashboard-kpi-link-payable-to-owners:hover .admin-dashboard-kpi-card-payable-to-owners {
+    border-color: #bbf7d0;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
+}
+
+/* "View transactions" / "View payouts" line at the foot of a drill-down tile */
 .admin-dashboard-kpi-drill-down-hint {
     display: block;
     margin-top: 8px;

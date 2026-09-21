@@ -44,7 +44,7 @@ export default function AdminReports() {
     if (!revenue?.rows) return [];
     const map = new Map();
     for (const r of revenue.rows) {
-      map.set(r.billboard_title, (map.get(r.billboard_title) ?? 0) + Number(r.gross));
+      map.set(r.billboard_title, (map.get(r.billboard_title) ?? 0) + Number(r.total_revenue));
     }
     return [...map.entries()].map(([name, value]) => ({ name: (name || '').slice(0, 22), revenue: value }));
   }, [revenue]);
@@ -64,8 +64,8 @@ export default function AdminReports() {
   }
 
   const kpiValues = {
-    'total-revenue': { label: 'Total revenue (paid)', value: formatBDT(revenue?.totals?.gross ?? 0) },
-    'platform-commission': { label: 'Platform commission', value: formatBDT(revenue?.totals?.platform_income ?? 0) },
+    'total-revenue': { label: 'Total revenue (paid)', value: formatBDT(revenue?.totals?.total_revenue ?? 0) },
+    'platform-commission': { label: 'Platform commission', value: formatBDT(revenue?.totals?.platform_commission ?? 0) },
     'payable-to-owners': { label: 'Payable to owners', value: formatBDT(revenue?.totals?.owner_payable ?? 0) },
   };
 

@@ -2,8 +2,7 @@ import { Link } from 'react-router-dom';
 import usePageTitle from '../hooks/usePageTitle';
 import './Home.css';
 
-// Small inline-SVG icons (stroke uses currentColor, so the icon box colour controls them).
-// This avoids adding the lucide-react dependency the reference project used.
+
 const icons = {
     map: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

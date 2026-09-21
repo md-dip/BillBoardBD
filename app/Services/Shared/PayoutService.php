@@ -2,10 +2,10 @@
 
 namespace App\Services\Shared;
 
-use App\Models\Payment;
 use App\Models\Payout;
 use App\Models\User;
 use App\Notifications\PayoutNotification;
+use App\Services\Admin\AdminPanelCalculationService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -22,41 +22,18 @@ use Illuminate\Support\Facades\DB;
  * confirmed. So the booking's own revenue can show on the owner dashboard
  * while its payout balance stays at zero, and the balance only moves when
  * admin verifies the proof of posting.
+ *
+ * The actual "how much is payable" calculation lives in
+ * Services\Admin\AdminPanelCalculationService - this class only orchestrates
+ * turning that figure into a recorded Payout (and notifying the owner).
  */
 class PayoutService
 {
-    private const SETTLED_STATUSES = ['paid_in_full', 'pending_proof_review', 'active'];
-
-    private function settledPaymentsQuery(int $ownerId)
-    {
-        // Only the 'advance' row is summed: its owner_payable already carries
-        // the net amount for the ENTIRE booking (total - commission, frozen
-        // at BookingController::submitCampaign time) - the same convention
-        // Admin\ReportController::revenue() relies on. The 'balance' row's
-        // owner_payable duplicates that same amount, so including it would
-        // double-count every settled booking.
-        return Payment::query()
-            ->whereNull('payout_id')
-            ->where('status', 'paid')
-            ->where('payment_type', 'advance')
-            ->whereHas(
-                'booking',
-                fn ($q) => $q->whereIn('status', self::SETTLED_STATUSES)
-                    // The proof-of-installation gate. Keyed off the proof row
-                    // rather than the booking status so it states the actual
-                    // rule: the owner uploaded it (OwnerProofOfPostingController
-                    // -> status 'pending') AND admin accepted it
-                    // (AdminProofOfPostingController -> 'verified'). A proof
-                    // admin rejects goes back to 'rejected' and the booking to
-                    // paid_in_full, which drops out of here again.
-                    ->whereHas('proofOfPostings', fn ($q3) => $q3->where('status', 'verified'))
-                    ->whereHas('billboard', fn ($q2) => $q2->where('owner_id', $ownerId))
-            );
-    }
+    public function __construct(private readonly AdminPanelCalculationService $calculations) {}
 
     public function outstandingForOwner(User $owner): float
     {
-        return round((float) $this->settledPaymentsQuery($owner->id)->sum('owner_payable'), 2);
+        return $this->calculations->payableToOwner($owner);
     }
 
     /**
@@ -64,12 +41,7 @@ class PayoutService
      */
     public function outstandingByOwner(): Collection
     {
-        return User::query()
-            ->where('role', 'owner')
-            ->get()
-            ->map(fn (User $owner) => ['owner' => $owner, 'amount' => $this->outstandingForOwner($owner)])
-            ->filter(fn (array $row) => $row['amount'] > 0)
-            ->values();
+        return $this->calculations->payableToAllOwners();
     }
 
     /**
@@ -78,7 +50,7 @@ class PayoutService
     public function payout(User $owner, array $data): Payout
     {
         return DB::transaction(function () use ($owner, $data) {
-            $amount = $this->outstandingForOwner($owner);
+            $amount = $this->calculations->payableToOwner($owner);
 
             $payout = Payout::query()->create([
                 'owner_id' => $owner->id,
@@ -96,7 +68,7 @@ class PayoutService
                 'paid_at' => now(),
             ]);
 
-            $this->settledPaymentsQuery($owner->id)->update(['payout_id' => $payout->id]);
+            $this->calculations->settledPaymentsQueryForOwner($owner->id)->update(['payout_id' => $payout->id]);
 
             $owner->notify(new PayoutNotification($payout));
 

@@ -43,6 +43,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::put('/settings', [AdminSettingController::class, 'update']);
 
     // Reports (revenue + occupancy)
+    Route::get('/reports/dashboard', [AdminReportController::class, 'dashboard']);
     Route::get('/reports/revenue', [AdminReportController::class, 'revenue']);
     Route::get('/reports/transactions', [AdminReportController::class, 'transactions']);
     Route::get('/reports/occupancy', [AdminReportController::class, 'occupancy']);

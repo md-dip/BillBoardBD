@@ -60,8 +60,6 @@ export default function AdminTransactions({ view = 'revenue' }) {
         );
     }
 
-    const bookingMoney = (totals?.gross ?? 0) - (totals?.listing_fees ?? 0);
-
     const pageCount = Math.max(1, Math.ceil(transactions.length / PER_PAGE));
     const firstOnPage = transactions.length === 0 ? 0 : (page - 1) * PER_PAGE + 1;
     const lastOnPage = Math.min(page * PER_PAGE, transactions.length);
@@ -77,13 +75,13 @@ export default function AdminTransactions({ view = 'revenue' }) {
     // Headline first, then what it is made of.
     const summary = isCommission
         ? [
-            { slug: 'platform-income', label: 'Platform commission', value: formatBDT(totals?.platform_income ?? 0) },
+            { slug: 'platform-income', label: 'Platform commission', value: formatBDT(totals?.platform_commission ?? 0) },
             { slug: 'booking-commission', label: 'From booking commission', value: formatBDT(totals?.commission ?? 0) },
             { slug: 'listing-income', label: 'From board listing fees', value: formatBDT(totals?.listing_fees ?? 0) },
         ]
         : [
-            { slug: 'total-revenue', label: 'Total revenue', value: formatBDT(totals?.gross ?? 0) },
-            { slug: 'booking-money', label: 'From booking payments', value: formatBDT(bookingMoney) },
+            { slug: 'total-revenue', label: 'Total revenue', value: formatBDT(totals?.total_revenue ?? 0) },
+            { slug: 'booking-money', label: 'From booking payments', value: formatBDT(totals?.from_booking_payments ?? 0) },
             { slug: 'listing-income', label: 'From board listing fees', value: formatBDT(totals?.listing_fees ?? 0) },
         ];
 

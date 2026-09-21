@@ -1,18 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { CalendarCheck, DollarSign, Megaphone, ShieldAlert, TrendingUp } from 'lucide-react';
+import { CalendarCheck, DollarSign, Megaphone, ShieldAlert, TrendingUp, Wallet } from 'lucide-react';
 import api from '../../shared/api/axios';
 import AdminShell from '../components/AdminShell';
 import { formatBDT } from '../../shared/utils/formatPrice';
 import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Dashboard.css';
 
-function daysUntil(dateStr) {
-  return Math.round((new Date(dateStr).getTime() - Date.now()) / 86400000);
-}
-
-const KPIS = ['revenue', 'commission', 'pending-bookings', 'permits-expiring'];
+const KPIS = ['revenue', 'commission', 'payable-to-owners', 'pending-bookings', 'permits-expiring'];
 const BOXES = ['inventory', 'booking-pipeline'];
 
 // The revenue chart draws one bar per calendar month, never one bar per month
@@ -112,6 +108,7 @@ export default function AdminDashboard() {
   const [billboards, setBillboards] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [revenue, setRevenue] = useState(null);
+  const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -120,11 +117,13 @@ export default function AdminDashboard() {
         api.get('/admin/billboards'),
         api.get('/admin/bookings'),
         api.get('/admin/reports/revenue'),
+        api.get('/admin/reports/dashboard'),
       ])
-        .then(([bbRes, bkRes, revRes]) => {
+        .then(([bbRes, bkRes, revRes, dashRes]) => {
           setBillboards(bbRes.data.data.data);
           setBookings(bkRes.data.data);
           setRevenue(revRes.data.data);
+          setDashboard(dashRes.data.data);
         })
         .catch((err) => console.error('Dashboard load failed', err))
         .finally(() => setLoading(false));
@@ -135,14 +134,16 @@ export default function AdminDashboard() {
     return () => clearInterval(interval);
   }, []);
 
+  // All five numbers come straight from AdminPanelCalculationService via
+  // /admin/reports/dashboard - the frontend does no counting or filtering of
+  // its own here, so there is exactly one place the math can be wrong.
   const stats = useMemo(() => ({
-    revenue: revenue?.totals?.gross ?? 0,
-    // Everything the platform keeps: booking commission + the one-time
-    // board listing fees owners pay, which have no owner split at all.
-    commission: revenue?.totals?.platform_income ?? 0,
-    pending: bookings.filter((b) => b.status === 'pending_admin_review').length,
-    expiring: billboards.filter((b) => b.permit_expiry_date && daysUntil(b.permit_expiry_date) < 90).length,
-  }), [bookings, billboards, revenue]);
+    revenue: dashboard?.total_revenue ?? 0,
+    commission: dashboard?.platform_commission ?? 0,
+    payableToOwners: dashboard?.payable_to_owners ?? 0,
+    pending: dashboard?.pending_bookings ?? 0,
+    expiring: dashboard?.permits_expiring ?? 0,
+  }), [dashboard]);
 
   const chartData = useMemo(() => {
     if (!revenue?.rows?.length) return [];
@@ -152,7 +153,7 @@ export default function AdminDashboard() {
     const earned = new Map();
     for (const r of revenue.rows) {
       const entry = earned.get(r.month) ?? { revenue: 0, commission: 0 };
-      entry.revenue += Number(r.gross);
+      entry.revenue += Number(r.total_revenue);
       entry.commission += Number(r.commission) + Number(r.listing_fees);
       earned.set(r.month, entry);
     }
@@ -187,10 +188,11 @@ export default function AdminDashboard() {
   }
 
   const kpiValues = {
-    // The two money tiles drill down into the transactions behind them
-    // (admin/pages/Transactions.jsx); the other two are plain figures.
-    revenue: { label: 'Total revenue', value: formatBDT(stats.revenue), icon: DollarSign, to: '/admin/revenue' },
-    commission: { label: 'Platform commission', value: formatBDT(stats.commission), icon: TrendingUp, to: '/admin/commission' },
+    // The three money tiles drill down into the page behind them; the other
+    // two are plain figures with nowhere further to go.
+    revenue: { label: 'Total revenue', value: formatBDT(stats.revenue), icon: DollarSign, to: '/admin/revenue', hint: 'View transactions' },
+    commission: { label: 'Platform commission', value: formatBDT(stats.commission), icon: TrendingUp, to: '/admin/commission', hint: 'View transactions' },
+    'payable-to-owners': { label: 'Payable to owners', value: formatBDT(stats.payableToOwners), icon: Wallet, to: '/admin/payouts', hint: 'View payouts' },
     'pending-bookings': { label: 'Pending bookings', value: String(stats.pending), icon: CalendarCheck },
     'permits-expiring': { label: 'Permits expiring <90d', value: String(stats.expiring), icon: ShieldAlert },
   };
@@ -213,7 +215,7 @@ export default function AdminDashboard() {
                 </span>
               </div>
               <div className={`admin-dashboard-kpi-value-${slug}`}>{k.value}</div>
-              {k.to && <span className="admin-dashboard-kpi-drill-down-hint">View transactions</span>}
+              {k.to && <span className="admin-dashboard-kpi-drill-down-hint">{k.hint}</span>}
             </>
           );
 
@@ -221,7 +223,7 @@ export default function AdminDashboard() {
 
           // A drill-down tile is the card inside a link; a plain tile is the
           // card itself. Either way the grid item stretches to the row height,
-          // so all four boxes stay the same size.
+          // so every tile stays the same size.
           return k.to
             ? <Link to={k.to} className={`admin-dashboard-kpi-link-${slug}`} key={slug}>{card}</Link>
             : <div className={`admin-dashboard-kpi-card-${slug}`} key={slug}>{cardBody}</div>;
