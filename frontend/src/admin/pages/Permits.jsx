@@ -82,7 +82,7 @@ export default function AdminPermits() {
                   <div className="admin-permits-row-sub">{b.address}</div>
                 </td>
                 <td>{b.owner?.name ?? 'N/A'}</td>
-                <td>{b.permit_expiry_date}</td>
+                <td>{String(b.permit_expiry_date).slice(0, 10)}</td>
                 <td className="admin-permits-days-left-cell">
                   {b.daysLeft < 0 ? `${-b.daysLeft} days overdue` : `${b.daysLeft} days`}
                 </td>
