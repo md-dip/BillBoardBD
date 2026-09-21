@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
-use App\Services\Owner\OwnerLedgerService;
+use App\Services\Owner\OwnerPanelCalculationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,16 +14,14 @@ class ReportController extends Controller
      * tile on their dashboard is made of - and where each one's earnings have
      * got to since.
      *
-     * The ledger itself lives in OwnerLedgerService, which the BillboardBD
-     * Assistant also reads. Both surfaces quoting one implementation is the
-     * whole point: an owner who asks the assistant what a board earned must be
-     * told what this page would show them.
+     * The actual calculation lives in Services\Owner\OwnerPanelCalculationService
+     * - this method only shapes the HTTP response.
      */
-    public function transactions(Request $request, OwnerLedgerService $ledger): JsonResponse
+    public function transactions(Request $request, OwnerPanelCalculationService $calculations): JsonResponse
     {
         return response()->json([
             'success' => true,
-            'data' => $ledger->forOwner($request->user()->id),
+            'data' => $calculations->transactionsSummary($request->user()->id),
             'message' => null,
         ]);
     }
