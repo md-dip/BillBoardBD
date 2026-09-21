@@ -12,8 +12,10 @@ class BillboardController extends Controller
 {
     public function index()
     {
-        // Only admin-approved listings are public.
-        $billboards = Billboard::query()->where('listing_status', 'approved')->get();
+        // Only admin-approved listings are public. Ordered by id so the list
+        // has a stable, well-defined order (there was none before) - id is
+        // unique and strictly creation-ordered, unlike a timestamp column.
+        $billboards = Billboard::query()->where('listing_status', 'approved')->orderBy('id')->get();
 
         return response()->json([
             'success' => true,
@@ -51,6 +53,7 @@ class BillboardController extends Controller
             ->where('listing_status', 'approved')
             ->where('distance_km', '<=', $radius)
             ->orderBy('distance_km')
+            ->orderBy('id')          // tiebreaker: two boards at the exact same distance
             ->get()
             // raw rows skip the Eloquent accessor, so mirror photo_url here too
             ->map(function ($b) {

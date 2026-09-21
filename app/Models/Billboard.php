@@ -60,7 +60,7 @@ class Billboard extends Model
             'daily_rate' => 'decimal:2',
             'monthly_rate' => 'decimal:2',
             'rating' => 'decimal:1',
-            'permit_expiry_date' => 'date',
+            'permit_expiry_date' => 'date:Y-m-d',
             'submitted_at' => 'datetime',
             'reviewed_at' => 'datetime',
         ];

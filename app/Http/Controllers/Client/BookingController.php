@@ -136,14 +136,16 @@ class BookingController extends Controller
         ]);
     }
 
-    /** Everything this user has booked (holds excluded), newest first. */
+    /**
+     * Everything  order, so it's the only column that sorts this reliably.
+     */
     public function myBookings(Request $request): JsonResponse
     {
         $bookings = $request->user()
             ->bookings()
             ->where('status', '!=', 'held')
             ->with(['billboard', 'payments', 'proofOfPostings', 'invoices'])
-            ->latest()
+            ->orderBy('id')
             ->get();
 
         return response()->json([

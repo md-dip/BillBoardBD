@@ -84,10 +84,12 @@ class PayoutService
      */
     public function history(?User $owner = null): Collection
     {
+        // Ordered by id, not created_at: id is unique and strictly
+        // creation-ordered, so unlike a timestamp it can never tie.
         return Payout::query()
             ->with('owner')
             ->when($owner, fn ($q) => $q->where('owner_id', $owner->id))
-            ->latest()
+            ->orderByDesc('id')
             ->get();
     }
 
