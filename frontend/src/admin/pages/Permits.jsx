@@ -5,19 +5,15 @@ import AdminShell from '../components/AdminShell';
 import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Permits.css';
 
-function daysUntil(dateStr) {
-  return Math.round((new Date(dateStr).getTime() - Date.now()) / 86400000);
-}
-
 export default function AdminPermits() {
     usePageTitle('Admin Permits');
 
-  const [billboards, setBillboards] = useState([]);
+  const [data, setData] = useState({ expired: 0, expiring_soon: 0, compliant: 0, billboards: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/admin/billboards')
-      .then((res) => setBillboards(res.data.data.data))
+    api.get('/admin/permits')
+      .then((res) => setData(res.data.data))
       .finally(() => setLoading(false));
   }, []);
 
@@ -29,19 +25,10 @@ export default function AdminPermits() {
     );
   }
 
-  const withDays = billboards
-    .filter((b) => b.permit_expiry_date && (b.listing_status ?? 'approved') === 'approved')
-    .map((b) => ({ ...b, daysLeft: daysUntil(b.permit_expiry_date) }))
-    .sort((a, b) => a.daysLeft - b.daysLeft);
-
-  const expired = withDays.filter((b) => b.daysLeft < 0);
-  const soon = withDays.filter((b) => b.daysLeft >= 0 && b.daysLeft <= 30);
-  const okay = withDays.filter((b) => b.daysLeft > 30);
-
   const kpis = [
-    { slug: 'expired', label: 'Expired', value: expired.length, icon: ShieldAlert },
-    { slug: 'expiring-soon', label: 'Expiring in 30 days', value: soon.length, icon: AlertTriangle },
-    { slug: 'compliant', label: 'Compliant', value: okay.length, icon: ShieldCheck },
+    { slug: 'expired', label: 'Expired', value: data.expired, icon: ShieldAlert },
+    { slug: 'expiring-soon', label: 'Expiring in 30 days', value: data.expiring_soon, icon: AlertTriangle },
+    { slug: 'compliant', label: 'Compliant', value: data.compliant, icon: ShieldCheck },
   ];
 
   return (
@@ -75,7 +62,7 @@ export default function AdminPermits() {
             </tr>
           </thead>
           <tbody>
-            {withDays.map((b) => (
+            {data.billboards.map((b) => (
               <tr key={b.id}>
                 <td>
                   <div className="admin-permits-row-title">{b.title}</div>
@@ -84,12 +71,12 @@ export default function AdminPermits() {
                 <td>{b.owner?.name ?? 'N/A'}</td>
                 <td>{String(b.permit_expiry_date).slice(0, 10)}</td>
                 <td className="admin-permits-days-left-cell">
-                  {b.daysLeft < 0 ? `${-b.daysLeft} days overdue` : `${b.daysLeft} days`}
+                  {b.days_left < 0 ? `${-b.days_left} days overdue` : `${b.days_left} days`}
                 </td>
                 <td>
-                  {b.daysLeft < 0 ? (
+                  {b.days_left < 0 ? (
                     <span className="admin-permits-badge-destructive">Expired</span>
-                  ) : b.daysLeft <= 30 ? (
+                  ) : b.days_left <= 30 ? (
                     <span className="admin-permits-badge-warning">Expiring soon</span>
                   ) : (
                     <span className="admin-permits-badge-success">Compliant</span>
@@ -97,7 +84,7 @@ export default function AdminPermits() {
                 </td>
               </tr>
             ))}
-            {withDays.length === 0 && (
+            {data.billboards.length === 0 && (
               <tr>
                 <td colSpan={5} className="admin-permits-table-empty">
                   No permit data.

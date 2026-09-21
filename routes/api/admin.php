@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BillboardController as AdminBillboardController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
+use App\Http\Controllers\Admin\PermitController as AdminPermitController;
 use App\Http\Controllers\Admin\ProofOfPostingController as AdminProofOfPostingController;
 use App\Http\Controllers\Admin\RefundController as AdminRefundController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
@@ -20,6 +21,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     // Owner-submitted board listing review
     Route::patch('/billboards/{billboard}/approve', [AdminBillboardController::class, 'approve']);
     Route::patch('/billboards/{billboard}/reject', [AdminBillboardController::class, 'reject']);
+
+    // Permit compliance (days-left + sort, computed server-side)
+    Route::get('/permits', [AdminPermitController::class, 'index']);
 
     // Bookings review + approval workflow
     Route::get('/bookings', [AdminBookingController::class, 'index']);
