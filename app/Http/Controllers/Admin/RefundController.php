@@ -17,21 +17,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-/**
- * Admin-actor checkout for paying a refund out by hand, through SSLCommerz
- * (hosted redirect flow). Mirrors Client\PaymentGatewayController and
- * Owner\ListingPaymentController.
- *
- *   bookingCheckout() / listingCheckout()
- *               authenticated, admin only - the SPA asks for a GatewayPageURL
- *               and sends the browser there.
- *   success() / fail() / cancel()  public - SSLCommerz redirects the browser
- *               back here (form POST); we re-validate, settle, and bounce the
- *               browser back into the admin panel with ?refund=<result>.
- *   ipn()       public, server-to-server - same settlement, idempotent.
- *
- * Both refund kinds share these callbacks; `value_b` says which one came back.
- */
+
 class RefundController extends Controller
 {
     public function __construct(
