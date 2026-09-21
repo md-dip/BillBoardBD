@@ -6,8 +6,21 @@ import { formatBDT } from '../../shared/utils/formatPrice';
 import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Reports.css';
 
-const COLORS = ['#2563eb', '#93c5fd', '#15803d', '#b45309', '#dc2626', '#9333ea', '#0891b2', '#ea580c', '#65a30d', '#db2777', '#4f46e5'];
 
+const TYPE_COLORS = {
+  unipole: '#2563eb',
+  multipole: '#93c5fd',
+  led: '#15803d',
+  wall: '#b45309',
+  neon: '#dc2626',
+  freestanding: '#9333ea',
+  static: '#0891b2',
+  gantry: '#ea580c',
+  backlit: '#65a30d',
+  rooftop: '#db2777',
+  frontlit: '#4f46e5',
+};
+const FALLBACK_TYPE_COLOR = '#94a3b8';
 const KPIS = ['total-revenue', 'platform-commission', 'payable-to-owners'];
 
 export default function AdminReports() {
@@ -66,7 +79,7 @@ export default function AdminReports() {
   const kpiValues = {
     'total-revenue': { label: 'Total revenue (paid)', value: formatBDT(revenue?.totals?.total_revenue ?? 0) },
     'platform-commission': { label: 'Platform commission', value: formatBDT(revenue?.totals?.platform_commission ?? 0) },
-    'payable-to-owners': { label: 'Payable to owners', value: formatBDT(revenue?.totals?.owner_payable ?? 0) },
+    'payable-to-owners': { label: 'Owner Revuenue (total)', value: formatBDT(revenue?.totals?.owner_payable ?? 0) },
   };
 
   return (
@@ -136,17 +149,18 @@ export default function AdminReports() {
                       nameKey="name"
                       outerRadius={100}
                       label
-                      shape={(props) => <Sector {...props} fill={COLORS[props.index % COLORS.length]} />}
+                      shape={(props) => <Sector {...props} fill={TYPE_COLORS[props.payload.name] ?? FALLBACK_TYPE_COLOR} />}
                     />
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
               <ul className="admin-reports-inventory-legend-list">
-                {typeShare.map((t, i) => (
+                {typeShare.map((t) => (
                   <li key={t.name} className="admin-reports-inventory-legend-item">
                     <span
-                      className={`admin-reports-inventory-legend-dot admin-reports-inventory-legend-dot-${i % COLORS.length}`}
+                      className="admin-reports-inventory-legend-dot"
+                      style={{ backgroundColor: TYPE_COLORS[t.name] ?? FALLBACK_TYPE_COLOR }}
                     />
                     <span className="admin-reports-inventory-legend-label">{t.name}</span>
                     <span className="admin-reports-inventory-legend-value">{t.value}</span>
