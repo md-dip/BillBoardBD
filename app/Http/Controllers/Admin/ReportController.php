@@ -15,11 +15,7 @@ class ReportController extends Controller
     public function __construct(private readonly AdminPanelCalculationService $calculations) {}
 
     /**
-     * Platform money, per billboard per month - the numbers behind the admin
-     * dashboard's KPI tiles and its revenue-by-month chart.
-     *
-     * The actual calculation lives in Services\Admin\AdminPanelCalculationService
-     * (revenueSummary()) - this method only shapes the HTTP response.
+     * Platform money, per billboard per month
      */
     public function revenue(): JsonResponse
     {

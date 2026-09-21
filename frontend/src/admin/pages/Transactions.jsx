@@ -20,16 +20,7 @@ const TYPES = {
     listing_fee: { label: 'Board listing fee', slug: 'listing-fee' },
 };
 
-/**
- * The drill-down behind the dashboard's "Total revenue" and "Platform
- * commission" tiles - one row per transaction that actually entered the
- * platform, straight from /admin/reports/transactions (the same ledger the
- * tiles are aggregated from, so the two can never disagree).
- *
- * Both views render this one component; `view` only decides which figures are
- * on show. Revenue asks "what came in", commission asks "what did we keep, and
- * at what rate" - the rows are identical either way.
- */
+
 export default function AdminTransactions({ view = 'revenue' }) {
     const isCommission = view === 'commission';
 
