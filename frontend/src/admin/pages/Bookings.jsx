@@ -15,7 +15,6 @@ const STATUSES = [
   'pending_proof_review',
   'active',
   'rejected',
-  'cancelled',
 ];
 
 // What the SSLCommerz redirect appends to the URL when the admin comes back
@@ -35,7 +34,6 @@ const STATUS_LABEL = {
   pending_proof_review: 'proof review',
   active: 'active',
   rejected: 'rejected',
-  cancelled: 'cancelled',
 };
 
 export default function AdminBookings() {
