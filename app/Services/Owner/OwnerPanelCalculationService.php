@@ -45,6 +45,7 @@ class OwnerPanelCalculationService
             ->select('payments.id as payment_id', 'payments.amount')
             ->get();
 
+        // Nothing to work out - a payment's own amount already IS revenue collected.
         return $payments->map(fn ($payment) => ['amount' => round((float) $payment->amount, 2)]);
     }
 
@@ -92,6 +93,7 @@ class OwnerPanelCalculationService
                 ? (float) ($frozenCommission[$payment->booking_id] ?? 0) / $bookingTotal
                 : 0.0;
 
+            // The platform's cut: how much was collected, times the rate this booking was sold at.
             return ['platform_cut' => round($collected * $rate, 2)];
         });
     }
@@ -141,11 +143,12 @@ class OwnerPanelCalculationService
                 : 0.0;
             $platformCut = round($collected * $rate, 2);
 
+            // What's left for the owner once the platform's cut comes out.
             return ['owner_earning' => round($collected - $platformCut, 2)];
         });
     }
 
-   
+
     // 4. PAID OUT TO YOU
     public function paidOut(int $ownerId): float
     {
@@ -157,6 +160,8 @@ class OwnerPanelCalculationService
      */
     private function fetchPaidOutLedger(int $ownerId): Collection
     {
+        // A row existing here means admin has already sent this owner money -
+        // nothing to calculate, just add up what has actually been paid.
         return DB::table('payouts')
             ->where('owner_id', $ownerId)
             ->select('amount')
@@ -325,11 +330,9 @@ class OwnerPanelCalculationService
         });
     }
 
-    // ========================================================================
+    
     // 7. IN PROGRESS
-    // ========================================================================
-
-    /** Earnings with nothing yet for the admin to act on. */
+    
     public function inProgress(int $ownerId): float
     {
         return round(
