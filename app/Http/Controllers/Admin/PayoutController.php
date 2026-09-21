@@ -19,26 +19,32 @@ class PayoutController extends Controller
 
     public function index(): JsonResponse
     {
+        //oldest owner first
+        $outstanding = $this->payouts->outstandingByOwner()
+            ->sortBy(fn (array $row) => $row['owner']->id)
+            ->values()
+            ->map(fn (array $row) => [
+                'owner' => [
+                    'id' => $row['owner']->id,
+                    'name' => $row['owner']->name,
+                    'email' => $row['owner']->email,
+                    'payout_method' => $row['owner']->payout_method,
+                    'payout_account_name' => $row['owner']->payout_account_name,
+                    'payout_account_number' => $row['owner']->payout_account_number,
+                    'payout_bank_name' => $row['owner']->payout_bank_name,
+                    'payout_branch' => $row['owner']->payout_branch,
+                ],
+                'amount' => $row['amount'],
+            ]);
+
+        // Newest payout first.
+        $history = $this->payouts->history()->sortByDesc('id')->values();
+
         return response()->json([
             'success' => true,
             'data' => [
-                // Map to an explicit owner payload rather than dumping the whole
-                // User model - the admin needs the payout account to know where
-                // to send the money, so surface exactly those fields, nothing more.
-                'outstanding' => $this->payouts->outstandingByOwner()->map(fn (array $row) => [
-                    'owner' => [
-                        'id' => $row['owner']->id,
-                        'name' => $row['owner']->name,
-                        'email' => $row['owner']->email,
-                        'payout_method' => $row['owner']->payout_method,
-                        'payout_account_name' => $row['owner']->payout_account_name,
-                        'payout_account_number' => $row['owner']->payout_account_number,
-                        'payout_bank_name' => $row['owner']->payout_bank_name,
-                        'payout_branch' => $row['owner']->payout_branch,
-                    ],
-                    'amount' => $row['amount'],
-                ]),
-                'history' => $this->payouts->history(),
+                'outstanding' => $outstanding,
+                'history' => $history,
             ],
             'message' => null,
         ]);
