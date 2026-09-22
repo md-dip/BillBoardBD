@@ -2,6 +2,7 @@
 
 namespace App\Services\Owner;
 
+use App\Services\Shared\LedgerTransactionType;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -19,49 +20,58 @@ class OwnerPanelCalculationService
 
    
     // 1. REVENUE COLLECTED
-    
-    /** Every taka actually collected on this owner's boards. */
+    // 2. PLATFORM COMMISSION
+    // 3. YOUR EARNINGS (ALL TIME)
+    //
+    // All three come out of one pass over the same ledger - same shape as
+    // AdminPanelCalculationService::transactionsList(): a loop with two
+    // running totals ($collected, $commission), then a third value derived
+    // from them by plain math ($earnings = $collected - $commission).
+
     public function revenueCollected(int $ownerId): float
     {
-        return round((float) $this->fetchRevenueCollectedLedger($ownerId)->sum('amount'), 2);
+        return $this->collectedAndCommission($ownerId)['collected'];
     }
-
-    /**
-     * Fetches the revenue collected ledger for a given owner.
-     * 
-     * @return Collection<int, array{amount: float}>
-     */
-    private function fetchRevenueCollectedLedger(int $ownerId): Collection
-    {
-        $payments = DB::table('payments')
-            ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
-            ->join('billboards', 'billboards.id', '=', 'bookings.billboard_id')
-            ->where('billboards.owner_id', $ownerId)
-            ->where('payments.status', 'paid')
-            ->where(function ($query) {
-                $query->where('payments.payment_type', 'balance')
-                    ->orWhereIn('bookings.status', self::EARNED_BOOKING_STATUSES);
-            })
-            ->select('payments.id as payment_id', 'payments.amount')
-            ->get();
-
-        // Nothing to work out - a payment's own amount already IS revenue collected.
-        return $payments->map(fn ($payment) => ['amount' => round((float) $payment->amount, 2)]);
-    }
-
-    // 2. PLATFORM COMMISSION
 
     /** The platform's cut of everything collected on this owner's boards. */
     public function platformCommission(int $ownerId): float
     {
-        return round((float) $this->fetchPlatformCommissionLedger($ownerId)->sum('platform_cut'), 2);
+        return $this->collectedAndCommission($ownerId)['commission'];
+    }
+
+    /** Revenue collected minus platform commission - what the owner actually keeps. */
+    public function earnings(int $ownerId): float
+    {
+        return $this->collectedAndCommission($ownerId)['earnings'];
     }
 
     /**
-     * Working out platform_cut still needs the collected amount
-     * @return Collection<int, array{platform_cut: float}>
+     * @return array{collected: float, commission: float, earnings: float}
      */
-    private function fetchPlatformCommissionLedger(int $ownerId): Collection
+    private function collectedAndCommission(int $ownerId): array
+    {
+        $collected = 0.0;
+        $commission = 0.0;
+
+        foreach ($this->fetchRevenueLedger($ownerId) as $row) {
+            $collected = $collected + $row['amount'];
+            $commission = $commission + $row['platform_cut'];
+        }
+
+
+        $earnings = $collected - $commission;
+
+        return [
+            'collected' => round($collected, 2),
+            'commission' => round($commission, 2),
+            'earnings' => round($earnings, 2),
+        ];
+    }
+
+    /**
+     * @return Collection<int, array{amount: float, platform_cut: float}>
+     */
+    private function fetchRevenueLedger(int $ownerId): Collection
     {
         $payments = DB::table('payments')
             ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
@@ -94,65 +104,25 @@ class OwnerPanelCalculationService
                 : 0.0;
 
             // The platform's cut: how much was collected, times the rate this booking was sold at.
-            return ['platform_cut' => round($collected * $rate, 2)];
-        });
-    }
-
-    // 3. YOUR EARNINGS (ALL TIME)
-  
-    /** Revenue collected minus platform commission - what the owner actually keeps. */
-    public function earnings(int $ownerId): float
-    {
-        return round((float) $this->fetchEarningsLedger($ownerId)->sum('owner_earning'), 2);
-    }
-
-    /**
-     * amount and platform_cut needed  intermediate values to work
-     * @return Collection<int, array{owner_earning: float}>
-     */
-    private function fetchEarningsLedger(int $ownerId): Collection
-    {
-        $payments = DB::table('payments')
-            ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
-            ->join('billboards', 'billboards.id', '=', 'bookings.billboard_id')
-            ->where('billboards.owner_id', $ownerId)
-            ->where('payments.status', 'paid')
-            ->where(function ($query) {
-                $query->where('payments.payment_type', 'balance')
-                    ->orWhereIn('bookings.status', self::EARNED_BOOKING_STATUSES);
-            })
-            ->select(
-                'payments.id as payment_id',
-                'payments.amount',
-                'bookings.id as booking_id',
-                'bookings.total_amount as booking_total',
-            )
-            ->get();
-
-        $frozenCommission = DB::table('payments')
-            ->groupBy('booking_id')
-            ->selectRaw('booking_id, SUM(commission_amount) as commission')
-            ->pluck('commission', 'booking_id');
-
-        return $payments->map(function ($payment) use ($frozenCommission) {
-            $collected = (float) $payment->amount;
-            $bookingTotal = (float) $payment->booking_total;
-
-            $rate = $bookingTotal > 0
-                ? (float) ($frozenCommission[$payment->booking_id] ?? 0) / $bookingTotal
-                : 0.0;
             $platformCut = round($collected * $rate, 2);
 
-            // What's left for the owner once the platform's cut comes out.
-            return ['owner_earning' => round($collected - $platformCut, 2)];
+            return [
+                'amount' => round($collected, 2),
+                'platform_cut' => $platformCut,
+            ];
         });
     }
-
 
     // 4. PAID OUT TO YOU
     public function paidOut(int $ownerId): float
     {
-        return round((float) $this->fetchPaidOutLedger($ownerId)->sum('amount'), 2);
+        // Plain math: each of this owner's payout rows, added up one at a time.
+        $paidOut = 0.0;
+        foreach ($this->fetchPaidOutLedger($ownerId) as $row) {
+            $paidOut = $paidOut + $row['amount'];
+        }
+
+        return round($paidOut, 2);
     }
 
     /**
@@ -176,10 +146,15 @@ class OwnerPanelCalculationService
     /** Earnings settled and proof-verified, waiting on the next payout run. */
     public function readyForPayout(int $ownerId): float
     {
-        return round(
-            (float) $this->fetchReadyForPayoutLedger($ownerId)->where('payout_status', 'ready')->sum('owner_earning'),
-            2
-        );
+
+        $ready = 0.0;
+        foreach ($this->fetchReadyForPayoutLedger($ownerId) as $row) {
+            if ($row['payout_status'] === 'ready') {
+                $ready = $ready + $row['owner_earning'];
+            }
+        }
+
+        return round($ready, 2);
     }
 
     /** Its own independent copy of the same classification query - see paidOut() above.
@@ -255,10 +230,16 @@ class OwnerPanelCalculationService
    
     public function awaitingVerification(int $ownerId): float
     {
-        return round(
-            (float) $this->fetchAwaitingVerificationLedger($ownerId)->where('payout_status', 'awaiting_verification')->sum('owner_earning'),
-            2
-        );
+        // Plain math: each row classified 'awaiting_verification', its
+        // owner_earning added up one at a time - everything else is skipped.
+        $awaiting = 0.0;
+        foreach ($this->fetchAwaitingVerificationLedger($ownerId) as $row) {
+            if ($row['payout_status'] === 'awaiting_verification') {
+                $awaiting = $awaiting + $row['owner_earning'];
+            }
+        }
+
+        return round($awaiting, 2);
     }
 
     /**  above.
@@ -335,10 +316,16 @@ class OwnerPanelCalculationService
     
     public function inProgress(int $ownerId): float
     {
-        return round(
-            (float) $this->fetchInProgressLedger($ownerId)->where('payout_status', 'in_progress')->sum('owner_earning'),
-            2
-        );
+        // Plain math: each row classified 'in_progress', its owner_earning
+        // added up one at a time - everything else is skipped.
+        $inProgress = 0.0;
+        foreach ($this->fetchInProgressLedger($ownerId) as $row) {
+            if ($row['payout_status'] === 'in_progress') {
+                $inProgress = $inProgress + $row['owner_earning'];
+            }
+        }
+
+        return round($inProgress, 2);
     }
 
     /** Its own independent copy of the same classification query - see paidOut() above.
@@ -410,9 +397,7 @@ class OwnerPanelCalculationService
         });
     }
 
-  
-    // together: everything the Transactions page needs
-  
+
     /**
      * @return array{transactions: Collection<int, array<string, mixed>>, totals: array<string, mixed>}
      */
@@ -519,7 +504,7 @@ class OwnerPanelCalculationService
 
                 return [
                     'id' => 'payment-'.$payment->payment_id,
-                    'type' => $payment->payment_type === 'balance' ? 'booking_balance' : 'booking_advance',
+                    'type' => LedgerTransactionType::forBookingPayment($payment->payment_type),
                     'earned_at' => (string) $payment->earned_at,
                     'month' => Carbon::parse($payment->earned_at)->format('Y-m'),
                     'billboard_id' => (int) $payment->billboard_id,
