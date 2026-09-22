@@ -33,13 +33,20 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request): JsonResponse
     {
-        $user = User::query()->create([
-            'name'     => $request->validated('name'),
-            'email'    => $request->validated('email'),
-            'password' => $request->validated('password'),
-            'phone'    => $request->validated('phone'),
-            'role'     => $request->validated('role') ?? 'client',
-        ]);
+        // Forwarding the whole validated array (instead of hand-mapping each
+        // field) means a brand-new nullable field only needs a rule here and
+        // a spot in $fillable on User - no controller change.
+        $data = $request->validated();
+        $data['role'] = $data['role'] ?? 'client';
+
+        // An optional-but-unique field must reach the DB as a real NULL, not
+        // '', or a second user who leaves it blank collides on the unique
+        // index (Postgres treats every NULL as distinct, but '' as equal).
+        if (array_key_exists('username', $data)) {
+            $data['username'] = $data['username'] ?: null;
+        }
+
+        $user = User::query()->create($data);
 
         $token = $user->createToken('api-token')->plainTextToken;
 

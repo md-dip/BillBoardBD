@@ -56,6 +56,20 @@ function ClientRegisterFields({ form, onChange }) {
                     onChange={onChange}
                 />
             </div>
+            
+            <div className="register-client-field">
+                <label className="register-client-label" htmlFor="username">Username</label>
+                <input
+                    id="username"
+                    name="username"
+                    className="register-client-input"
+                    value={form.username}
+                    onChange={onChange}
+                    maxLength={15}
+                    required
+                />
+            </div>
+
         </>
     );
 }
@@ -77,7 +91,7 @@ function OwnerRegisterFields({ form, onChange }) {
                     required
                 />
             </div>
-
+            
             <div className="register-owner-field">
                 <label className="register-owner-label" htmlFor="email">Email</label>
                 <input
@@ -132,6 +146,7 @@ export default function Register() {
 
     const [form, setForm] = useState({
         name: '',
+        username: '',
         email: '',
         password: '',
         phone: '',
