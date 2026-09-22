@@ -16,7 +16,7 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
     const [endDate, setEndDate] = useState(todayIso());
     const [booking, setBooking] = useState(null);
     const [payment, setPayment] = useState(null);
-
+    // 1
     // Step 2 fields
     const [brandName, setBrandName] = useState('');
     const [adCategory, setAdCategory] = useState('');
@@ -78,7 +78,7 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
             setError(err.response?.data?.message || 'Could not hold these dates.');
         } finally { setLoading(false); }
     }
-
+    // 2
     async function handleCampaign() {
         if (!creative) { setError('Please attach an ad creative image.'); return; }
         setLoading(true); setError('');
@@ -161,7 +161,7 @@ export default function BookingWizard({ billboard, advancePercentage, holdMinute
                     <p className="booking-note">🔒 Dates are locked to you for {holdMinutes} minutes while you finish your request.</p>
                 </>
             )}
-
+            {/* 3 */}
             {/* STEP 2 - CAMPAIGN */}
             {step === 'campaign' && (
                 <>

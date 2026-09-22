@@ -111,10 +111,14 @@ class BookingController extends Controller
         $path = Storage::disk('public')->putFile('campaign-creatives', $request->file('creative'));
         $holdMinutes = (int) Setting::get('hold_minutes', 15);
 
-        $booking->update([
-            'brand_name' => $request->validated('brand_name'),
-            'ad_category' => $request->validated('ad_category'),
-            'campaign_description' => $request->validated('campaign_description'),
+        // Forward every validated text field automatically (the raw upload
+        // is excluded - it's stored separately above as creative_path) so a
+        // new campaign field only needs a rule here and a spot in $fillable
+        // on Booking, no controller change.
+        $data = $request->validated();
+        unset($data['creative']);
+
+        $booking->update($data + [
             'creative_path' => $path,
             'status' => 'pending_payment',
             'expires_at' => now()->addMinutes($holdMinutes),
