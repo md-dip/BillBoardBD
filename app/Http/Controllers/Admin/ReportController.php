@@ -26,13 +26,7 @@ class ReportController extends Controller
         ]);
     }
 
-    /**
-     * Every single transaction behind those tiles, newest first - what the
-     * admin gets after clicking "Total revenue" or "Platform commission".
-     *
-     * The actual calculation lives in Services\Admin\AdminPanelCalculationService
-     * (transactionsList()) - this method only shapes the HTTP response.
-     */
+
     public function transactions(): JsonResponse
     {
         return response()->json([

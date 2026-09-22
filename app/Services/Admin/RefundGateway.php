@@ -8,20 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use RuntimeException;
 
-/**
- * SSLCommerz v4 hosted-checkout client for the ADMIN paying a refund out by
- * hand. The third sibling of Client\SslCommerzGateway (booking payments) and
- * Owner\ListingFeeGateway (listing fees) - same actor split, same small surface
- * (start a session, validate a callback).
- *
- * The admin is the one sitting at the hosted page, but the customer details
- * sent to SSLCommerz are the RECIPIENT's - the client owed their advance back,
- * or the owner owed their listing fee. That is who the money is for, and it is
- * what makes the gateway's own record of the transaction readable later.
- *
- * Both refund kinds share one set of callback routes; `value_b` says which
- * table to settle, exactly as `value_a` says which row.
- */
+
 class RefundGateway
 {
     private const SANDBOX_HOST = 'https://sandbox.sslcommerz.com';
@@ -32,11 +19,7 @@ class RefundGateway
 
     public const LISTING_REFUND = 'listing_refund';
 
-    /**
-     * Open a checkout session to refund a client's booking advance. Persists
-     * the generated tran_id + session key onto the refund row so the later
-     * callback can be tied back to exactly this attempt.
-     */
+
     public function startBookingRefund(Payment $refund): string
     {
         $refund->loadMissing('booking.billboard', 'booking.user');
@@ -66,11 +49,7 @@ class RefundGateway
         return $session['gateway_page_url'];
     }
 
-    /**
-     * Open a checkout session to refund an owner's board listing fee. Writes to
-     * the refund_* columns so the owner's original payment reference - the
-     * proof the fee was ever collected - is left untouched.
-     */
+
     public function startListingRefund(ListingPayment $payment): string
     {
         $payment->loadMissing('billboard', 'owner');

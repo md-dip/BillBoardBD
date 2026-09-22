@@ -7,13 +7,10 @@ import { formatBDT } from '../../shared/utils/formatPrice';
 import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Transactions.css';
 
-// One screenful of ledger. The whole list is already in memory (the totals are
-// summed from it), so paging is instant and the summary cards keep covering
-// every transaction rather than just the page on show.
+
 const PER_PAGE = 30;
 
-// Every kind of money that can enter the platform. The slug doubles as the CSS
-// suffix, so each badge owns its own complete rule in Transactions.css.
+
 const TYPES = {
     booking_advance: { label: 'Booking advance', slug: 'booking-advance' },
     booking_balance: { label: 'Final payment', slug: 'final-payment' },
