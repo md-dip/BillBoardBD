@@ -6,6 +6,7 @@ use App\Models\Billboard;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\User;
+use App\Services\Shared\LedgerTransactionType;
 use App\Services\Shared\RevenueRecognitionService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -90,7 +91,7 @@ class AdminPanelCalculationService
 
             $ledger->push([
                 'id' => 'payment-'.$payment->payment_id,
-                'type' => $payment->payment_type === 'balance' ? 'booking_balance' : 'booking_advance',
+                'type' => LedgerTransactionType::forBookingPayment($payment->payment_type),
                 'earned_at' => (string) $payment->earned_at,
                 'month' => Carbon::parse($payment->earned_at)->format('Y-m'),
                 'billboard_id' => (int) $payment->billboard_id,
@@ -113,7 +114,7 @@ class AdminPanelCalculationService
 
             $ledger->push([
                 'id' => 'listing-'.$fee->listing_payment_id,
-                'type' => 'listing_fee',
+                'type' => LedgerTransactionType::LISTING_FEE,
                 'earned_at' => (string) $fee->earned_at,
                 'month' => Carbon::parse($fee->earned_at)->format('Y-m'),
                 'billboard_id' => (int) $fee->billboard_id,
@@ -164,7 +165,7 @@ class AdminPanelCalculationService
             $buckets[$key]['owner_payable'] += $entry['owner_payable'];
 
             // A listing fee is 100% platform money
-            if ($entry['type'] === 'listing_fee') {
+            if ($entry['type'] === LedgerTransactionType::LISTING_FEE) {
                 $buckets[$key]['listing_fees'] += $entry['platform_cut'];
             } else {
                 $buckets[$key]['commission'] += $entry['platform_cut'];
@@ -230,7 +231,7 @@ class AdminPanelCalculationService
             $count = $count + 1;
             $ownerPayable = $ownerPayable + $transaction['owner_payable'];
 
-            if ($transaction['type'] === 'listing_fee') {
+            if ($transaction['type'] === LedgerTransactionType::LISTING_FEE) {
                 $listingCut = $listingCut + $transaction['platform_cut'];
             } else {
                 $bookingGross = $bookingGross + $transaction['amount'];
@@ -263,7 +264,7 @@ class AdminPanelCalculationService
         $listingCut = 0.0;
 
         foreach ($this->fetchRevenueLedger() as $entry) {
-            if ($entry['type'] === 'listing_fee') {
+            if ($entry['type'] === LedgerTransactionType::LISTING_FEE) {
                 $listingCut = $listingCut + $entry['platform_cut'];
             } else {
                 $bookingCut = $bookingCut + $entry['platform_cut'];

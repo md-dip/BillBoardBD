@@ -2,6 +2,7 @@
 
 namespace App\Services\Owner;
 
+use App\Services\Shared\LedgerTransactionType;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -187,7 +188,7 @@ class OwnerLedgerService
 
                 return [
                     'id' => 'payment-'.$payment->payment_id,
-                    'type' => $payment->payment_type === 'balance' ? 'booking_balance' : 'booking_advance',
+                    'type' => LedgerTransactionType::forBookingPayment($payment->payment_type),
                     'earned_at' => (string) $payment->earned_at,
                     'month' => Carbon::parse($payment->earned_at)->format('Y-m'),
                     'billboard_id' => (int) $payment->billboard_id,
