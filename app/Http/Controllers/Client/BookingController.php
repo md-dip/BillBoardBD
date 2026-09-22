@@ -7,18 +7,15 @@ use App\Http\Requests\Client\HoldBookingRequest;
 use App\Http\Requests\Client\SubmitCampaignRequest;
 use App\Models\Billboard;
 use App\Models\Booking;
-use App\Models\Payment;
-use App\Models\Setting;
-use App\Services\Client\BookingPricingService;
+use App\Services\Client\BookingLifecycleService;
 use App\Services\Shared\InvoiceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class BookingController extends Controller
 {
     public function __construct(
-        private readonly BookingPricingService $pricing,
+        private readonly BookingLifecycleService $lifecycle,
         private readonly InvoiceService $invoices,
     ) {}
 
@@ -28,122 +25,34 @@ class BookingController extends Controller
         $billboard = Billboard::query()
             ->where('listing_status', 'approved')
             ->findOrFail($request->validated('billboard_id'));
-        $startDate = $request->validated('start_date');
-        $endDate = $request->validated('end_date');
 
-        // Drop this user's own stale holds on this billboard first, so
-        // re-picking dates doesn't leave orphaned rows behind.
-        $billboard->bookings()
-            ->where('user_id', $request->user()->id)
-            ->where('status', 'held')
-            ->delete();
-
-        // Any booking still "in flight" on overlapping dates blocks this one.
-        // activeBookings() already excludes an expired 'held' row, so a 'held'
-        // conflict found here is always still genuinely running - distinguish
-        // it from a real booking, since one clears itself shortly and the
-        // other won't.
-        $conflict = $billboard->activeBookings()
-            ->where('start_date', '<=', $endDate)
-            ->where('end_date', '>=', $startDate)
-            ->first();
-
-        if ($conflict) {
-            return response()->json([
-                'success' => false,
-                'data' => null,
-                'message' => $conflict->status === 'held'
-                    ? 'Someone else is currently holding these dates. Please try again in a few minutes.'
-                    : 'These dates conflict with an existing booking.',
-            ], 409);
-        }
-
-        // Money is computed server-side - never trusted from the browser.
-        $amounts = $this->pricing->calculate($billboard, $startDate, $endDate);
-        $holdMinutes = (int) Setting::get('hold_minutes', 15);
-
-        $booking = Booking::query()->create([
-            'billboard_id' => $billboard->id,
-            'user_id' => $request->user()->id,
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'total_amount' => $amounts['total'],
-            'advance_amount' => $amounts['advance'],
-            'status' => 'held',
-            'expires_at' => now()->addMinutes($holdMinutes),
-        ]);
+        $result = $this->lifecycle->hold(
+            $billboard,
+            $request->user()->id,
+            $request->validated('start_date'),
+            $request->validated('end_date'),
+        );
 
         return response()->json([
-            'success' => true,
-            'data' => $booking,
-            'message' => "Dates held for {$holdMinutes} minutes. Add your campaign details to continue.",
-        ], 201);
+            'success' => $result['ok'],
+            'data' => $result['booking'] ?? null,
+            'message' => $result['message'],
+        ], $result['status']);
     }
 
     /** Step 2: campaign details + creative, required before payment. */
     public function submitCampaign(SubmitCampaignRequest $request, Booking $booking): JsonResponse
     {
-        if ($booking->user_id !== $request->user()->id) {
-            return response()->json([
-                'success' => false,
-                'data' => null,
-                'message' => 'Forbidden: this is not your booking hold.',
-            ], 403);
-        }
-
-        if ($booking->status !== 'held') {
-            return response()->json([
-                'success' => false,
-                'data' => null,
-                'message' => 'This hold is no longer active.',
-            ], 422);
-        }
-
-        if ($booking->expires_at && $booking->expires_at->isPast()) {
-            return response()->json([
-                'success' => false,
-                'data' => null,
-                'message' => 'Your hold has expired, please pick dates again.',
-            ], 410);
-        }
-
-        // Store the creative on the public disk (needs `php artisan storage:link`).
-        $path = Storage::disk('public')->putFile('campaign-creatives', $request->file('creative'));
-        $holdMinutes = (int) Setting::get('hold_minutes', 15);
-
-        // Forward every validated text field automatically (the raw upload
-        // is excluded - it's stored separately above as creative_path) so a
-        // new campaign field only needs a rule here and a spot in $fillable
-        // on Booking, no controller change.
         $data = $request->validated();
         unset($data['creative']);
 
-        $booking->update($data + [
-            'creative_path' => $path,
-            'status' => 'pending_payment',
-            'expires_at' => now()->addMinutes($holdMinutes),
-        ]);
-
-        // Commission is taken against the full total and frozen onto the
-        // payment row (read from settings, never hard-coded).
-        $commissionRate = (float) Setting::get('commission_rate', 10);
-        $commission = round((float) $booking->total_amount * ($commissionRate / 100), 2);
-        $ownerPayable = round((float) $booking->total_amount - $commission, 2);
-
-        Payment::query()->create([
-            'booking_id' => $booking->id,
-            'amount' => $booking->advance_amount,
-            'payment_type' => 'advance',
-            'status' => 'pending',
-            'commission_amount' => $commission,
-            'owner_payable' => $ownerPayable,
-        ]);
+        $result = $this->lifecycle->submitCampaign($booking, $request->user()->id, $data, $request->file('creative'));
 
         return response()->json([
-            'success' => true,
-            'data' => $booking->fresh(['payments']),
-            'message' => 'Campaign details saved. Pay the advance to submit your request.',
-        ]);
+            'success' => $result['ok'],
+            'data' => $result['booking'] ?? null,
+            'message' => $result['message'],
+        ], $result['status']);
     }
 
     /**

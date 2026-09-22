@@ -8,17 +8,7 @@ use App\Models\Setting;
 use App\Notifications\NotificationService;
 use App\Services\Shared\RefundService;
 
-/**
- * Stage 3 of the booking pipeline: the billboard owner's own acceptance,
- * reached once admin has forwarded the request. Accepting is what actually
- * creates the balance payment and starts the countdown to the final-payment
- * due date - mirrors BookingApprovalService's shape for the admin's stage 2.
- *
- * Declining here is terminal and, exactly like an admin rejection, records the
- * client's advance as owed back (see RefundService). The owner cannot send that
- * money themselves, so the admin is notified and pays it out by hand from the
- * Rejected tab of their own Bookings page.
- */
+
 class OwnerAcceptanceService
 {
     public function __construct(
@@ -80,9 +70,6 @@ class OwnerAcceptanceService
             'rejection_reason' => $reason,
         ]);
 
-        // The client paid the advance up front, so an owner decline leaves the
-        // same debt behind as an admin rejection - identical mechanism, and the
-        // admin settles it either way.
         $refund = $this->refunds->queueAdvanceRefund($booking);
 
         $booking = $booking->fresh(['billboard', 'user', 'payments']);

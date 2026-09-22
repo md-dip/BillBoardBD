@@ -5,15 +5,7 @@ namespace App\Services\Shared;
 use App\Models\Payment;
 use App\Notifications\NotificationService;
 
-/**
- * The single place a payment becomes "paid" and the booking moves forward.
- *
- * Both the manual/mock endpoint (PaymentController::pay) and the SSLCommerz
- * callbacks (PaymentGatewayController) funnel through markPaid() so the booking
- * transition, invoice generation and notifications are identical no matter how
- * the money arrived. Idempotent - a replayed callback or a callback+IPN race is
- * a no-op once the payment is already paid.
- */
+
 class PaymentCompletionService
 {
     public function __construct(
@@ -54,6 +46,8 @@ class PaymentCompletionService
      */
     private function afterAdvance(Payment $payment): void
     {
+        // Next status: pending_admin_review - now waits on
+        // BookingApprovalService::approve()/reject().
         $payment->booking->update(['status' => 'pending_admin_review', 'expires_at' => null]);
 
         $booking = $payment->booking->fresh(['billboard', 'user']);
@@ -68,6 +62,8 @@ class PaymentCompletionService
      */
     private function afterBalance(Payment $payment): void
     {
+        // Next status: paid_in_full - now waits on the owner to upload proof
+        // of posting, via Owner\ProofSubmissionService::submit().
         $payment->booking->update(['status' => 'paid_in_full']);
 
         $booking = $payment->booking->fresh(['billboard.owner', 'user']);
