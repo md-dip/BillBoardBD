@@ -9,68 +9,101 @@ use Illuminate\Support\Facades\DB;
 
 class OwnerPanelCalculationService
 {
-
     private const EARNED_BOOKING_STATUSES = ['confirmed', 'paid_in_full', 'pending_proof_review', 'active'];
-
 
     private const PAYABLE_BOOKING_STATUSES = ['paid_in_full', 'pending_proof_review', 'active'];
 
     private const AWAITING_ADMIN_STATUS = 'pending_proof_review';
 
-   
-    // 1. REVENUE COLLECTED
-    // 2. PLATFORM COMMISSION
-    // 3. YOUR EARNINGS (ALL TIME)
-    //
-    // All three come out of one pass over the same ledger - same shape as
-    // AdminPanelCalculationService::transactionsList(): a loop with two
-    // running totals ($collected, $commission), then a third value derived
-    // from them by plain math ($earnings = $collected - $commission).
-
+    //  REVENUE COLLECTED
     public function revenueCollected(int $ownerId): float
     {
-        return $this->collectedAndCommission($ownerId)['collected'];
+        $payments = DB::table('payments')
+            ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
+            ->join('billboards', 'billboards.id', '=', 'bookings.billboard_id')
+            ->where('billboards.owner_id', $ownerId)
+            ->where('payments.status', 'paid')
+            ->where(function ($query) {
+                $query->where('payments.payment_type', 'balance')
+                    ->orWhereIn('bookings.status', self::EARNED_BOOKING_STATUSES);
+            })
+            ->select('payments.amount')
+            ->get();
+
+        $collected = 0.0;
+        foreach ($payments as $payment) {
+            $collected = $collected + (float) $payment->amount;
+        }
+
+        return round($collected, 2);
     }
 
-    /** The platform's cut of everything collected on this owner's boards. */
+    //  PLATFORM COMMISSION
+
     public function platformCommission(int $ownerId): float
     {
-        return $this->collectedAndCommission($ownerId)['commission'];
-    }
+        $payments = DB::table('payments')
+            ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
+            ->join('billboards', 'billboards.id', '=', 'bookings.billboard_id')
+            ->where('billboards.owner_id', $ownerId)
+            ->where('payments.status', 'paid')
+            ->where(function ($query) {
+                $query->where('payments.payment_type', 'balance')
+                    ->orWhereIn('bookings.status', self::EARNED_BOOKING_STATUSES);
+            })
+            ->select('payments.amount', 'bookings.id as booking_id', 'bookings.total_amount as booking_total')
+            ->get();
 
-    /** Revenue collected minus platform commission - what the owner actually keeps. */
-    public function earnings(int $ownerId): float
-    {
-        return $this->collectedAndCommission($ownerId)['earnings'];
-    }
+        $frozenCommission = DB::table('payments')
+            ->groupBy('booking_id')
+            ->selectRaw('booking_id, SUM(commission_amount) as commission')
+            ->pluck('commission', 'booking_id');
 
-    /**
-     * @return array{collected: float, commission: float, earnings: float}
-     */
-    private function collectedAndCommission(int $ownerId): array
-    {
-        $collected = 0.0;
-        $commission = 0.0;
+        $bookingCut = 0.0;
+        foreach ($payments as $payment) {
+            $collected = (float) $payment->amount;
+            $bookingTotal = (float) $payment->booking_total;
 
-        foreach ($this->fetchRevenueLedger($ownerId) as $row) {
-            $collected = $collected + $row['amount'];
-            $commission = $commission + $row['platform_cut'];
+            $rate = $bookingTotal > 0
+                ? (float) ($frozenCommission[$payment->booking_id] ?? 0) / $bookingTotal
+                : 0.0;
+
+            $bookingCut = $bookingCut + round($collected * $rate, 2);
         }
 
 
-        $earnings = $collected - $commission;
+        $platformCommission = $bookingCut;
 
-        return [
-            'collected' => round($collected, 2),
-            'commission' => round($commission, 2),
-            'earnings' => round($earnings, 2),
-        ];
+        return round($platformCommission, 2);
     }
 
-    /**
-     * @return Collection<int, array{amount: float, platform_cut: float}>
-     */
-    private function fetchRevenueLedger(int $ownerId): Collection
+    // YOUR EARNINGS 
+
+    public function earnings(int $ownerId): float
+    {
+        return round($this->revenueCollected($ownerId) - $this->platformCommission($ownerId), 2);
+    }
+
+    //  PAID OUT  
+
+    public function paidOut(int $ownerId): float
+    {
+        $payouts = DB::table('payouts')
+            ->where('owner_id', $ownerId)
+            ->select('amount')
+            ->get();
+
+        $paidOut = 0.0;
+        foreach ($payouts as $payout) {
+            $paidOut = $paidOut + (float) $payout->amount;
+        }
+
+        return round($paidOut, 2);
+    }
+
+    // READY FOR PAYOUT
+
+    public function readyForPayout(int $ownerId): float
     {
         $payments = DB::table('payments')
             ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
@@ -82,9 +115,9 @@ class OwnerPanelCalculationService
                     ->orWhereIn('bookings.status', self::EARNED_BOOKING_STATUSES);
             })
             ->select(
-                'payments.id as payment_id',
                 'payments.amount',
                 'bookings.id as booking_id',
+                'bookings.status as booking_status',
                 'bookings.total_amount as booking_total',
             )
             ->get();
@@ -94,71 +127,52 @@ class OwnerPanelCalculationService
             ->selectRaw('booking_id, SUM(commission_amount) as commission')
             ->pluck('commission', 'booking_id');
 
-        return $payments->map(function ($payment) use ($frozenCommission) {
+        $bookingIds = $payments->pluck('booking_id')->unique();
+
+        $payoutByBooking = DB::table('payments')
+            ->join('payouts', 'payouts.id', '=', 'payments.payout_id')
+            ->where('payments.payment_type', 'advance')
+            ->whereIn('payments.booking_id', $bookingIds)
+            ->pluck('payouts.id', 'payments.booking_id');
+
+        $proofVerified = DB::table('proof_of_postings')
+            ->whereIn('booking_id', $bookingIds)
+            ->where('status', 'verified')
+            ->pluck('booking_id')
+            ->flip();
+
+        $ready = 0.0;
+        foreach ($payments as $payment) {
             $collected = (float) $payment->amount;
             $bookingTotal = (float) $payment->booking_total;
 
             $rate = $bookingTotal > 0
                 ? (float) ($frozenCommission[$payment->booking_id] ?? 0) / $bookingTotal
                 : 0.0;
-
-            // The platform's cut: how much was collected, times the rate this booking was sold at.
             $platformCut = round($collected * $rate, 2);
 
-            return [
-                'amount' => round($collected, 2),
-                'platform_cut' => $platformCut,
-            ];
-        });
-    }
+            if ($payoutByBooking->has($payment->booking_id)) {
+                $status = 'paid_out';
+            } elseif (in_array($payment->booking_status, self::PAYABLE_BOOKING_STATUSES, true)
+                && $proofVerified->has($payment->booking_id)) {
+                $status = 'ready';
+            } elseif ($payment->booking_status === self::AWAITING_ADMIN_STATUS) {
+                $status = 'awaiting_verification';
+            } else {
+                $status = 'in_progress';
+            }
 
-    // 4. PAID OUT TO YOU
-    public function paidOut(int $ownerId): float
-    {
-        // Plain math: each of this owner's payout rows, added up one at a time.
-        $paidOut = 0.0;
-        foreach ($this->fetchPaidOutLedger($ownerId) as $row) {
-            $paidOut = $paidOut + $row['amount'];
-        }
-
-        return round($paidOut, 2);
-    }
-
-    /**
-     * @return Collection<int, array{amount: float}>
-     */
-    private function fetchPaidOutLedger(int $ownerId): Collection
-    {
-        // A row existing here means admin has already sent this owner money -
-        // nothing to calculate, just add up what has actually been paid.
-        return DB::table('payouts')
-            ->where('owner_id', $ownerId)
-            ->select('amount')
-            ->get()
-            ->map(fn ($payout) => ['amount' => round((float) $payout->amount, 2)]);
-    }
-
-    // ========================================================================
-    // 5. READY FOR PAYOUT
-    // ========================================================================
-
-    /** Earnings settled and proof-verified, waiting on the next payout run. */
-    public function readyForPayout(int $ownerId): float
-    {
-
-        $ready = 0.0;
-        foreach ($this->fetchReadyForPayoutLedger($ownerId) as $row) {
-            if ($row['payout_status'] === 'ready') {
-                $ready = $ready + $row['owner_earning'];
+            if ($status === 'ready') {
+                $ready = $ready + round($collected - $platformCut, 2);
             }
         }
 
         return round($ready, 2);
     }
 
-    /** Its own independent copy of the same classification query - see paidOut() above.
-     * @return Collection<int, array{owner_earning: float, payout_status: string}> */
-    private function fetchReadyForPayoutLedger(int $ownerId): Collection
+    //  AWAITING 
+
+    public function awaitingVerification(int $ownerId): float
     {
         $payments = DB::table('payments')
             ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
@@ -170,7 +184,6 @@ class OwnerPanelCalculationService
                     ->orWhereIn('bookings.status', self::EARNED_BOOKING_STATUSES);
             })
             ->select(
-                'payments.id as payment_id',
                 'payments.amount',
                 'bookings.id as booking_id',
                 'bookings.status as booking_status',
@@ -197,7 +210,8 @@ class OwnerPanelCalculationService
             ->pluck('booking_id')
             ->flip();
 
-        return $payments->map(function ($payment) use ($frozenCommission, $payoutByBooking, $proofVerified) {
+        $awaiting = 0.0;
+        foreach ($payments as $payment) {
             $collected = (float) $payment->amount;
             $bookingTotal = (float) $payment->booking_total;
 
@@ -210,7 +224,6 @@ class OwnerPanelCalculationService
                 $status = 'paid_out';
             } elseif (in_array($payment->booking_status, self::PAYABLE_BOOKING_STATUSES, true)
                 && $proofVerified->has($payment->booking_id)) {
-                // Admin accepted the proof: payable on the next run.
                 $status = 'ready';
             } elseif ($payment->booking_status === self::AWAITING_ADMIN_STATUS) {
                 $status = 'awaiting_verification';
@@ -218,32 +231,17 @@ class OwnerPanelCalculationService
                 $status = 'in_progress';
             }
 
-            return [
-                'owner_earning' => round($collected - $platformCut, 2),
-                'payout_status' => $status,
-            ];
-        });
-    }
-
-    // 6. AWAITING VERIFICATION
-   
-    public function awaitingVerification(int $ownerId): float
-    {
-        // Plain math: each row classified 'awaiting_verification', its
-        // owner_earning added up one at a time - everything else is skipped.
-        $awaiting = 0.0;
-        foreach ($this->fetchAwaitingVerificationLedger($ownerId) as $row) {
-            if ($row['payout_status'] === 'awaiting_verification') {
-                $awaiting = $awaiting + $row['owner_earning'];
+            if ($status === 'awaiting_verification') {
+                $awaiting = $awaiting + round($collected - $platformCut, 2);
             }
         }
 
         return round($awaiting, 2);
     }
 
-    /**  above.
-     * @return Collection<int, array{owner_earning: float, payout_status: string}> */
-    private function fetchAwaitingVerificationLedger(int $ownerId): Collection
+    //  IN PROGRESS
+
+    public function inProgress(int $ownerId): float
     {
         $payments = DB::table('payments')
             ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
@@ -255,7 +253,6 @@ class OwnerPanelCalculationService
                     ->orWhereIn('bookings.status', self::EARNED_BOOKING_STATUSES);
             })
             ->select(
-                'payments.id as payment_id',
                 'payments.amount',
                 'bookings.id as booking_id',
                 'bookings.status as booking_status',
@@ -282,7 +279,8 @@ class OwnerPanelCalculationService
             ->pluck('booking_id')
             ->flip();
 
-        return $payments->map(function ($payment) use ($frozenCommission, $payoutByBooking, $proofVerified) {
+        $inProgress = 0.0;
+        foreach ($payments as $payment) {
             $collected = (float) $payment->amount;
             $bookingTotal = (float) $payment->booking_total;
 
@@ -297,105 +295,20 @@ class OwnerPanelCalculationService
                 && $proofVerified->has($payment->booking_id)) {
                 $status = 'ready';
             } elseif ($payment->booking_status === self::AWAITING_ADMIN_STATUS) {
-                // Owner has uploaded the proof, admin has not looked yet.
                 $status = 'awaiting_verification';
             } else {
                 $status = 'in_progress';
             }
 
-            return [
-                'owner_earning' => round($collected - $platformCut, 2),
-                'payout_status' => $status,
-            ];
-        });
-    }
-
-    
-    // 7. IN PROGRESS
-    
-    public function inProgress(int $ownerId): float
-    {
-        // Plain math: each row classified 'in_progress', its owner_earning
-        // added up one at a time - everything else is skipped.
-        $inProgress = 0.0;
-        foreach ($this->fetchInProgressLedger($ownerId) as $row) {
-            if ($row['payout_status'] === 'in_progress') {
-                $inProgress = $inProgress + $row['owner_earning'];
+            if ($status === 'in_progress') {
+                $inProgress = $inProgress + round($collected - $platformCut, 2);
             }
         }
 
         return round($inProgress, 2);
     }
 
-    /** Its own independent copy of the same classification query - see paidOut() above.
-     * @return Collection<int, array{owner_earning: float, payout_status: string}> */
-    private function fetchInProgressLedger(int $ownerId): Collection
-    {
-        $payments = DB::table('payments')
-            ->join('bookings', 'bookings.id', '=', 'payments.booking_id')
-            ->join('billboards', 'billboards.id', '=', 'bookings.billboard_id')
-            ->where('billboards.owner_id', $ownerId)
-            ->where('payments.status', 'paid')
-            ->where(function ($query) {
-                $query->where('payments.payment_type', 'balance')
-                    ->orWhereIn('bookings.status', self::EARNED_BOOKING_STATUSES);
-            })
-            ->select(
-                'payments.id as payment_id',
-                'payments.amount',
-                'bookings.id as booking_id',
-                'bookings.status as booking_status',
-                'bookings.total_amount as booking_total',
-            )
-            ->get();
-
-        $frozenCommission = DB::table('payments')
-            ->groupBy('booking_id')
-            ->selectRaw('booking_id, SUM(commission_amount) as commission')
-            ->pluck('commission', 'booking_id');
-
-        $bookingIds = $payments->pluck('booking_id')->unique();
-
-        $payoutByBooking = DB::table('payments')
-            ->join('payouts', 'payouts.id', '=', 'payments.payout_id')
-            ->where('payments.payment_type', 'advance')
-            ->whereIn('payments.booking_id', $bookingIds)
-            ->pluck('payouts.id', 'payments.booking_id');
-
-        $proofVerified = DB::table('proof_of_postings')
-            ->whereIn('booking_id', $bookingIds)
-            ->where('status', 'verified')
-            ->pluck('booking_id')
-            ->flip();
-
-        return $payments->map(function ($payment) use ($frozenCommission, $payoutByBooking, $proofVerified) {
-            $collected = (float) $payment->amount;
-            $bookingTotal = (float) $payment->booking_total;
-
-            $rate = $bookingTotal > 0
-                ? (float) ($frozenCommission[$payment->booking_id] ?? 0) / $bookingTotal
-                : 0.0;
-            $platformCut = round($collected * $rate, 2);
-
-            if ($payoutByBooking->has($payment->booking_id)) {
-                $status = 'paid_out';
-            } elseif (in_array($payment->booking_status, self::PAYABLE_BOOKING_STATUSES, true)
-                && $proofVerified->has($payment->booking_id)) {
-                $status = 'ready';
-            } elseif ($payment->booking_status === self::AWAITING_ADMIN_STATUS) {
-                $status = 'awaiting_verification';
-            } else {
-                // Balance still owed, or no proof uploaded yet.
-                $status = 'in_progress';
-            }
-
-            return [
-                'owner_earning' => round($collected - $platformCut, 2),
-                'payout_status' => $status,
-            ];
-        });
-    }
-
+    //  FULL TRANSACTION LIST + TOTALS (calls blocks 1-7 above, one by one)
 
     /**
      * @return array{transactions: Collection<int, array<string, mixed>>, totals: array<string, mixed>}
@@ -420,7 +333,7 @@ class OwnerPanelCalculationService
     }
 
     /**
-     * The full row-by-row transaction list 
+     * The full row-by-row transaction list.
      *
      * @return Collection<int, array<string, mixed>>
      */

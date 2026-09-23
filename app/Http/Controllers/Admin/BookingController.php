@@ -27,11 +27,6 @@ class BookingController extends Controller
             $query->where('status', $status);
         }
 
-        // Ordered by id, not created_at: rows created in the same batch (bulk
-        // seeding, or two actions in the same request) can share a created_at
-        // second, and a non-unique sort column lets ties come back in a
-        // different order on every request. id is unique and strictly
-        // creation-ordered.
         return response()->json([
             'success' => true,
             'data' => $query->orderBy('id')->get(),

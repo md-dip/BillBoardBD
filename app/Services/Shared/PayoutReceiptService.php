@@ -4,18 +4,6 @@ namespace App\Services\Shared;
 
 use App\Models\Payout;
 
-/**
- * Builds the display payload for an owner payout receipt - the statement an
- * owner (and admin) can view and print after a payout has been recorded.
- *
- * Mirrors InvoiceService::payload(): the same platform/seller block, the same
- * round() + (float) money convention (never number_format - the client formats).
- *
- * The owner payout account is read from the immutable snapshot frozen onto the
- * Payout row at pay time (`payout_details`), NOT the live users row - owners can
- * edit their payout details at any moment, so a historical receipt must always
- * reflect where the money actually went.
- */
 class PayoutReceiptService
 {
     /**

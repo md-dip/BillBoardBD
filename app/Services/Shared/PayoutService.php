@@ -61,11 +61,6 @@ class PayoutService
                 'method' => $data['method'] ?? null,
                 'reference' => $data['reference'] ?? null,
                 'note' => $data['note'] ?? null,
-                // Freeze where the money was sent. Owners can edit their payout
-                // details any time, so the receipt must render from this snapshot,
-                // never the live users row. Null when the owner never filled any
-                // of it in, so the receipt shows a "not recorded" notice rather
-                // than a grid of blanks.
                 'payout_details' => $this->payoutDetailsSnapshot($owner),
                 'paid_by' => auth()->id(),
                 'paid_at' => now(),

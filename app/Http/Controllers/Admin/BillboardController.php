@@ -25,11 +25,7 @@ class BillboardController extends Controller
             $query->where('listing_status', $listingStatus);
         }
 
-        // paginate() keeps the response shape (data.data) the frontend expects.
-        // The page size sits well above the seeded inventory so newly listed
-        // boards (which always get the highest ids) never fall off page one -
-        // the admin table, the Listing-requests tab and the dashboard counts
-        // all read this endpoint.
+
         return response()->json([
             'success' => true,
             'data' => $query->paginate(1000),

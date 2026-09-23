@@ -23,7 +23,6 @@ class BookingLifecycleService
             return ['ok' => false, 'status' => 409, 'message' => $conflictMessage];
         }
 
-        // Money is computed server-side - never trusted from the browser.
         $amounts = $this->pricing->calculate($billboard, $startDate, $endDate);
         $holdMinutes = (int) Setting::get('hold_minutes', 15);
 

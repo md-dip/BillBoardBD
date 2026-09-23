@@ -40,14 +40,10 @@ class PaymentCompletionService
         return $payment->fresh();
     }
 
-    /**
-     * Advance paid → the booking enters admin review (stage 1) and the advance
-     * invoice is issued.
-     */
+
     private function afterAdvance(Payment $payment): void
     {
-        // Next status: pending_admin_review - now waits on
-        // BookingApprovalService::approve()/reject().
+
         $payment->booking->update(['status' => 'pending_admin_review', 'expires_at' => null]);
 
         $booking = $payment->booking->fresh(['billboard', 'user']);
@@ -56,14 +52,10 @@ class PaymentCompletionService
         $this->notifications->notifyAdvancePaid($booking, $invoice);
     }
 
-    /**
-     * Balance paid → the booking is paid in full (stage 4) and the final invoice
-     * is issued.
-     */
+
     private function afterBalance(Payment $payment): void
     {
-        // Next status: paid_in_full - now waits on the owner to upload proof
-        // of posting, via Owner\ProofSubmissionService::submit().
+
         $payment->booking->update(['status' => 'paid_in_full']);
 
         $booking = $payment->booking->fresh(['billboard.owner', 'user']);
