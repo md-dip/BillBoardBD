@@ -8,31 +8,16 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
-/**
- * What the BillboardBD Assistant can look up on behalf of a signed-in client.
- *
- * Every method takes the authenticated User and filters on it in SQL. The model
- * never passes an identity - there is no `user_id` argument anywhere in the
- * schemas below - so no phrasing of a question can reach another client's
- * bookings. Tool arguments only ever narrow a result set that is already scoped.
- */
+
 class AssistantTools
 {
-    /**
-     * Booking statuses that hold dates against a billboard. A `held` booking is
-     * the 15-minute slot lock, which only blocks while it is still running -
-     * see the expires_at guard in blockedBillboardIds().
-     */
+
     private const OCCUPYING_STATUSES = [
         'held', 'pending_payment', 'pending_admin_review', 'pending_owner_approval',
         'confirmed', 'paid_in_full', 'pending_proof_review', 'active',
     ];
 
-    /**
-     * The plain-English meaning of each pipeline stage. The model is given these
-     * with every booking row so it explains a status instead of echoing the
-     * enum at the user.
-     */
+
     public const STATUS_MEANINGS = [
         'held' => 'Dates are locked for you for a few minutes while you finish the request. Nothing is paid yet.',
         'pending_payment' => 'Campaign details are in; the advance payment has not gone through yet.',

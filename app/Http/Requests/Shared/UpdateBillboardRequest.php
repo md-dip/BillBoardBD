@@ -4,13 +4,6 @@ namespace App\Http\Requests\Shared;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * Admin-only despite the Shared namespace - only Admin\BillboardController uses
- * this. It's the one place `rating` is settable; Owner\BillboardController has
- * its own Owner\UpdateBillboardRequest (identical, minus `rating`) precisely so
- * an owner can never set their own board's rating. Don't point a new
- * owner-facing endpoint at this class without dropping that field first.
- */
 class UpdateBillboardRequest extends FormRequest
 {
     public function authorize(): bool { return true; }

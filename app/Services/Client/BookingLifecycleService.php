@@ -19,26 +19,8 @@ class BookingLifecycleService
      */
     public function hold(Billboard $billboard, int $userId, string $startDate, string $endDate): array
     {
-        // Drop this user's own stale holds on this billboard first, so
-        // re-picking dates doesn't leave orphaned rows behind.
-        $billboard->bookings()
-            ->where('user_id', $userId)
-            ->where('status', 'held')
-            ->delete();
-
-        $conflict = $billboard->activeBookings()
-            ->where('start_date', '<=', $endDate)
-            ->where('end_date', '>=', $startDate)
-            ->first();
-
-        if ($conflict) {
-            return [
-                'ok' => false,
-                'status' => 409,
-                'message' => $conflict->status === 'held'
-                    ? 'Someone else is currently holding these dates. Please try again in a few minutes.'
-                    : 'These dates conflict with an existing booking.',
-            ];
+        if ($conflictMessage = $this->conflictMessage($billboard, $userId, $startDate, $endDate)) {
+            return ['ok' => false, 'status' => 409, 'message' => $conflictMessage];
         }
 
         // Money is computed server-side - never trusted from the browser.
@@ -62,6 +44,28 @@ class BookingLifecycleService
             'message' => "Dates held for {$holdMinutes} minutes. Add your campaign details to continue.",
             'booking' => $booking,
         ];
+    }
+
+
+    private function conflictMessage(Billboard $billboard, int $userId, string $startDate, string $endDate): ?string
+    {
+        $billboard->bookings()
+            ->where('user_id', $userId)
+            ->where('status', 'held')
+            ->delete();
+
+        $conflict = $billboard->activeBookings()
+            ->where('start_date', '<=', $endDate)
+            ->where('end_date', '>=', $startDate)
+            ->first();
+
+        if (! $conflict) {
+            return null;
+        }
+
+        return $conflict->status === 'held'
+            ? 'Someone else is currently holding these dates. Please try again in a few minutes.'
+            : 'These dates conflict with an existing booking.';
     }
 
     /**

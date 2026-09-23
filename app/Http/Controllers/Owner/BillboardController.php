@@ -21,18 +21,13 @@ class BillboardController extends Controller
             'data' => Billboard::query()
                 ->where('owner_id', $request->user()->id)
                 ->with('listingPayments')
-                ->orderBy('id')
+                ->orderByDesc('id')
                 ->paginate(1000),
             'message' => null,
         ]);
     }
 
-    /**
-     * List a new board. It is created straight away as `pending_payment` with a
-     * pending listing-fee payment; the owner then checks out through SSLCommerz
-     * (see ListingPaymentController) and only after the fee clears does it reach
-     * admin review.
-     */
+
     public function store(StoreBillboardListingRequest $request): JsonResponse
     {
         $result = $this->submissions->submit(

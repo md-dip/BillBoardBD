@@ -64,7 +64,7 @@ class BookingController extends Controller
             ->bookings()
             ->where('status', '!=', 'held')
             ->with(['billboard', 'payments', 'proofOfPostings', 'invoices'])
-            ->orderBy('id')
+            ->orderByDesc('id')
             ->get();
 
         return response()->json([

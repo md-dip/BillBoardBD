@@ -8,13 +8,7 @@ const api = axios.create({
     },
 });
 
-// NOTE: we deliberately do NOT set a global 'Content-Type' here.
-// Axios sets it per request: application/json for plain objects, and
-// multipart/form-data (with the right boundary) for FormData. If we forced
-// application/json, the campaign creative upload (FormData) would break.
 
-// Attach the Bearer token to every request if this TAB has one saved
-// (see tokenStore - each tab holds its own actor).
 api.interceptors.request.use((config) => {
     const token = readToken();
     if (token) {

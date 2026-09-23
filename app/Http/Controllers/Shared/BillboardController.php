@@ -9,12 +9,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class BillboardController extends Controller
+//list on map bar
 {
     public function index()
     {
-        // Only admin-approved listings are public. Ordered by id so the list
-        // has a stable, well-defined order (there was none before) - id is
-        // unique and strictly creation-ordered, unlike a timestamp column.
         $billboards = Billboard::query()->where('listing_status', 'approved')->orderBy('id')->get();
 
         return response()->json([
@@ -35,9 +33,8 @@ class BillboardController extends Controller
         $lng = $validated['lng'];
         $radius = $validated['radius'];
 
-        // Haversine formula: distance in km between two lat/lng points on Earth.
-        // 6371 = Earth's mean radius in kilometers.
-        // We compute distance in an inner subquery so WHERE can filter on it.
+        
+        // 6371 = Earth's mean radius in
         $haversine = '(6371 * acos(
             cos(radians(?)) * cos(radians(latitude)) *
             cos(radians(longitude) - radians(?)) +

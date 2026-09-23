@@ -22,14 +22,7 @@ class Billboard extends Model
 
     protected $appends = ['photo_url', 'permit_document_url'];
 
-    /**
-     * Image URL for the frontend. Seeded photos live at
-     * frontend/public/billboards/<id>.jpg and are stored as a root-relative
-     * "/billboards/1.jpg" (or an absolute URL) - those pass through untouched.
-     * Owner-uploaded photos are stored as a bare public-disk path
-     * ("board-photos/xxx.jpg") and get resolved through the storage disk.
-     * Null when there is no photo.
-     */
+
     protected function photoUrl(): Attribute
     {
         return Attribute::get(function () {
@@ -88,9 +81,7 @@ class Billboard extends Model
 
     public function activeBookings(): HasMany
     {
-        // A 'held' row only blocks the dates while its 15-minute lock is still
-        // running - once expires_at passes, it must stop counting here, the
-        // same rule AssistantTools::blockedBillboardIds() already applies.
+
         return $this->bookings()
             ->whereIn('status', [
                 'held', 'pending_payment', 'pending_admin_review', 'pending_owner_approval',

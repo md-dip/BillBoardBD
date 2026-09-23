@@ -7,17 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use RuntimeException;
 
-/**
- * SSLCommerz v4 hosted-checkout client.
- *
- * Two calls matter:
- *   startSession() - POST the order, get back a GatewayPageURL to redirect to.
- *   validate()     - after the callback, ask SSLCommerz whether the payment is
- *                    genuine. This is the authoritative check; the browser POST
- *                    to our success_url is never trusted on its own.
- *
- * No SDK / Composer package - just the HTTP client, so the surface stays small.
- */
+
 class SslCommerzGateway
 {
     private const SANDBOX_HOST = 'https://sandbox.sslcommerz.com';

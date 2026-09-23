@@ -5,6 +5,7 @@ import L from 'leaflet';
 import api from '../../shared/api/axios';
 import { getBillboardIcon } from '../../shared/utils/markerIcons';
 import usePageTitle from '../../shared/hooks/usePageTitle';
+import BillboardFilters, { filterBillboards } from './BillboardFilters';
 import './FindBillboards.css';
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -77,23 +78,12 @@ const userIcon = L.divIcon({
     iconAnchor: [12, 12],
 });
 
-function normalizeSize(s) {
-    const nums = String(s).match(/\d+(\.\d+)?/g);
-    return nums ? nums.join('x') : String(s).toLowerCase().replace(/\s+/g, '');
-}
-
-function effectivePrice(b) {
-    return b.pricing_mode === 'monthly' ? Number(b.monthly_rate) : Number(b.daily_rate);
-}
-
 function formatPrice(b) {
     if (b.pricing_mode === 'monthly') {
         return `৳${Number(b.monthly_rate).toLocaleString()} / mo`;
     }
     return `৳${Number(b.daily_rate).toLocaleString()} / day`;
 }
-
-const RADII = [5, 10, 20];
 
 export default function FindBillboards() {
     usePageTitle('Find Billboards');
@@ -161,15 +151,7 @@ export default function FindBillboards() {
         setRadius(r);
     };
 
-    const filteredBillboards = billboards.filter((b) => {
-        if (nameQuery.trim() && !b.title.toLowerCase().includes(nameQuery.trim().toLowerCase())) return false;
-        if (typeFilter && b.type.toLowerCase() !== typeFilter.toLowerCase()) return false;
-        if (sizeFilter.trim() && !normalizeSize(b.size).includes(normalizeSize(sizeFilter))) return false;
-        const price = effectivePrice(b);
-        if (minPrice !== '' && price < Number(minPrice)) return false;
-        if (maxPrice !== '' && price > Number(maxPrice)) return false;
-        return true;
-    });
+    const filteredBillboards = filterBillboards(billboards, { nameQuery, typeFilter, sizeFilter, minPrice, maxPrice });
 
     // Put the selected billboard at the top of the sidebar list
     const displayedBillboards = selectedId
@@ -193,67 +175,21 @@ export default function FindBillboards() {
                         <p className="geo-warning">📍 Location unavailable showing all boards</p>
                     )}
 
-                    <div className="filter-search-row">
-                        <input
-                            className="filter-search"
-                            type="search"
-                            placeholder="Search by billboard name…"
-                            value={nameQuery}
-                            onChange={(e) => setNameQuery(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="radius-pills">
-                        {RADII.map((r) => (
-                            <button
-                                key={r}
-                                className={`pill ${radius === r ? 'active' : ''}`}
-                                onClick={() => handleRadiusClick(r)}
-                            >
-                                {r} km
-                            </button>
-                        ))}
-                        <button
-                            className={`pill ${radius === null ? 'active' : ''}`}
-                            onClick={() => handleRadiusClick(null)}
-                        >
-                            All boards
-                        </button>
-                    </div>
-
-                    <div className="filter-row">
-                        <select
-                            className="filter-select"
-                            value={typeFilter}
-                            onChange={(e) => setTypeFilter(e.target.value)}
-                        >
-                            <option value="">All types</option>
-                            {Object.keys(TYPE_COLORS).sort().map((t) => (
-                                <option key={t} value={t}>{t.toUpperCase()}</option>
-                            ))}
-                        </select>
-                        <input
-                            className="filter-input"
-                            placeholder="Size e.g. 20×10"
-                            value={sizeFilter}
-                            onChange={(e) => setSizeFilter(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="filter-row">
-                        <input
-                            className="filter-input"
-                            placeholder="Min ৳"
-                            value={minPrice}
-                            onChange={(e) => setMinPrice(e.target.value)}
-                        />
-                        <input
-                            className="filter-input"
-                            placeholder="Max ৳"
-                            value={maxPrice}
-                            onChange={(e) => setMaxPrice(e.target.value)}
-                        />
-                    </div>
+                    <BillboardFilters
+                        nameQuery={nameQuery}
+                        onNameQueryChange={setNameQuery}
+                        radius={radius}
+                        onRadiusClick={handleRadiusClick}
+                        typeFilter={typeFilter}
+                        onTypeFilterChange={setTypeFilter}
+                        types={Object.keys(TYPE_COLORS).sort()}
+                        sizeFilter={sizeFilter}
+                        onSizeFilterChange={setSizeFilter}
+                        minPrice={minPrice}
+                        onMinPriceChange={setMinPrice}
+                        maxPrice={maxPrice}
+                        onMaxPriceChange={setMaxPrice}
+                    />
                 </div>
 
                 <div className="list">

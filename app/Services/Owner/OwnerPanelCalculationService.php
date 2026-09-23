@@ -9,13 +9,12 @@ use Illuminate\Support\Facades\DB;
 
 class OwnerPanelCalculationService
 {
-// filter is the amount is still refundable or not
+
     private const EARNED_BOOKING_STATUSES = ['confirmed', 'paid_in_full', 'pending_proof_review', 'active'];
 
-// does the owner will get payout for this booking or not 
+
     private const PAYABLE_BOOKING_STATUSES = ['paid_in_full', 'pending_proof_review', 'active'];
 
-// awaiting admin verification means the owner has uploaded proof, but admin has not accepted it yet
     private const AWAITING_ADMIN_STATUS = 'pending_proof_review';
 
    

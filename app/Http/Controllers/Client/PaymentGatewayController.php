@@ -13,16 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-/**
- * Real client-actor checkout through SSLCommerz (hosted redirect flow).
- *
- *   checkout()  authenticated - the SPA asks for a GatewayPageURL and sends the
- *               browser there.
- *   success() / fail() / cancel()  public - SSLCommerz redirects the browser
- *               back here (form POST); we re-validate, settle, and bounce the
- *               browser into the SPA with ?payment=<result>.
- *   ipn()       public, server-to-server - same settlement, idempotent.
- */
+
 class PaymentGatewayController extends Controller
 {
     public function __construct(
@@ -30,7 +21,6 @@ class PaymentGatewayController extends Controller
         private readonly PaymentCompletionService $completion,
     ) {}
 
-    /** SPA → { gateway_url }. Requires auth:sanctum. */
     public function checkout(Request $request, Payment $payment): JsonResponse
     {
         if ($payment->booking->user_id !== $request->user()->id) {
