@@ -73,7 +73,7 @@ class BillboardSeeder extends Seeder
                 'daily_rate' => 0,
                 'monthly_rate' => 90000,
                 'rating' => 3.9,
-                'status' => 'booked',
+                'status' => 'available',
             ],
             [
                 'title' => 'Dhanmondi 32 Neon Sign',
@@ -242,7 +242,7 @@ class BillboardSeeder extends Seeder
                 'daily_rate' => 0,
                 'monthly_rate' => 160000,
                 'rating' => 3.9,
-                'status' => 'booked',
+                'status' => 'available',
             ],
             [
                 'title' => 'Malibagh Chowdhurypara Unipole',
@@ -307,7 +307,7 @@ class BillboardSeeder extends Seeder
                 'daily_rate' => 4200,
                 'monthly_rate' => null,
                 'rating' => 3.4,
-                'status' => 'booked',
+                'status' => 'available',
             ],
             [
                 'title' => 'Mohammadpur Bus Stand Unipole',
@@ -372,7 +372,7 @@ class BillboardSeeder extends Seeder
                 'daily_rate' => 0,
                 'monthly_rate' => 250000,
                 'rating' => 4.5,
-                'status' => 'booked',
+                'status' => 'available',
             ],
             [
                 'title' => 'Uttara Sector-4 Unipole',

@@ -9,24 +9,7 @@ use App\Services\Admin\AdminPanelCalculationService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Owner payouts are computed live from settled-but-not-yet-disbursed payments
- * (payout_id IS NULL, status = paid, on a booking that reached at least
- * paid_in_full) rather than pre-generated batches - admin triggers a payout
- * for a given owner manually, any time, from the Admin Payouts page.
- *
- * Being paid in full is not enough to be payable. The owner still owes the
- * platform proof that the campaign actually went up on the board, and admin
- * still has to accept that proof - until then the money is collected but not
- * earned, and paying it out would mean paying for a posting nobody has
- * confirmed. So the booking's own revenue can show on the owner dashboard
- * while its payout balance stays at zero, and the balance only moves when
- * admin verifies the proof of posting.
- *
- * The actual "how much is payable" calculation lives in
- * Services\Admin\AdminPanelCalculationService - this class only orchestrates
- * turning that figure into a recorded Payout (and notifying the owner).
- */
+
 class PayoutService
 {
     public function __construct(

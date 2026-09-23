@@ -23,7 +23,7 @@ class UpdateBillboardRequest extends FormRequest
             'pricing_mode' => ['sometimes', 'required', 'in:daily,monthly'],
             'photo' => ['nullable', 'string'],
             'rating' => ['nullable', 'numeric', 'between:0,5'],
-            'status' => ['sometimes', 'required', 'in:available,booked,hidden'],
+            'status' => ['sometimes', 'required', 'in:available,hidden'],
             'permit_expiry_date' => ['sometimes', 'required', 'date'],
         ];
     }

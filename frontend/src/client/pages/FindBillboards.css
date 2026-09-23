@@ -195,7 +195,7 @@
     color: #1d1d1f;
 }
 
-/* Available/booked pill on each card */
+/* Available status pill on each card */
 .status-badge {
     padding: 2px 8px;
     border-radius: 999px;
@@ -208,11 +208,6 @@
 .status-badge.available {
     background: #d4f4dd;
     color: #1a7f37;
-}
-
-.status-badge.booked {
-    background: #ffe0e0;
-    color: #d70015;
 }
 
 /* Whole card wrapped in a Link - kills default link styling, and lifts

@@ -8,7 +8,7 @@ import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Billboards.css';
 
 const TYPES = ['unipole', 'multipole', 'gantry', 'rooftop', 'freestanding', 'static', 'backlit', 'frontlit', 'led', 'neon', 'wall'];
-const STATUSES = ['available', 'booked', 'hidden'];
+const STATUSES = ['available', 'hidden'];
 
 const BLANK_FORM = {
   title: '', description: '', latitude: '', longitude: '', address: '', size: '',

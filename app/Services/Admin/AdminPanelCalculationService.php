@@ -147,7 +147,7 @@ class AdminPanelCalculationService
         $ledger = $this->fetchRevenueLedger();
 
         $buckets = [];
-
+// monthly revenue per billboard, with commission and listing fees broken out
         foreach ($ledger as $entry) {
             $key = $entry['billboard_id'].'|'.$entry['month'];
 
@@ -164,7 +164,7 @@ class AdminPanelCalculationService
             $buckets[$key]['total_revenue'] += $entry['amount'];
             $buckets[$key]['owner_payable'] += $entry['owner_payable'];
 
-            // A listing fee is 100% platform money
+            
             if ($entry['type'] === LedgerTransactionType::LISTING_FEE) {
                 $buckets[$key]['listing_fees'] += $entry['platform_cut'];
             } else {

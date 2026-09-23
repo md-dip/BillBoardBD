@@ -86,7 +86,6 @@ class BookingLifecycleService
             return ['ok' => false, 'status' => 410, 'message' => 'Your hold has expired, please pick dates again.'];
         }
 
-        // Store the creative on the public disk (needs `php artisan storage:link`).
         $path = Storage::disk('public')->putFile('campaign-creatives', $creative);
         $holdMinutes = (int) Setting::get('hold_minutes', 15);
 

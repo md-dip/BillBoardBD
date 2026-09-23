@@ -6,17 +6,6 @@ use App\Models\Billboard;
 use App\Models\User;
 use App\Notifications\NotificationService;
 
-/**
- * Admin review of an owner-submitted board (reached once the listing fee is
- * paid and the board is 'pending_review').
- *
- *   approve()  the board goes live on the public map/list.
- *   reject()   terminal - the listing fee the owner paid is recorded as owed
- *              back, and the admin pays it out by hand through SSLCommerz from
- *              the Listing refunds tab (see ListingRefundService).
- *
- * Mirrors Admin\BookingApprovalService.
- */
 class ListingApprovalService
 {
     public function __construct(
@@ -67,9 +56,7 @@ class ListingApprovalService
             'reviewed_by' => $admin->id,
         ]);
 
-        // Rejecting records the debt; it does not move the money. The fee stays
-        // 'paid' until the admin has actually sent it back, which is what the
-        // Listing refunds tab is for.
+
         $refund = $this->refunds->pendingRefundFor($billboard);
 
         $billboard = $billboard->fresh(['owner', 'listingPayments']);

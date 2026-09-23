@@ -7,7 +7,7 @@
    one card */
 .dashboard-kpi-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     margin-bottom: 24px;
 }
@@ -242,6 +242,7 @@
 /* Stack the two boxes into one column on narrow screens */
 @media (max-width: 768px) {
     .dashboard-two-col-grid { grid-template-columns: 1fr; }
+    .dashboard-kpi-grid { grid-template-columns: 1fr; }
 }
 
 /* ============================================================

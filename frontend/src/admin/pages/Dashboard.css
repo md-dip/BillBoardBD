@@ -3,9 +3,7 @@
 /* Layout-only grid holding the 5 KPI cards - no color here, safe to share */
 .admin-dashboard-kpi-grid {
     display: grid;
-    /* minmax(0, 1fr), not a bare 1fr: a bare track is minmax(auto, 1fr), which
-       lets a long value (the revenue total) widen its own column and squeeze
-       the others. Zero minimum keeps every card exactly equal. */
+
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 16px;
     margin-bottom: 24px;
@@ -200,11 +198,6 @@
 .admin-dashboard-inventory-mini-stat-available { background: #f8fafc; border-radius: 8px; padding: 12px; }
 .admin-dashboard-inventory-mini-stat-label-available { font-size: 12px; color: #64748b; }
 .admin-dashboard-inventory-mini-stat-value-available { font-size: 18px; font-weight: 600; color: #0f172a; margin-top: 2px; }
-
-/* "Booked" mini-stat */
-.admin-dashboard-inventory-mini-stat-booked { background: #f8fafc; border-radius: 8px; padding: 12px; }
-.admin-dashboard-inventory-mini-stat-label-booked { font-size: 12px; color: #64748b; }
-.admin-dashboard-inventory-mini-stat-value-booked { font-size: 18px; font-weight: 600; color: #0f172a; margin-top: 2px; }
 
 /* "Hidden" mini-stat */
 .admin-dashboard-inventory-mini-stat-hidden { background: #f8fafc; border-radius: 8px; padding: 12px; }

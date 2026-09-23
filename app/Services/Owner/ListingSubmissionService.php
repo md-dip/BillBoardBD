@@ -10,17 +10,6 @@ use App\Notifications\NotificationService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-/**
- * The owner's side of the paid board-listing flow.
- *
- *   submit()       stores the two uploads, creates the Billboard row
- *                  (listing_status = pending_payment) and a pending
- *                  ListingPayment for the one-time fee.
- *   markFeePaid()  the single place the fee becomes "paid": flips the board to
- *                  pending_review and tells the admins. Idempotent, so a
- *                  replayed SSLCommerz callback / callback+IPN race is a no-op.
- *                  Mirrors Shared\PaymentCompletionService::markPaid().
- */
 class ListingSubmissionService
 {
     public function __construct(private readonly NotificationService $notifications) {}

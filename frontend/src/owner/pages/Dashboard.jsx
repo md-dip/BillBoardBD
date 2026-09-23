@@ -8,6 +8,7 @@ import usePageTitle from '../../shared/hooks/usePageTitle';
 import './Dashboard.css';
 
 
+const KPIS = ['my-billboards', 'pending-requests', 'confirmed-bookings', 'revenue', 'awaiting-verification'];
 const BOXES = ['my-billboards','recent-bookings'];
 
 // "Recent booking requests" box
@@ -152,20 +153,24 @@ export default function OwnerDashboard() {
   // it stays the lifetime total.
   const awaitingVerification = Number(earnings?.awaiting_verification ?? 0);
 
-  const kpis = [
-    { slug: 'my-billboards', label: 'My billboards', value: billboards.length, icon: Megaphone },
-    { slug: 'pending-requests', label: 'Pending requests', value: pending.length, icon: Clock, accent: 'warning' },
-    { slug: 'confirmed-bookings', label: 'Confirmed bookings', value: inProgress.length, icon: CalendarCheck, accent: 'success' },
+  // Every card the dashboard knows how to show, keyed by slug. Which ones
+  // actually render - and in what order - is controlled by the KPIS array
+  // up top, the same split the admin dashboard uses.
+  const kpiValues = {
+    'my-billboards': { label: 'My billboards', value: billboards.length, icon: Megaphone },
+    'pending-requests': { label: 'Pending requests', value: pending.length, icon: Clock, accent: 'warning' },
+    'confirmed-bookings': { label: 'Confirmed bookings', value: inProgress.length, icon: CalendarCheck, accent: 'success' },
     // The only tile with something behind it: the payments that add up to
     // this figure (owner/pages/Transactions.jsx).
-    { slug: 'revenue', label: 'Revenue (BDT)', value: formatBDT(revenue), icon: DollarSign, to: '/owner/revenue' },
-    { slug: 'awaiting-verification', label: 'Awaiting verification', value: formatBDT(awaitingVerification), icon: Wallet, to: '/owner/revenue' },
-  ];
+    revenue: { label: 'Revenue (BDT)', value: formatBDT(revenue), icon: DollarSign, to: '/owner/revenue' },
+    'awaiting-verification': { label: 'Awaiting verification', value: formatBDT(awaitingVerification), icon: Wallet, to: '/owner/revenue' },
+  };
 
   return (
     <OwnerShell title="Dashboard">
       <div className="dashboard-kpi-grid">
-        {kpis.map((k) => {
+        {KPIS.map((slug) => {
+          const k = kpiValues[slug];
           const Icon = k.icon;
 
           const cardBody = (
@@ -185,11 +190,11 @@ export default function OwnerDashboard() {
           // card keeps the exact look the other three have.
           return k.to
             ? (
-              <Link to={k.to} className={`dashboard-kpi-link-${k.slug}`} key={k.label}>
-                <div className={`dashboard-kpi-card dashboard-kpi-card-${k.slug}`}>{cardBody}</div>
+              <Link to={k.to} className={`dashboard-kpi-link-${slug}`} key={slug}>
+                <div className={`dashboard-kpi-card dashboard-kpi-card-${slug}`}>{cardBody}</div>
               </Link>
             )
-            : <div className={`dashboard-kpi-card dashboard-kpi-card-${k.slug}`} key={k.label}>{cardBody}</div>;
+            : <div className={`dashboard-kpi-card dashboard-kpi-card-${slug}`} key={slug}>{cardBody}</div>;
         })}
       </div>
 

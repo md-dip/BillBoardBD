@@ -45,7 +45,6 @@ function InventoryBox({ billboards }) {
   const stats = [
     { slug: 'total-billboards', label: 'Total billboards', value: live.length },
     { slug: 'available', label: 'Available', value: live.filter((b) => b.status === 'available').length },
-    { slug: 'booked', label: 'Booked', value: live.filter((b) => b.status === 'booked').length },
     { slug: 'hidden', label: 'Hidden', value: live.filter((b) => b.status === 'hidden').length },
     { slug: 'pending-listings', label: 'Pending review', value: billboards.filter((b) => b.listing_status === 'pending_review').length },
   ];

@@ -14,9 +14,7 @@ class ReportController extends Controller
 {
     public function __construct(private readonly AdminPanelCalculationService $calculations) {}
 
-    /**
-     * Platform money, per billboard per month
-     */
+
     public function revenue(): JsonResponse
     {
         return response()->json([
@@ -36,13 +34,7 @@ class ReportController extends Controller
         ]);
     }
 
-    /**
-     * The admin Dashboard's four KPI tiles in one call: total revenue,
-     * platform commission, pending bookings and permits expiring soon.
-     *
-     * The actual calculation lives in Services\Admin\AdminPanelCalculationService
-     * (dashboardSummary()) - this method only shapes the HTTP response.
-     */
+
     public function dashboard(): JsonResponse
     {
         return response()->json([

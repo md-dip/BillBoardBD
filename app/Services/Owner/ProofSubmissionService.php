@@ -7,11 +7,6 @@ use App\Notifications\NotificationService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-/**
- * The owner's half of the proof-of-posting exchange: uploading photos once a
- * booking is paid in full moves it to pending_proof_review for the admin to
- * check (see Admin\ProofReviewService for the other half).
- */
 class ProofSubmissionService
 {
     public function __construct(private readonly NotificationService $notifications) {}

@@ -23,7 +23,7 @@ class StoreBillboardRequest extends FormRequest
             'pricing_mode' => ['required', 'in:daily,monthly'],
             'photo' => ['nullable', 'string'],
             'rating' => ['nullable', 'numeric', 'between:0,5'],
-            'status' => ['nullable', 'in:available,booked,hidden'],
+            'status' => ['nullable', 'in:available,hidden'],
             'permit_expiry_date' => ['required', 'date'],
         ];
     }

@@ -6,24 +6,9 @@ use App\Models\Booking;
 use App\Models\Invoice;
 use App\Models\Setting;
 
-/**
- * Builds and stores the two invoices a booking earns over its life:
- *
- *   'advance' - issued the moment the client pays the 30% advance.
- *   'final'   - issued once the booking is paid in full.
- *
- * Each invoice is an immutable snapshot. The platform commission is NOT a
- * constant anywhere - it is read from the `commission_rate` setting at pay
- * time (frozen onto the Payment rows by the booking flow), and this service
- * simply snapshots whatever was frozen. Change the rate in the admin panel
- * and every booking paid after that point invoices at the new rate.
- */
+
 class InvoiceService
 {
-    /**
-     * Issue the invoice for a milestone, or return the one already issued.
-     * Idempotent - safe to call again on a re-tried payment.
-     */
     public function issue(Booking $booking, string $kind): Invoice
     {
         $booking->loadMissing('payments');
@@ -39,9 +24,6 @@ class InvoiceService
         }
         $commissionRate = $subtotal > 0 ? round($commissionAmount / $subtotal * 100, 2) : 0.0;
 
-        // Deterministic by milestone, not a live sum - an 'advance' invoice
-        // always states the advance and the balance still owed; a 'final' one
-        // always states the whole amount with nothing left.
         if ($kind === 'final') {
             $amountPaid = $subtotal;
             $balanceDue = 0.0;
